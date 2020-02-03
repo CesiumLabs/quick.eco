@@ -1,0 +1,32 @@
+{
+  "name": "quick.eco",
+  "version": "1.0.2",
+  "description": "A simple & easy to use economy package for discord bots using quick.db",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/INEX07/quick.eco.git"
+  },
+  "keywords": [
+    "quick.eco",
+    "quick.db",
+    "discord",
+    "discord.js",
+    "discord.js-economy",
+    "quick.db-economy",
+    "eris-economy"
+  ],
+  "author": "INEX07",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/INEX07/quick.eco/issues"
+  },
+  "homepage": "https://github.com/INEX07/quick.eco#readme",
+  "dependencies": {
+    "quick.db": "^7.0.0-b22"
+  },
+  "devDependencies": {}
+}
