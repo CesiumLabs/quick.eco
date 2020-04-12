@@ -78,8 +78,8 @@ leaderboard({ options }); // returns leaderboard | options: { raw: false, limit:
 # Making Other Commands
 You can make some other commands like `rob`, `gamble`, `search`, `shop` & more using above mentioned functions.
 
-# Psss
-`quick.eco` also has `quick.db`. You can call it using `Eco.db`.
+# quick.db
+`quick.eco` has `quick.db`. You can call it using `Eco.db`.
 
 # Join Our Discord
 **[Click Me](https://discord.gg/AHdaSqr)**
