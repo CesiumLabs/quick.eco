@@ -10,7 +10,8 @@ class EconomyManager {
     constructor() {
         console.log(`
         ┏╋━━━━━━◥◣◆◢◤━━━━━━━╋┓
-          [quick.eco] - Loaded!
+               [quick.eco] - Loaded!
+                Total Data: ${db.all() ? db.all().length.toLocaleString() : 0}
         ┗╋━━━━━━◢◤◆◥◣━━━━━━━╋┛
         `);
     }
@@ -291,8 +292,6 @@ class EconomyManager {
 }
 
 function fetch(param) {
-    let check = db.fetch(param);
-    if (check < 0) db.set(param, 0);
     return db.fetch(param) ? db.fetch(param) : 0;
 }
 
