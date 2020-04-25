@@ -1,5 +1,6 @@
 const db = require("quick.db");
 let invalid = [0, -1, -0];
+let invL = [-1, -0];
 
 class EconomyManager {
 
@@ -56,7 +57,7 @@ class EconomyManager {
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
         if (!amount) throw new TypeError("Amount was not provided.");
         if (isNaN(amount)) throw new SyntaxError("Amount must be a number.");
-        if (invalid.includes(Math.sign(amount))) throw new TypeError("Amount can't be negative or zero.");
+        if (invL.includes(Math.sign(amount))) throw new TypeError("Amount can't be negative or zero.");
         let oldbal = fetch(`money_${userid}`);
         db.set(`money_${userid}`, amount);
         let newbal = fetch(`money_${userid}`);
