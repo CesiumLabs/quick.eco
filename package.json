@@ -27,6 +27,5 @@
   "homepage": "https://github.com/INEX07/quick.eco#readme",
   "dependencies": {
     "quick.db": "^7.1.1"
-  },
-  "devDependencies": {}
+  }
 }
