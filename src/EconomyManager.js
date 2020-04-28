@@ -12,7 +12,7 @@ class EconomyManager {
         console.log(`
         ┏╋━━━━━━◥◣◆◢◤━━━━━━━╋┓
                [quick.eco] - Loaded!
-                Total Data: ${db.all() ? db.all().length.toLocaleString() : 0}
+               Total Entries: ${db.all() ? db.all().length.toLocaleString() : 0}
         ┗╋━━━━━━◢◤◆◥◣━━━━━━━╋┛
         `);
     }
@@ -23,7 +23,7 @@ class EconomyManager {
      * @param {Number} amount Amount to add
      * @returns Object
      */
-    async addMoney(userid, amount) {
+    addMoney(userid, amount) {
         if (!userid) throw new TypeError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
         if (!amount) throw new TypeError("Amount was not provided.");
@@ -40,7 +40,7 @@ class EconomyManager {
      * @param {String} userid user id
      * @returns Object
      */
-    async fetchMoney(userid) {
+    fetchMoney(userid) {
         if (!userid) throw new TypeError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
         return { amount: fetch(`money_${userid}`), user: userid };
@@ -52,7 +52,7 @@ class EconomyManager {
      * @param {Number} amount amount to set
      * @returns Object
      */
-    async setMoney(userid, amount) {
+    setMoney(userid, amount) {
         if (!userid) throw new TypeError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
         if (!amount) throw new TypeError("Amount was not provided.");
@@ -69,7 +69,7 @@ class EconomyManager {
      * @param {String} userid user id
      * @returns Object
      */
-    async deleteUser(userid) {
+    deleteUser(userid) {
         if (!userid) throw new TypeError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
         let oldbal = fetch(`money_${userid}`);
@@ -84,7 +84,7 @@ class EconomyManager {
      * @param {Number} amount amount
      * @returns Object
      */
-    async removeMoney(userid, amount) {
+    removeMoney(userid, amount) {
         if (!userid) throw new TypeError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
         if (!amount) throw new TypeError("Amount was not provided.");
@@ -103,7 +103,7 @@ class EconomyManager {
      * @param {Number} amount amount 
      * @returns Object
      */
-    async daily(userid, amount) {
+    daily(userid, amount) {
         if (!userid) throw new TypeError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
         if (!amount) throw new TypeError("Amount was not provided.");
@@ -127,7 +127,7 @@ class EconomyManager {
      * @param {Number} amount amount
      * @returns Object
      */
-    async weekly(userid, amount) {
+    weekly(userid, amount) {
         if (!userid) throw new TypeError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
         if (!amount) throw new TypeError("Amount was not provided.");
@@ -152,7 +152,7 @@ class EconomyManager {
      * @param {Object} options Options = { jobs: ["Doctor", "Singer"], cooldown: 2.7e+6 } 
      * @returns Object
      */
-    async work(userid, amount, options={}) {
+    work(userid, amount, options={}) {
         if (!userid) throw new TypeError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
         if (!amount) throw new TypeError("Amount was not provided.");
@@ -212,7 +212,7 @@ class EconomyManager {
      * @param {Object} options options = { canLose: false }
      * @returns Object
      */
-    async beg(userid, amount, options={}) {
+    beg(userid, amount, options={}) {
         if (!userid) throw new TypeError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
         if (!amount) throw new TypeError("Amount was not provided.");
@@ -246,7 +246,7 @@ class EconomyManager {
      * @param {Number} amount Amount
      * @returns Object
      */
-    async transfer(user1, user2, amount) {
+    transfer(user1, user2, amount) {
         if (!user1) throw new TypeError("User id was not provided.");
         if (typeof user1 !== "string") throw new SyntaxError("User id must be a string.");
         if (!user2) throw new TypeError("User id was not provided.");
@@ -268,7 +268,7 @@ class EconomyManager {
      * @param {Object} options Options = { limit: 10, raw: false }
      * @returns Array
      */
-    async leaderboard(options = {}) {
+    leaderboard(options = {}) {
         let limit = options.limit || 10;
         if (isNaN(limit)) throw new SyntaxError("Limit must be a number.");
         if (limit <= 0) throw new SyntaxError("Limit must be a number greater than 0.");
