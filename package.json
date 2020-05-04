@@ -1,6 +1,6 @@
 {
   "name": "quick.eco",
-  "version": "2.0.1-dev",
+  "version": "2.0.2",
   "description": "A simple & easy to use economy package for discord bots using quick.db",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/INEX07/quick.eco.git"
+    "url": "git+https://github.com/Snowflake107/quick.eco.git"
   },
   "keywords": [
     "quick.eco",
@@ -19,12 +19,12 @@
     "quick.db-economy",
     "eris-economy"
   ],
-  "author": "INEX07",
+  "author": "Snowflake7",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/INEX07/quick.eco/issues"
+    "url": "https://github.com/Snowflake107/quick.eco/issues"
   },
-  "homepage": "https://github.com/INEX07/quick.eco#readme",
+  "homepage": "https://github.com/Snowflake107/quick.eco#readme",
   "dependencies": {
     "quick.db": "^7.1.1"
   }
