@@ -79,7 +79,7 @@ leaderboard({ options }); // returns leaderboard | options: { raw: false, limit:
 You can make some other commands like `rob`, `gamble`, `search`, `shop` & more using above mentioned functions.
 
 # Join Our Discord
-**[Click Me](https://discord.gg/AHdaSqr)**
+**[Click Me](https://discord.gg/uqB8kxh)**
 
 **Having problems with quick.db?**
 - Join **[discord.gg/plexidev](https://discord.gg/plexidev)**
