@@ -78,7 +78,7 @@ leaderboard({ options }); // returns leaderboard | options: { raw: false, limit:
 # Making Other Commands
 You can make some other commands like `rob`, `gamble`, `search`, `shop` & more using above mentioned functions.
 
-# Join Our Discord
+# Join Our Discord for help with quick.eco
 **[Click Me](https://discord.gg/uqB8kxh)**
 
 **Having problems with quick.db?**
