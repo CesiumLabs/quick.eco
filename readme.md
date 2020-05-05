@@ -36,7 +36,7 @@ client.on("message", async (message) => {
     if (!message.guild || message.author.bot) return;
     if (message.content === "daily") {
         let add = eco.daily(message.author.id, 500);
-        if (add.onCooldown) return message.reply(`You already claimed your daily coins. Come back after ${add.time.days} days, ${add.time.hours} hours, ${add.time.minutes} minutes * ${add.time.seconds} seconds.`);
+        if (add.onCooldown) return message.reply(`You already claimed your daily coins. Come back after ${add.time.days} days, ${add.time.hours} hours, ${add.time.minutes} minutes & ${add.time.seconds} seconds.`);
         else return message.reply(`you claimed ${add.amount} as your daily coins and now you have total ${add.after} coins.`);
     }
     if (message.content === "bal") {
