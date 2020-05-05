@@ -47,7 +47,7 @@ class EconomyManager {
         let one = every.filter(data => data.id === userid);
         one = one.length < 1 ? null : one;
 
-        return one ? { amount: one[0].money, user: one[0].user, position: every.indexOf(one[0]) + 1 } : { amount: 0, user: userid, position: every.length + 1 };
+        return one ? { amount: one[0].money, user: one[0].id, position: every.indexOf(one[0]) + 1 } : { amount: 0, user: userid, position: every.length + 1 };
     }
 
     /**
