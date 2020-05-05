@@ -11,6 +11,8 @@ A simple & easy to use economy package for discord bots using quick.db
 
 > Note: This package uses `quick.db` to run.
 
+**[Join Our Discord Server](https://discord.gg/uqB8kxh)**
+
 # Getting Started
 
 ```js
@@ -78,10 +80,10 @@ leaderboard({ options }); // returns leaderboard | options: { raw: false, limit:
 # Making Other Commands
 You can make some other commands like `rob`, `gamble`, `search`, `shop` & more using above mentioned functions.
 
-# Join Our Discord for help with quick.eco
-**[Click Me](https://discord.gg/uqB8kxh)**
+# Need help in quick.eco?
+**[discord.gg/uqB8kxh](https://discord.gg/uqB8kxh)**
 
-**Having problems with quick.db?**
+# **Having problems in quick.db?**
 - Join **[discord.gg/plexidev](https://discord.gg/plexidev)**
 
 
