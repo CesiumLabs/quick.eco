@@ -43,7 +43,11 @@ class EconomyManager {
     fetchMoney(userid) {
         if (!userid) throw new TypeError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
-        return { amount: fetch(`money_${userid}`), user: userid };
+        let every = this.leaderboard({ limit: 19774483275598 });
+        let one = every.filter(data => data.id === userid);
+        one = one.length < 1 ? null : one;
+
+        return one ? { amount: one[0].money, user: one[0].user, position: every.indexOf(one[0]) + 1 } : { amount: 0, user: userid, position: every.length + 1 };
     }
 
     /**
