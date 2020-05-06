@@ -4,7 +4,9 @@
   "description": "A simple & easy to use economy package for discord bots using quick.db",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate-docs": "node_modules/.bin/jsdoc --configure .jsdoc.json --verbose",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\""
   },
   "repository": {
     "type": "git",
@@ -27,5 +29,10 @@
   "homepage": "https://github.com/Snowflake107/quick.eco#readme",
   "dependencies": {
     "quick.db": "^7.1.1"
+  },
+  "devDependencies": {
+    "jsdoc": "^3.6.3",
+    "minami": "github:Androz2091/minami",
+    "prettier": "^2.0.5"
   }
 }
