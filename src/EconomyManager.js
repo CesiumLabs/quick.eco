@@ -44,7 +44,7 @@ class EconomyManager {
     fetchMoney(userid) {
         if (!userid) throw new TypeError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
-        let every = this.leaderboard();
+        let every = this.leaderboard({limit:19774488});
         let one = every.filter(data => data.id === userid);
         one = one.length < 1 ? null : one;
 
@@ -274,12 +274,12 @@ class EconomyManager {
      * @returns Array
      */
     leaderboard(options = {}) {
-        let limit = options.limit;
-        if (limit && isNaN(limit)) throw new SyntaxError("Limit must be a number.");
-        if (limit && limit <= 0) throw new SyntaxError("Limit must be a number greater than 0.");
+        let limit = options.limit || 10;
+        if (isNaN(limit)) throw new SyntaxError("Limit must be a number.");
+        if (limit <= 0) throw new SyntaxError("Limit must be a number greater than 0.");
         let raw = options.raw || false;
         let lb = db.all().filter(data => data.ID.startsWith(`money`)).sort((a, b) => b.data - a.data);
-        if (limit && !isNaN(limit)) lb.length = parseInt(limit);
+        lb.length = parseInt(limit);
         if (raw === true) return lb;
         var final = [];
         var i = 0;
