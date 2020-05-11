@@ -10,6 +10,7 @@ class EconomyManager {
      */
     constructor() {
         this.entries = (db.all() ? db.all().length.toLocaleString() : 0);
+        
         console.log(`
         ┏╋━━━━━━◥◣◆◢◤━━━━━━━╋┓
                [quick.eco] - Loaded!
@@ -214,7 +215,7 @@ class EconomyManager {
      * beg - beg and earn
      * @param {String} userid user id
      * @param {Number} amount amount 
-     * @param {Object} options options = { canLose: false }
+     * @param {Object} options options = { canLose: false, cooldown: 60000 }
      * @returns Object
      */
     beg(userid, amount, options={}) {
@@ -227,7 +228,7 @@ class EconomyManager {
         let luck1 = Math.floor(Math.random() * 5);
         let luck2 = Math.floor(Math.random() * 5);
         if (luck1 === luck2) lost = true;
-        let timeout = 60000;
+        let timeout = options.cooldown ? (!isNaN(options.cooldown) ? parseInt(options.cooldown) : 60000) : 60000;
         let check = db.fetch(`begcooldown_${userid}`);
         if (check !== null && timeout - (Date.now() - check) > 0) {
             let time = ms(timeout - (Date.now() - check));
