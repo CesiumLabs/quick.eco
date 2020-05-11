@@ -59,6 +59,10 @@ client.login("NjU3OTUwNjk2NDAyMDU5Mjc5.XjgRXA.uS-OspxdjqXoxEQa59xVIsZvt5g");
 
 ```
 
+# Documentaion
+## [Snowflake107/quick.eco](https://snowflake107.github.io/quick.eco)
+
+
 # Functions
 
 ```js
@@ -71,7 +75,7 @@ removeMoney(userid, amount); // removes certain amount from user
 daily(userid, amount); // Adds daily balance & returns object with 24h cooldown
 weekly(userid, amount); // adds weekly balance & returns object with cooldown
 work(userid, amount, { options }); // Work function, returns object | options: { cooldown: time_in_ms, jobs: ["job name", "another job"] }
-beg(userid, amount, { options }); // beg function, returns object | options: { canLose: false } | [ can be used in "search" command ]
+beg(userid, amount, { options }); // beg function, returns object | options: { canLose: false, cooldown: time_in_ms } | [ can be used in "search" command ]
 transfer(userid1, userid2, amount); // transfer balance from a user to another, returns object | [ Can be used in "rob" command ]
 leaderboard({ options }); // returns leaderboard | options: { raw: false, limit: 10 }
 
