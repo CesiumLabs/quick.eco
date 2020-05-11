@@ -215,7 +215,7 @@ class EconomyManager {
      * beg - beg and earn
      * @param {String} userid user id
      * @param {Number} amount amount 
-     * @param {Object} options options = { canLose: false, cooldown: 60000 }
+     * @param {Object} options options = { canLose: false, cooldown: 60000, customName: "beg" }
      * @returns Object
      */
     beg(userid, amount, options={}) {
@@ -229,19 +229,19 @@ class EconomyManager {
         let luck2 = Math.floor(Math.random() * 5);
         if (luck1 === luck2) lost = true;
         let timeout = options.cooldown ? (!isNaN(options.cooldown) ? parseInt(options.cooldown) : 60000) : 60000;
-        let check = db.fetch(`begcooldown_${userid}`);
+        let check = db.fetch(`${options.customName || "beg"}cooldown_${userid}`);
         if (check !== null && timeout - (Date.now() - check) > 0) {
             let time = ms(timeout - (Date.now() - check));
             return { onCooldown: true, time: time, user: userid };
         }
         if (options.canLose && lost) {
             let before = fetch(`money_${userid}`);
-            let newcooldown = db.set(`begcooldown_${userid}`, Date.now());
+            let newcooldown = db.set(`${options.customName || "beg"}cooldown_${userid}`, Date.now());
             return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: timeout, before: before, after: before, user: userid, amount: amount, time: convertTime(timeout, newcooldown), lost: true };
         }
         let before = fetch(`money_${userid}`);
         let added = db.add(`money_${userid}`, amount);
-        let newcooldown = db.set(`begcooldown_${userid}`, Date.now());
+        let newcooldown = db.set(`${options.customName || "beg"}cooldown_${userid}`, Date.now());
         return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: timeout, before: before, after: added, user: userid, amount: amount, time: convertTime(timeout, newcooldown), lost: false };
     }
 
