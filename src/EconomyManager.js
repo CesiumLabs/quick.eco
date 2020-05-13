@@ -8,9 +8,10 @@ class EconomyManager {
      * @constructor
      * @example ```const eco = new Eco.Manager();```
      */
-    constructor() {
-        this.entries = db.all();
-      
+    constructor(name) {
+        if (name && (typeof name !== "string")) throw new Error("Eco: Name must me a string");
+        this.db = name ? db.table(name.replace(/ +/g, "")) : db;
+        this.entries = this.db.all();
         console.log(`
         ┏╋━━━━━━◥◣◆◢◤━━━━━━━╋┓
                [quick.eco] - Loaded!
@@ -32,7 +33,7 @@ class EconomyManager {
         if (isNaN(amount)) throw new SyntaxError("Amount must be a number.");
         if (invalid.includes(Math.sign(amount))) throw new TypeError("Amount can't be negative or zero.");
         let oldbal = fetch(`money_${userid}`);
-        db.add(`money_${userid}`, amount);
+        this.db.add(`money_${userid}`, amount);
         let newbal = fetch(`money_${userid}`);
         return { before: oldbal, after: newbal, user: userid, amount: amount };
     }
@@ -65,7 +66,7 @@ class EconomyManager {
         if (isNaN(amount)) throw new SyntaxError("Amount must be a number.");
         if (invL.includes(Math.sign(amount))) throw new TypeError("Amount can't be negative or zero.");
         let oldbal = fetch(`money_${userid}`);
-        db.set(`money_${userid}`, amount);
+        this.db.set(`money_${userid}`, amount);
         let newbal = fetch(`money_${userid}`);
         return { before: oldbal, after: newbal, user: userid, amount: amount };
     }
@@ -79,7 +80,7 @@ class EconomyManager {
         if (!userid) throw new TypeError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
         let oldbal = fetch(`money_${userid}`);
-        db.delete(`money_${userid}`);
+        this.db.delete(`money_${userid}`);
         let newbal = fetch(`money_${userid}`);
         return { before: oldbal, after: newbal, user: userid };
     }
@@ -98,7 +99,7 @@ class EconomyManager {
         if (invalid.includes(Math.sign(amount))) throw new TypeError("Amount can't be negative or zero.");
         let oldbal = fetch(`money_${userid}`);
         if (oldbal - amount < 0) return { error: "New amount is negative." };
-        db.subtract(`money_${userid}`, amount);
+        this.db.subtract(`money_${userid}`, amount);
         let newbal = fetch(`money_${userid}`);
         return { before: oldbal, after: newbal, user: userid, amount: amount };
     }
@@ -116,14 +117,14 @@ class EconomyManager {
         if (isNaN(amount)) throw new SyntaxError("Amount must be a number.");
         if (invalid.includes(Math.sign(amount))) throw new TypeError("Amount can't be negative or zero.");
         let timeout = 86400000;
-        let check = db.fetch(`dailycooldown_${userid}`);
+        let check = this.db.fetch(`dailycooldown_${userid}`);
         if (check !== null && timeout - (Date.now() - check) > 0) {
             let time = ms(timeout - (Date.now() - check));
             return { onCooldown: true, time: time, user: userid };
         }
         let before = fetch(`money_${userid}`);
-        let added = db.add(`money_${userid}`, amount);
-        let newcooldown = db.set(`dailycooldown_${userid}`, Date.now());
+        let added = this.db.add(`money_${userid}`, amount);
+        let newcooldown = this.db.set(`dailycooldown_${userid}`, Date.now());
         return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: timeout, before: before, after: added, user: userid, amount: amount, time: convertTime(timeout, newcooldown) };
     }
 
@@ -140,14 +141,14 @@ class EconomyManager {
         if (isNaN(amount)) throw new SyntaxError("Amount must be a number.");
         if (invalid.includes(Math.sign(amount))) throw new TypeError("Amount can't be negative or zero.");
         let timeout = 604800000;
-        let check = db.fetch(`weeklycooldown_${userid}`);
+        let check = this.db.fetch(`weeklycooldown_${userid}`);
         if (check !== null && timeout - (Date.now() - check) > 0) {
             let time = ms(timeout - (Date.now() - check));
             return { onCooldown: true, time: time, user: userid };
         }
         let before = fetch(`money_${userid}`);
-        let added = db.add(`money_${userid}`, amount);
-        let newcooldown = db.set(`weeklycooldown_${userid}`, Date.now());
+        let added = this.db.add(`money_${userid}`, amount);
+        let newcooldown = this.db.set(`weeklycooldown_${userid}`, Date.now());
         return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: timeout, before: before, after: added, user: userid, amount: amount, time: convertTime(timeout, newcooldown) };
     }
     
@@ -199,15 +200,15 @@ class EconomyManager {
             "Singer", 
             "Dancer"
         ];
-        let check = db.fetch(`workcooldown_${userid}`);
+        let check = this.db.fetch(`workcooldown_${userid}`);
         if (check !== null && cooldown - (Date.now() - check) > 0) {
             let time = ms(cooldown - (Date.now() - check));
             return { onCooldown: true, time: time, user: userid };
         }
         let workedAs = jobs[Math.floor(Math.random() * jobs.length)];
         let before = fetch(`money_${userid}`);
-        let added = db.add(`money_${userid}`, amount);
-        let newcooldown = db.set(`workcooldown_${userid}`, Date.now());
+        let added = this.db.add(`money_${userid}`, amount);
+        let newcooldown = this.db.set(`workcooldown_${userid}`, Date.now());
         return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: cooldown, before: before, after: added, user: userid, amount: amount, workedAs: workedAs, time: convertTime(cooldown, newcooldown) };
     }
 
@@ -229,19 +230,19 @@ class EconomyManager {
         let luck2 = Math.floor(Math.random() * 5);
         if (luck1 === luck2) lost = true;
         let timeout = options.cooldown ? (!isNaN(options.cooldown) ? parseInt(options.cooldown) : 60000) : 60000;
-        let check = db.fetch(`${options.customName || "beg"}cooldown_${userid}`);
+        let check = this.db.fetch(`${options.customName || "beg"}cooldown_${userid}`);
         if (check !== null && timeout - (Date.now() - check) > 0) {
             let time = ms(timeout - (Date.now() - check));
             return { onCooldown: true, time: time, user: userid };
         }
         if (options.canLose && lost) {
             let before = fetch(`money_${userid}`);
-            let newcooldown = db.set(`${options.customName || "beg"}cooldown_${userid}`, Date.now());
+            let newcooldown = this.db.set(`${options.customName || "beg"}cooldown_${userid}`, Date.now());
             return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: timeout, before: before, after: before, user: userid, amount: amount, time: convertTime(timeout, newcooldown), lost: true };
         }
         let before = fetch(`money_${userid}`);
-        let added = db.add(`money_${userid}`, amount);
-        let newcooldown = db.set(`${options.customName || "beg"}cooldown_${userid}`, Date.now());
+        let added = this.db.add(`money_${userid}`, amount);
+        let newcooldown = this.db.set(`${options.customName || "beg"}cooldown_${userid}`, Date.now());
         return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: timeout, before: before, after: added, user: userid, amount: amount, time: convertTime(timeout, newcooldown), lost: false };
     }
 
@@ -264,8 +265,8 @@ class EconomyManager {
         if (check < 1) return { error: "Money of first user is less than 1." };
         if (check < amount) return { error: "Money of first user is less than given amount." };
         if (check - amount < 0) return { error: "This user can't share that much amount of money." };
-        let newM = db.add(`money_${user2}`, amount);
-        let newM2 = db.subtract(`money_${user1}`, amount);
+        let newM = this.db.add(`money_${user2}`, amount);
+        let newM2 = this.db.subtract(`money_${user1}`, amount);
         return { user1: { id: user1, money: newM2 }, user2: { id: user2, money: newM }, amount: amount };
     }
 
@@ -279,7 +280,7 @@ class EconomyManager {
         if (isNaN(limit)) throw new SyntaxError("Limit must be a number.");
         if (limit <= 0) throw new SyntaxError("Limit must be a number greater than 0.");
         let raw = options.raw || false;
-        let lb = db.all().filter(data => data.ID.startsWith(`money`)).sort((a, b) => b.data - a.data);
+        let lb = this.db.all().filter(data => data.ID.startsWith(`money`)).sort((a, b) => b.data - a.data);
         lb.length = parseInt(limit);
         if (raw === true) return lb;
         var final = [];
@@ -296,27 +297,26 @@ class EconomyManager {
         return final;
     }
 
-}
+    fetch(param) {
+        return this.db.fetch(param) ? db.fetch(param) : 0;
+    }
 
-function fetch(param) {
-    return db.fetch(param) ? db.fetch(param) : 0;
-}
+    convertTime(cooldown, check) {
+        let time = ms(cooldown - (Date.now() - check));
+        return time;
+    }
 
-function convertTime(cooldown, check) {
-    let time = ms(cooldown - (Date.now() - check));
-    return time;
-}
-
-function ms(milliseconds) {
-    const roundTowardsZero = milliseconds > 0 ? Math.floor : Math.ceil;
-    return {
-        days: roundTowardsZero(milliseconds / 86400000),
-        hours: roundTowardsZero(milliseconds / 3600000) % 24,
-        minutes: roundTowardsZero(milliseconds / 60000) % 60,
-        seconds: roundTowardsZero(milliseconds / 1000) % 60,
-        milliseconds: roundTowardsZero(milliseconds) % 1000,
-        microseconds: roundTowardsZero(milliseconds * 1000) % 1000,
-        nanoseconds: roundTowardsZero(milliseconds * 1e6) % 1000
+    ms(milliseconds) {
+        const roundTowardsZero = milliseconds > 0 ? Math.floor : Math.ceil;
+        return {
+            days: roundTowardsZero(milliseconds / 86400000),
+            hours: roundTowardsZero(milliseconds / 3600000) % 24,
+            minutes: roundTowardsZero(milliseconds / 60000) % 60,
+            seconds: roundTowardsZero(milliseconds / 1000) % 60,
+            milliseconds: roundTowardsZero(milliseconds) % 1000,
+            microseconds: roundTowardsZero(milliseconds * 1000) % 1000,
+            nanoseconds: roundTowardsZero(milliseconds * 1e6) % 1000
+        }
     }
 }
 
