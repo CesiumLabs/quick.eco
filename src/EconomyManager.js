@@ -9,12 +9,12 @@ class EconomyManager {
      * @example ```const eco = new Eco.Manager();```
      */
     constructor() {
-        this.entries = (db.all() ? db.all().length.toLocaleString() : 0);
-        
+        this.entries = db.all();
+      
         console.log(`
         ┏╋━━━━━━◥◣◆◢◤━━━━━━━╋┓
                [quick.eco] - Loaded!
-               Total Entries: ${this.entries}
+               Total Entries: ${this.entries.length.toLocaleString()}
         ┗╋━━━━━━◢◤◆◥◣━━━━━━━╋┛
         `);
     }
