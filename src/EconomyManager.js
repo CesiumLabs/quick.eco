@@ -298,7 +298,7 @@ class EconomyManager {
     }
 
     fetch(param) {
-        return this.db.fetch(param) ? db.fetch(param) : 0;
+        return this.db.fetch(param) ? this.db.fetch(param) : 0;
     }
 
     convertTime(cooldown, check) {
