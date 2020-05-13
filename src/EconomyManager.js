@@ -63,7 +63,7 @@ class EconomyManager {
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
         if (!amount) throw new TypeError("Amount was not provided.");
         if (isNaN(amount)) throw new SyntaxError("Amount must be a number.");
-        if (invL.includes(Math.sign(amount))) throw new TypeError("Amount can't be negative or zero.");
+        if (amount < 0) throw new TypeError("Amount can't be negative.");
         let oldbal = fetch(`money_${userid}`);
         db.set(`money_${userid}`, amount);
         let newbal = fetch(`money_${userid}`);
