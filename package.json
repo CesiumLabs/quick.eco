@@ -1,12 +1,10 @@
 {
   "name": "quick.eco",
-  "version": "2.0.4",
+  "version": "3.0.0-dev",
   "description": "A simple & easy to use economy package for discord bots using quick.db",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "generate-docs": "node_modules/.bin/jsdoc --configure .jsdoc.json --verbose",
-    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\""
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -27,12 +25,7 @@
     "url": "https://github.com/Snowflake107/quick.eco/issues"
   },
   "homepage": "https://github.com/Snowflake107/quick.eco#readme",
-  "dependencies": {
-    "quick.db": "^7.1.1"
-  },
   "devDependencies": {
-    "jsdoc": "^3.6.3",
-    "minami": "github:Androz2091/minami",
-    "prettier": "^2.0.5"
+    "quick.db": "^7.1.1"
   }
 }
