@@ -1,4 +1,4 @@
-const db = require("quick.db");
+let db = require("quick.db");
 let invalid = [0, -1, -0];
 let invL = [-1, -0];
 
@@ -10,7 +10,8 @@ class EconomyManager {
      */
     constructor(name) {
         if (name && (typeof name !== "string")) throw new Error("Eco: Name must me a string");
-        this.db = name ? db.table(name.replace(/ +/g, "")) : db;
+        if (name) db = db.table(name.replace(/ +/g, ""));
+        this.db = db;
         this.entries = this.db.fetchAll();
         console.log(`
         ┏╋━━━━━━◥◣◆◢◤━━━━━━━╋┓
