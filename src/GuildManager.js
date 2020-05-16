@@ -2,7 +2,7 @@ let db = require("quick.db");
 let invalid = [0, -1, -0];
 let invL = [-1, -0];
 
-class EconomyManager {
+class GuildEconomyManager {
 
     /**
      * @constructor
@@ -354,4 +354,4 @@ class EconomyManager {
     }
 }
 
-module.exports = EconomyManager;
+module.exports = GuildEconomyManager;
