@@ -10,7 +10,7 @@ class EconomyManager {
      */
     constructor(name) {
         if (name && (typeof name !== "string")) throw new Error("Eco: Name must me a string");
-        if (name) db = db.table(name.replace(/ +/g, ""));
+        if (name) db = new db.table(name.replace(/ +/g, ""));
         this.db = db;
         this.entries = this.db.fetchAll();
         console.log(`
