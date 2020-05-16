@@ -45,6 +45,7 @@ class EconomyManager {
     /**
      * fetchMoney - Returns user's money
      * @param {String} userid user id
+     * @param {String} guildid Guild ID
      * @returns Object
      */
     fetchMoney(userid, guildid) {
@@ -62,6 +63,7 @@ class EconomyManager {
     /**
      * setMoney - Sets money
      * @param {String} userid user id
+     * @param {String} guildid Guild ID
      * @param {Number} amount amount to set
      * @returns Object
      */
@@ -82,6 +84,7 @@ class EconomyManager {
     /**
      * deleteUser - Deletes a user from the database
      * @param {String} userid user id
+     * @param {String} guildid Guild ID
      * @returns Object
      */
     deleteUser(userid, guildid) {
@@ -98,6 +101,7 @@ class EconomyManager {
     /**
      * removeMoney - Subtracts money of a user
      * @param {String} userid User id
+     * @param {String} guildid Guild ID
      * @param {Number} amount amount
      * @returns Object
      */
@@ -119,6 +123,7 @@ class EconomyManager {
     /**
      * daily - daily balance
      * @param {String} userid user id
+     * @param {String} guildid Guild ID
      * @param {Number} amount amount 
      * @returns Object
      */
@@ -145,6 +150,7 @@ class EconomyManager {
     /**
      * weekly - weekly balance
      * @param {String} userid user id
+     * @param {String} guildid Guild ID
      * @param {Number} amount amount
      * @returns Object
      */
@@ -171,6 +177,7 @@ class EconomyManager {
     /**
      * Work - Work and earn
      * @param {String} userid User id
+     * @param {String} guildid Guild ID
      * @param {Number} amount amount
      * @param {Object} options Options = { jobs: ["Doctor", "Singer"], cooldown: 2.7e+6 } 
      * @returns Object
@@ -233,6 +240,7 @@ class EconomyManager {
     /**
      * beg - beg and earn
      * @param {String} userid user id
+     * @param {String} guildid Guild ID
      * @param {Number} amount amount 
      * @param {Object} options options = { canLose: false, cooldown: 60000, customName: "beg" }
      * @returns Object
@@ -270,6 +278,7 @@ class EconomyManager {
      * transfer - Transfer money from one user to another
      * @param {String} user1 first user id
      * @param {String} user2 Second user id
+     * @param {String} guildid Guild ID
      * @param {Number} amount Amount
      * @returns Object
      */
@@ -294,6 +303,7 @@ class EconomyManager {
 
     /**
      * leaderboard - leaderboard
+     * @param {String} guildid Guild ID
      * @param {Object} options Options = { limit: 10, raw: false }
      * @returns Array
      */
