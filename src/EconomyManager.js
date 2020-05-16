@@ -31,9 +31,9 @@ class EconomyManager {
         if (!amount) throw new TypeError("Amount was not provided.");
         if (isNaN(amount)) throw new SyntaxError("Amount must be a number.");
         if (invalid.includes(Math.sign(amount))) throw new TypeError("Amount can't be negative or zero.");
-        let oldbal = fetch(`money_${userid}`);
-        db.add(`money_${userid}`, amount);
-        let newbal = fetch(`money_${userid}`);
+        let oldbal = this.fetch(`money_${userid}`);
+        this.db.add(`money_${userid}`, amount);
+        let newbal = this.fetch(`money_${userid}`);
         return { before: oldbal, after: newbal, user: userid, amount: amount };
     }
 
