@@ -11,7 +11,7 @@ class EconomyManager {
     constructor(name) {
         if (name && (typeof name !== "string")) throw new Error("Eco: Name must me a string");
         this.db = name ? db.table(name.replace(/ +/g, "")) : db;
-        this.entries = this.db.all();
+        this.entries = this.db.fetchAll();
         console.log(`
         ┏╋━━━━━━◥◣◆◢◤━━━━━━━╋┓
                [quick.eco] - Loaded!
@@ -280,7 +280,7 @@ class EconomyManager {
         if (isNaN(limit)) throw new SyntaxError("Limit must be a number.");
         if (limit <= 0) throw new SyntaxError("Limit must be a number greater than 0.");
         let raw = options.raw || false;
-        let lb = this.db.all().filter(data => data.ID.startsWith(`money`)).sort((a, b) => b.data - a.data);
+        let lb = this.db.fetchAll().filter(data => data.ID.startsWith(`money`)).sort((a, b) => b.data - a.data);
         lb.length = parseInt(limit);
         if (raw === true) return lb;
         var final = [];
