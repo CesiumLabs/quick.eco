@@ -79,6 +79,23 @@ transfer(userid1, userid2, amount); // transfer balance from a user to another, 
 leaderboard({ options }); // returns leaderboard | options: { raw: false, limit: 10 }
 ```
 
+# Manager Functions
+
+```js
+addMoney(userid, guildid, amount); // adds money & returns object
+fetchMoney(userid, guildid); // returns object
+setMoney(userid, guildid, amount); // sets new money value & returns object
+deleteUser(userid, guuldid); // Deletes a user from the database
+removeMoney(userid, guildid, amount); // removes certain amount from user
+daily(userid, guildid, amount); // Adds daily balance & returns object with 24h cooldown
+weekly(userid, guildid, amount); // adds weekly balance & returns object with cooldown
+work(userid, guildid, amount, { options }); // Work function, returns object | options: { cooldown: time_in_ms, jobs: ["job name", "another job"] }
+beg(userid, guildid, amount, { options }); // beg function, returns object | options: { canLose: false, cooldown: time_in_ms, customName} | [ can be used in "search" command ]
+transfer(userid1, userid2, guildid, amount); // transfer balance from a user to another, returns object | [ Can be used in "rob" command ]
+leaderboard(guildid, { options }); // returns leaderboard | options: { raw: false, limit: 10 }
+```
+
+
 # Making Other Commands
 You can make some other commands like `rob`, `gamble` & more using above mentioned functions.
 
