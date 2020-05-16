@@ -149,7 +149,7 @@ class EconomyManager {
         let before = this.fetch(`money_${userid}`);
         let added = this.db.add(`money_${userid}`, amount);
         let newcooldown = this.db.set(`weeklycooldown_${userid}`, Date.now());
-        return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: timeout, before: before, after: added, user: userid, amount: amount, time: convertTime(timeout, newcooldown) };
+        return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: timeout, before: before, after: added, user: userid, amount: amount, time: this.convertTime(timeout, newcooldown) };
     }
     
     /**
