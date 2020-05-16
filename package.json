@@ -24,7 +24,7 @@
   "bugs": {
     "url": "https://github.com/Snowflake107/quick.eco/issues"
   },
-  "homepage": "https://github.com/Snowflake107/quick.eco#readme",
+  "homepage": "https://quickeco.cf",
   "dependencies": {
     "quick.db": "^7.1.1"
   }
