@@ -1,3 +1,5 @@
+const db = new (require("quick.db")).table("ecoshop");
+
 class ShopManager extends Array {
 
     /**
@@ -90,6 +92,23 @@ class ShopManager extends Array {
      */
     allItems() {
         return this;
+    }
+    
+    /**
+     * collection - Saved data
+     * @returns array
+     */
+    get collection() {
+        return db.get("collection") ? db.get("collection") : [];;
+    }
+    
+    /**
+     * _save - Saves the item in database
+     * @returns Boolean
+     */
+    _save() {
+        db.set("collection", this);
+        return true;
     }
 
 }
