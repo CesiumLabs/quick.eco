@@ -79,7 +79,7 @@ transfer(userid1, userid2, amount); // transfer balance from a user to another, 
 leaderboard({ options }); // returns leaderboard | options: { raw: false, limit: 10 }
 ```
 
-# Manager Functions
+# GuildManager Functions
 
 ```js
 addMoney(userid, guildid, amount); // adds money & returns object
