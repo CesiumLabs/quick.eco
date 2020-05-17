@@ -99,7 +99,7 @@ class ShopManager extends Array {
      * @returns array
      */
     get collection() {
-        return db.get("collection") ? db.get("collection") : [];;
+        return db.get("collection") ? db.get("collection") : [];
     }
     
     /**
