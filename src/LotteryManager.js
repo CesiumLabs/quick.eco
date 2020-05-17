@@ -1,10 +1,15 @@
 const db = require("quick.db");
+const { EventEmitter } = require("events");
 
-class LotteryManager {
+class LotteryManager extends EventEmitter {
 
-  constructor(client, options={}) {
-    if (!client) throw new Error("No client provided!");
-    this.client = client;
+  constructor(options={}) {
+    super();
+    
+  }
+  
+  registerUser(id) {
+    
   }
 
 }
