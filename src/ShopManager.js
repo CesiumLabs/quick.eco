@@ -14,7 +14,7 @@ class ShopManager extends Array {
      * registerItem - Adds an Item to the Shop
      * @param {String} itemName Name of the Item
      * @param {Object} itemInfo About the Item
-     * @returns true
+     * @returns ShopManager
      */
     registerItem(itemName, itemInfo = {}) {
         if(typeof itemName !== "string") throw new TypeError("Item name must be a string.");
@@ -26,7 +26,7 @@ class ShopManager extends Array {
         this.push({
             name, ...itemInfo
         }); // ...itemInfo because user can add excess info about the item
-        return true;
+        return this;
     }
 
     /**
@@ -55,7 +55,7 @@ class ShopManager extends Array {
      * updateItem - Checks if an Item is in Shop
      * @param {String} itemName Name of the Item
      * @param {newItemInfo} newItemInfo Item's new information
-     * @returns true
+     * @returns ShopManager
      */
     updateItem(itemName, newItemInfo = {}) {
         if(typeof itemName !== "string") throw new TypeError("Item name must be a string.");
@@ -69,29 +69,37 @@ class ShopManager extends Array {
         item = {
             ...newItemInfo, name
         }; // name atlast to prevent sneaky ppl changing the name
-        return true;
+        return this;
     }
 
     /**
      * deleteItem - Deletes an Item from the shop
      * @param {String} itemName Name of the Item
-     * @returns true
+     * @returns Boolean
      */
     deleteItem(itemName) {
         if(!itemName) throw new TypeError("Item name was not provided.");
         if(typeof itemName !== "string") throw new TypeError("Item name must be a string.");
         let item = this.map(item => item.name).indexOf(itemName);
-        if(!item) throw new TypeError(`${itemName} was not found.`);
+        if(!item) return false;
         this.splice(item, 1);
         return true;
     }
 
     /**
      * allItems - All the Items in the Shop
-     * @returns array
+     * @returns ShopManager
      */
     allItems() {
         return this;
+    }
+    
+    /**
+     * all - alias to allItems
+     * @returns ShopManager
+     */
+    all() {
+        return this.allItems();
     }
     
     /**
