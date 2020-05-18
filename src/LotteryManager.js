@@ -15,7 +15,6 @@ class LotteryManager extends EventEmitter {
     }
 
     start() {
-        if (this.db.fetch("lottery") == null || this.db.fetch("lottery").length < 1) return false;
         this._started = true;
         this.emit('ready');
         if(!this.db.fetch('lastStarted') || this.db.fetch('lastStarted') == null) this.db.set('lastStarted', Date.now());
@@ -74,6 +73,7 @@ class LotteryManager extends EventEmitter {
                 this.emit('end', (randomUser, lotteryDB));
                 this.db.set("lottery", []);
                 this.db.set('lastEnded', Date.now());
+                this.start();
             }
         }, checkInterval);
     }
