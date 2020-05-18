@@ -5,7 +5,6 @@ class LotteryManager extends EventEmitter {
 
     constructor(options = {}) {
         super();
-
         this._started = false;
         this.db = db;
         this.startedAt = Date.now();
@@ -52,7 +51,7 @@ class LotteryManager extends EventEmitter {
         return;
     }
 
-    getUsers() {
+    get users() {
         return (this.db.fetch('lottery') || []);
     }
     
@@ -65,13 +64,16 @@ class LotteryManager extends EventEmitter {
             let lastStarted = this.db.fetch('lastStarted');
             if(!lastEnded && lastStarted) {
                 lastEnded = lastStarted;
-                this.emit("resume");
+                this.emit("resume", (this.db.fetch("lottery") || []));
             }
             if(Date.now() - lastEnded > lotteryInterval) {
                 const lotteryDB = this.db.fetch('lottery') || [];
+                if (lotteryDB.length < 1) return this.emit("error", "No user participated");
                 let randomUser = lotteryDB[Math.floor(Math.random() * lotteryDB.length)];
-                this.emit('end', randomUser);
+                this.emit('end', (randomUser, lotteryDB));
+                this.db.set("lottery", []);
                 this.db.set('lastEnded', Date.now());
+                this.start();
             }
         }, checkInterval);
     }
