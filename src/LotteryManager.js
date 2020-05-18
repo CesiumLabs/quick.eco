@@ -69,8 +69,9 @@ class LotteryManager extends EventEmitter {
             }
             if(Date.now() - lastEnded > lotteryInterval) {
                 const lotteryDB = this.db.fetch('lottery') || [];
+                if (lotteryDB.length < 1) return this.emit("error", "No user participated");
                 let randomUser = lotteryDB[Math.floor(Math.random() * lotteryDB.length)];
-                this.emit('end', randomUser);
+                this.emit('end', (randomUser, lotteryDB));
                 this.db.set("lottery", []);
                 this.db.set('lastEnded', Date.now());
             }
