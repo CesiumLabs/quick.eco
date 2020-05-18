@@ -15,9 +15,10 @@ class LotteryManager extends EventEmitter {
     }
 
     start() {
+        if (this.db.fetch("lottery") == null || this.db.fetch("lottery").length < 1) return false;
         this._started = true;
         this.emit('ready');
-        if(!this.db.fetch('lastStarted')) this.db.set('lastStarted', Date.now());
+        if(!this.db.fetch('lastStarted') || this.db.fetch('lastStarted') == null) this.db.set('lastStarted', Date.now());
         return this._start();
     }
     
@@ -64,12 +65,13 @@ class LotteryManager extends EventEmitter {
             let lastStarted = this.db.fetch('lastStarted');
             if(!lastEnded && lastStarted) {
                 lastEnded = lastStarted;
-                this.emit("resume");
+                this.emit("resume", this.db.fetch("lottery"));
             }
             if(Date.now() - lastEnded > lotteryInterval) {
                 const lotteryDB = this.db.fetch('lottery') || [];
                 let randomUser = lotteryDB[Math.floor(Math.random() * lotteryDB.length)];
                 this.emit('end', randomUser);
+                this.db.set("lottery", []);
                 this.db.set('lastEnded', Date.now());
             }
         }, checkInterval);
