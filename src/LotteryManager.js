@@ -5,7 +5,6 @@ class LotteryManager extends EventEmitter {
 
     constructor(options = {}) {
         super();
-
         this._started = false;
         this.db = db;
         this.startedAt = Date.now();
@@ -52,7 +51,7 @@ class LotteryManager extends EventEmitter {
         return;
     }
 
-    getUsers() {
+    get users() {
         return (this.db.fetch('lottery') || []);
     }
     
