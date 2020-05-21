@@ -165,7 +165,7 @@ class GuildEconomyManager {
         let timeout = 604800000;
         let check = this.db.fetch(`weeklycooldown_${guildid}_${userid}`);
         if (check !== null && timeout - (Date.now() - check) > 0) {
-            let time = ms(timeout - (Date.now() - check));
+            let time = this.ms(timeout - (Date.now() - check));
             return { onCooldown: true, time: time, user: userid };
         }
         let before = this.fetch(`money_${guildid}_${userid}`);
@@ -260,7 +260,7 @@ class GuildEconomyManager {
         let timeout = options.cooldown ? (!isNaN(options.cooldown) ? parseInt(options.cooldown) : 60000) : 60000;
         let check = this.db.fetch(`${options.customName || "beg"}cooldown_${guildid}_${userid}`);
         if (check !== null && timeout - (Date.now() - check) > 0) {
-            let time = ms(timeout - (Date.now() - check));
+            let time = this.ms(timeout - (Date.now() - check));
             return { onCooldown: true, time: time, user: userid };
         }
         if (options.canLose && lost) {
