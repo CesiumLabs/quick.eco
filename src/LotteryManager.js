@@ -26,6 +26,7 @@ class LotteryManager extends EventEmitter {
 
     /**
       * starts the lotteryManager
+      * @fires LotteryManager#ready
       */
     start() {
         this._started = true;
@@ -37,6 +38,7 @@ class LotteryManager extends EventEmitter {
     /**
       * registers the user in lottery
       * @param {String} id - ID of a user, generally a Snowflake
+      * @fires LotteryManager#entryCreate
       */
     registerUser(id) {
         if(!id) {
@@ -53,6 +55,7 @@ class LotteryManager extends EventEmitter {
     /**
       * removes a user
       * @param {String} User id
+      * @fires LotteryManager#entryDelete
       */
     removeUser(id) {
         if(!id) {
@@ -68,7 +71,6 @@ class LotteryManager extends EventEmitter {
         this.db.set('lottery', lotteryDB);
         let emitted = this.emit('entryDelete', id);
         if(!emitted) return true;
-        return;
     }
 
     /**
@@ -80,7 +82,8 @@ class LotteryManager extends EventEmitter {
     
     /**
       * @ignore
-      * Starter
+      * @private
+      * Lottery Starter
       */
     _start() {
         if(!this._started) return;
@@ -91,7 +94,7 @@ class LotteryManager extends EventEmitter {
             let lastStarted = this.db.fetch('lastStarted');
             if(!lastEnded && lastStarted) {
                 lastEnded = lastStarted;
-                this.emit("resume", (this.db.fetch("lottery") || []));
+                this.emit("resume");
             }
             if(Date.now() - lastEnded > lotteryInterval) {
                 const lotteryDB = this.db.fetch('lottery') || [];
@@ -106,5 +109,40 @@ class LotteryManager extends EventEmitter {
     }
 
 }
+
+/**
+  * Emitted whenever the LotteryManager becomes ready
+  * @event LotteryManager#ready
+  */
+
+/**
+  * Emitted whenever error occurs
+  * @event LotteryManager#error
+  */
+
+/**
+  * Emitted whenever lottery resumes
+  * @event LotteryManager#resume
+  */
+
+/**
+  * Emitted whenever a user is registered
+  * @event LotteryManager#entryCreate
+  * @param {User} user registered
+  */
+
+/**
+  * Emitted whenever a user is removed from the lottery
+  * @event LotteryManager#entryDelete
+  * @param {User} removed user
+  */
+
+/**
+  * Emitted whenever lottery ends
+  * @event LotteryManager#end
+  * @param {String} winner - Lottery Winner
+  * @param {Array} entries - Array of the entries
+  * @example lotrery.on("end", (winner, entries) => console.log(winner + " won the lottery. Total "+ entries.length + " participated!");
+  */
 
 module.exports = LotteryManager;
