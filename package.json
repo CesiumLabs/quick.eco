@@ -1,6 +1,6 @@
 {
   "name": "quick.eco",
-  "version": "3.0.0-dev",
+  "version": "3.0.0",
   "description": "A simple & easy to use economy package for discord bots using quick.db",
   "main": "index.js",
   "scripts": {
