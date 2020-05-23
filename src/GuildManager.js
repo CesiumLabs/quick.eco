@@ -323,7 +323,7 @@ class GuildEconomyManager {
 
             let obj = {
                 position: lb.indexOf(lb[i]) + 1,
-                id: lb[i].ID.split('_')[1],
+                id: lb[i].ID.split('_')[2],
                 money: lb[i].data
             };
             final.push(obj);
