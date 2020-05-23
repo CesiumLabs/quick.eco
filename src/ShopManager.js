@@ -4,7 +4,7 @@ class ShopManager extends Array {
 
     /**
      * @constructor
-     * @example ```const shop = new Eco.ShopManager();```
+     * @example const shop = new Eco.ShopManager();
      */
     constructor() {
         super();
@@ -14,9 +14,9 @@ class ShopManager extends Array {
      * registerItem - Adds an Item to the Shop
      * @param {String} itemName Name of the Item
      * @param {Object} [itemInfo] About the Item
-     * @param { Number } [itemInfo.cost] Cost of the item
-     * @param { Number } [itemInfo.price] alias of cost
-     * @param { Any } [itemInfo.any] anything related to item (optional)
+     * @param {Number} [itemInfo.cost] Cost of the item
+     * @param {Number} [itemInfo.price] alias of cost
+     * @param {Any} [itemInfo.any] anything related to item (optional)
      * @returns ShopManager
      */
     registerItem(itemName, itemInfo = {}) {
@@ -57,7 +57,10 @@ class ShopManager extends Array {
     /**
      * updateItem - Checks if an Item is in Shop
      * @param {String} itemName Name of the Item
-     * @param {newItemInfo} newItemInfo Item's new information
+     * @param {newItemInfo} [newItemInfo] Item's new information
+     * @param {Number} [newItemInfo.cost] Cost of the item
+     * @param {Number} [newItemInfo.price] alias of cost
+     * @param {Any} [newItemInfo.any] anything related to item (optional)
      * @returns ShopManager
      */
     updateItem(itemName, newItemInfo = {}) {
@@ -67,7 +70,7 @@ class ShopManager extends Array {
         if(!name) throw new TypeError("Item name was not provided.");
         let item = this.find(item => item.name == itemName);
         if(!item) throw new TypeError(`${itemName} was not found.`);
-        const cost = newItemInfo.cost;
+        const cost = newItemInfo.cost || newItemInfo.price;
         if(!cost || typeof cost !== "number") throw new TypeError("Item cost must be a number");
         item = {
             ...newItemInfo, name
