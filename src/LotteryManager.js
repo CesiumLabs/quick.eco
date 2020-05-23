@@ -31,7 +31,7 @@ class LotteryManager extends EventEmitter {
     start() {
         this._started = true;
         this.emit('ready');
-        if(!this.db.fetch('lastStarted')) this.db.set('lastStarted', Date.now());
+        if(!this.db.fetch('lastStarted') || this.db.fetch("lastStarted") == null) this.db.set('lastStarted', Date.now());
         return this._start();
     }
     
@@ -79,6 +79,23 @@ class LotteryManager extends EventEmitter {
     get users() {
         return (this.db.fetch('lottery') || []);
     }
+
+
+    /**
+      * forcefully end the lottery
+      */
+    end() {
+        if (!this.started) return false;
+        let u = this.db.get("lottery");
+        if (!u || u == null || u.length < 1) {
+            let emitted = this.emit("error", "No user particilated");
+            if (!emitted) throw new Error("No user participated");
+            return;
+        }
+        this.emit("end", (u[Math.floor(Math.random() * u.length)], u);
+        this.db.forEach(i => this.db.delete(i.ID));
+        return true;
+    }
     
     /**
       * @ignore
@@ -86,7 +103,7 @@ class LotteryManager extends EventEmitter {
       * Lottery Starter
       */
     _start() {
-        if(!this._started) return;
+        if(!this._started) return false;
         const checkInterval = this.checkInterval * 1000;
         const lotteryInterval = this.lotteryInterval * 60 * 1000;
         setInterval(() => {
@@ -96,12 +113,12 @@ class LotteryManager extends EventEmitter {
                 lastEnded = lastStarted;
                 this.emit("resume");
             }
-            if(Date.now() - lastEnded > lotteryInterval) {
+            if((Date.now() - lastEnded) > lotteryInterval) {
                 const lotteryDB = this.db.fetch('lottery') || [];
                 if (lotteryDB.length < 1) return this.emit("error", "No user participated");
                 let randomUser = lotteryDB[Math.floor(Math.random() * lotteryDB.length)];
                 this.emit('end', (randomUser, lotteryDB));
-                this.db.set("lottery", []);
+                this.db.all().forEach(i => this.db.delete(i.ID));
                 this.db.set('lastEnded', Date.now());
                 this.start();
             }
