@@ -118,6 +118,7 @@ class LotteryManager extends EventEmitter {
 /**
   * Emitted whenever error occurs
   * @event LotteryManager#error
+  * @param {Error} error
   */
 
 /**
