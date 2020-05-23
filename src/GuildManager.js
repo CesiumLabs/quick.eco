@@ -6,7 +6,7 @@ class GuildEconomyManager {
 
     /**
      * @constructor
-     * @example ```const eco = new Eco.GuildManager();```
+     * @example const eco = new Eco.GuildManager();
      */
     constructor(name) {
         if (name && (typeof name !== "string")) throw new Error("Eco: Name must me a string");
@@ -331,15 +331,27 @@ class GuildEconomyManager {
         return final;
     }
 
+    /**
+      * @ignore
+      * @private
+      */
     fetch(param) {
         return this.db.fetch(param) ? this.db.fetch(param) : 0;
     }
 
+    /**
+      * @ignore
+      * @private
+      */
     convertTime(cooldown, check) {
         let time = this.ms(cooldown - (Date.now() - check));
         return time;
     }
 
+    /**
+      * @ignore
+      * @private
+      */
     ms(milliseconds) {
         const roundTowardsZero = milliseconds > 0 ? Math.floor : Math.ceil;
         return {
