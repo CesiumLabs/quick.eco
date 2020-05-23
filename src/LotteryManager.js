@@ -1,8 +1,18 @@
 const db = require("quick.db");
 const { EventEmitter } = require("events");
 
+/**
+ * LotteryManager - Simple LotteryManager class
+ * This class can be used to create lottery system in your bot
+ */
 class LotteryManager extends EventEmitter {
 
+    /**
+      * @constructor
+      * @param {Object} options - Lottery Options
+      * @param [options.lotteryInterval] - Lottery Interval, time in minutes.
+      * @param [options.checkInterval] - Lottery check interval, time in seconds
+      */
     constructor(options = {}) {
         super();
         this._started = false;
@@ -14,6 +24,9 @@ class LotteryManager extends EventEmitter {
         }, options);
     }
 
+    /**
+      * starts the lotteryManager
+      */
     start() {
         this._started = true;
         this.emit('ready');
@@ -21,6 +34,10 @@ class LotteryManager extends EventEmitter {
         return this._start();
     }
     
+    /**
+      * registers the user in lottery
+      * @param {String} id - ID of a user, generally a Snowflake
+      */
     registerUser(id) {
         if(!id) {
             let emitted = this.emit('error', `User ID was not provided.`);
@@ -31,9 +48,12 @@ class LotteryManager extends EventEmitter {
         this.db.set('lottery', lotteryDB);
         let emitted = this.emit('entryCreate', id);
         if(!emitted) return true;
-        return;
     }
 
+    /**
+      * removes a user
+      * @param {String} User id
+      */
     removeUser(id) {
         if(!id) {
             let emitted = this.emit('error', `User ID was not provided.`);
@@ -51,10 +71,17 @@ class LotteryManager extends EventEmitter {
         return;
     }
 
+    /**
+      * get all registed users
+      */
     get users() {
         return (this.db.fetch('lottery') || []);
     }
     
+    /**
+      * @ignore
+      * Starter
+      */
     _start() {
         if(!this._started) return;
         const checkInterval = this.checkInterval * 1000;
