@@ -94,7 +94,8 @@ class LotteryManager extends EventEmitter {
             if (!emitted) throw new Error("No user participated");
             return;
         }
-        this.emit("end", u[Math.floor(Math.random() * u.length)], u);
+        let Winner = u[Math.floor(Math.random() * u.length)];
+        this.emit("end", (Winner, u));
         this.db.all().forEach(d => this.db.delete(d.ID));
         this.db.set('lastEnded', Date.now());
         this._started = false;
