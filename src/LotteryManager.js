@@ -83,9 +83,10 @@ class LotteryManager extends EventEmitter {
 
     /**
       * forcefully end the lottery
+      * @returns Boolean
       */
     end() {
-        if (!this.started) return false;
+        if (!this._started) return false;
         let u = this.db.get("lottery");
         if (!u || u == null || u.length < 1) {
             let emitted = this.emit("error", "No user particilated");
@@ -94,6 +95,7 @@ class LotteryManager extends EventEmitter {
         }
         this.emit("end", (u[Math.floor(Math.random() * u.length)], u));
         this.db.forEach(i => this.db.delete(i.ID));
+        this.db.set('lastEnded', Date.now());
         return true;
     }
     
@@ -118,8 +120,8 @@ class LotteryManager extends EventEmitter {
                 if (lotteryDB.length < 1) return this.emit("error", "No user participated");
                 let randomUser = lotteryDB[Math.floor(Math.random() * lotteryDB.length)];
                 this.emit('end', (randomUser, lotteryDB));
-                this.db.all().forEach(i => this.db.delete(i.ID));
                 this.db.set('lastEnded', Date.now());
+                this.db.all().forEach(i => this.db.delete(i.ID));
                 this.start();
             }
         }, checkInterval);
