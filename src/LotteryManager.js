@@ -17,7 +17,7 @@ class LotteryManager extends EventEmitter {
         super();
         this._started = false;
         this.db = db;
-        this.startedAt = Date.now();
+        this.startedAt = 0;
         this.options = Object.assign({
             lotteryInterval: 60, // mins
             checkInterval: 60 // seconds
@@ -30,6 +30,7 @@ class LotteryManager extends EventEmitter {
       */
     start() {
         this._started = true;
+        this.startedAt = Date.now();
         this.emit('ready');
         if(!this.db.fetch('lastStarted') || this.db.fetch("lastStarted") == null) this.db.set('lastStarted', Date.now());
         return this._start();
