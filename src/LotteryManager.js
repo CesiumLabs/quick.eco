@@ -68,8 +68,8 @@ class LotteryManager extends EventEmitter {
             let emitted = this.emit('error', `${id} is not enrolled.`);
             if(!emitted) throw new TypeError(`${id} is not enrolled.`);
         }
-        let newUsers = lotteryDB.splice(lotteryDB.indexOf(id), 1);
-        this.db.set('lottery', newUsers);
+        lotteryDB.splice(lotteryDB.indexOf(id), 1);
+        this.db.set('lottery', lotteryDB);
         let emitted = this.emit('entryDelete', id);
         if(!emitted) return true;
     }
