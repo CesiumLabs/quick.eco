@@ -95,8 +95,10 @@ class LotteryManager extends EventEmitter {
             return;
         }
         this.emit("end", u[Math.floor(Math.random() * u.length)], u);
-        this.db.forEach(i => this.db.delete(i.ID));
+        this.db.all().forEach(d => this.db.delete(d.ID));
         this.db.set('lastEnded', Date.now());
+        this._started = false;
+        this.startedAt = 0;
         return true;
     }
     
