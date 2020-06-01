@@ -1,4 +1,5 @@
-const db = require("quick.db");
+const db = require("rex.db");
+db.init("./economy");
 const { EventEmitter } = require("events");
 
 /**
