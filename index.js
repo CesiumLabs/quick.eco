@@ -23,6 +23,6 @@ module.exports = {
     ShopManager: require("./src/ShopManager"),
     LotteryManager: require("./src/LotteryManager"),
     version: require("./package.json").version,
-    db: require("quick.db"),
+    db: require("rex.db"),
     ms: msParse
 };
