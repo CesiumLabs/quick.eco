@@ -26,6 +26,6 @@
   },
   "homepage": "https://quickeco.cf",
   "dependencies": {
-    "quick.db": "^7.1.1"
+    "rex.db": "^1.0.0"
   }
 }
