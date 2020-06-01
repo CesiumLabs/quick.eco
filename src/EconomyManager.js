@@ -1,4 +1,5 @@
-let db = require("quick.db");
+let db = require("rex.db");
+db.init("./economy");
 let invalid = [0, -1, -0];
 let invL = [-1, -0];
 
@@ -13,12 +14,6 @@ class EconomyManager {
         if (name) db = new db.table(name.replace(/ +/g, ""));
         this.db = db;
         this.entries = this.db.fetchAll();
-        console.log(`
-        ┏╋━━━━━━◥◣◆◢◤━━━━━━━╋┓
-               [quick.eco] - Loaded!
-               Total Entries: ${this.entries.length.toLocaleString()}
-        ┗╋━━━━━━◢◤◆◥◣━━━━━━━╋┛
-        `);
     }
 
     /**
@@ -34,7 +29,7 @@ class EconomyManager {
         if (isNaN(amount)) throw new SyntaxError("Amount must be a number.");
         if (invalid.includes(Math.sign(amount))) throw new TypeError("Amount can't be negative or zero.");
         let oldbal = this.fetch(`money_${userid}`);
-        this.db.add(`money_${userid}`, amount);
+        this.db.math(`money_${userid}`, "+", amount);
         let newbal = this.fetch(`money_${userid}`);
         return { before: oldbal, after: newbal, user: userid, amount: amount };
     }
@@ -100,7 +95,7 @@ class EconomyManager {
         if (invalid.includes(Math.sign(amount))) throw new TypeError("Amount can't be negative or zero.");
         let oldbal = this.fetch(`money_${userid}`);
         if (oldbal - amount < 0) return { error: "New amount is negative." };
-        this.db.subtract(`money_${userid}`, amount);
+        this.db.math(`money_${userid}`, "-", amount);
         let newbal = this.fetch(`money_${userid}`);
         return { before: oldbal, after: newbal, user: userid, amount: amount };
     }
@@ -124,7 +119,7 @@ class EconomyManager {
             return { onCooldown: true, time: time, user: userid };
         }
         let before = this.fetch(`money_${userid}`);
-        let added = this.db.add(`money_${userid}`, amount);
+        let added = this.db.math(`money_${userid}`, "+", amount);
         let newcooldown = this.db.set(`dailycooldown_${userid}`, Date.now());
         return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: timeout, before: before, after: added, user: userid, amount: amount, time: this.convertTime(timeout, newcooldown) };
     }
@@ -148,7 +143,7 @@ class EconomyManager {
             return { onCooldown: true, time: time, user: userid };
         }
         let before = this.fetch(`money_${userid}`);
-        let added = this.db.add(`money_${userid}`, amount);
+        let added = this.db.math(`money_${userid}`, "+", amount);
         let newcooldown = this.db.set(`weeklycooldown_${userid}`, Date.now());
         return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: timeout, before: before, after: added, user: userid, amount: amount, time: this.convertTime(timeout, newcooldown) };
     }
@@ -208,7 +203,7 @@ class EconomyManager {
         }
         let workedAs = jobs[Math.floor(Math.random() * jobs.length)];
         let before = this.fetch(`money_${userid}`);
-        let added = this.db.add(`money_${userid}`, amount);
+        let added = this.db.math(`money_${userid}`, "+", amount);
         let newcooldown = this.db.set(`workcooldown_${userid}`, Date.now());
         return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: cooldown, before: before, after: added, user: userid, amount: amount, workedAs: workedAs, time: this.convertTime(cooldown, newcooldown) };
     }
@@ -242,7 +237,7 @@ class EconomyManager {
             return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: timeout, before: before, after: before, user: userid, amount: amount, time: this.convertTime(timeout, newcooldown), lost: true };
         }
         let before = this.fetch(`money_${userid}`);
-        let added = this.db.add(`money_${userid}`, amount);
+        let added = this.db.math(`money_${userid}`, "+", amount);
         let newcooldown = this.db.set(`${options.customName || "beg"}cooldown_${userid}`, Date.now());
         return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: timeout, before: before, after: added, user: userid, amount: amount, time: this.convertTime(timeout, newcooldown), lost: false };
     }
@@ -266,8 +261,8 @@ class EconomyManager {
         if (check < 1) return { error: "Money of first user is less than 1." };
         if (check < amount) return { error: "Money of first user is less than given amount." };
         if (check - amount < 0) return { error: "This user can't share that much amount of money." };
-        let newM = this.db.add(`money_${user2}`, amount);
-        let newM2 = this.db.subtract(`money_${user1}`, amount);
+        let newM = this.db.math(`money_${user2}`, "+", amount);
+        let newM2 = this.db.math(`money_${user1}`, "-", amount);
         return { user1: { id: user1, money: newM2 }, user2: { id: user2, money: newM }, amount: amount };
     }
 
