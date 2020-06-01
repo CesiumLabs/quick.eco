@@ -1,4 +1,6 @@
-const db = new (require("quick.db")).table("ecoshop");
+const Db = require("rex.db");
+Db.init("./economy");
+const db = new Db.table("ecoshop");
 
 class ShopManager extends Array {
 
