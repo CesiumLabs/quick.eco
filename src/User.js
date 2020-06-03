@@ -9,9 +9,9 @@ class User {
     get balance() {
         if (this.guild) {
             let i = this.db.get(`money_${this.guild}_${this.id}`)
-            return (i ? i : 0);
+            return (i || 0);
         }
-        return this.db.get(`money_${this.id}`) ? this.db.get(`money_${this.id}`) : 0;
+        return (this.db.get(`money_${this.id}`) || 0);
     }
 }
 

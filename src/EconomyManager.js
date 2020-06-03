@@ -3,6 +3,8 @@ db.init("./economy");
 let invalid = [0, -1, -0];
 let invL = [-1, -0];
 
+const User = require("./User");
+
 class EconomyManager {
 
     /**
@@ -41,7 +43,7 @@ class EconomyManager {
         let oldbal = this.fetch(`money_${userid}`);
         this.db.math(`money_${userid}`, "+", amount);
         let newbal = this.fetch(`money_${userid}`);
-        return { before: oldbal, after: newbal, user: userid, amount: amount };
+        return { before: oldbal, after: newbal, user: new User(userid, this.db), amount: amount };
     }
 
     /**
@@ -56,7 +58,7 @@ class EconomyManager {
         let one = every.filter(data => data.id === userid);
         one = one.length < 1 ? null : one;
 
-        return one ? { amount: one[0].money, user: one[0].id, position: every.indexOf(one[0]) + 1 } : { amount: 0, user: userid, position: null };
+        return one ? { amount: one[0].money, user: new User(one[0].id, this.db), position: every.indexOf(one[0]) + 1 } : { amount: 0, user: new User(userid, this.db), position: null };
     }
 
     /**
@@ -74,7 +76,7 @@ class EconomyManager {
         let oldbal = this.fetch(`money_${userid}`);
         this.db.set(`money_${userid}`, amount);
         let newbal = this.fetch(`money_${userid}`);
-        return { before: oldbal, after: newbal, user: userid, amount: amount };
+        return { before: oldbal, after: newbal, user: new User(userid, this.db), amount: amount };
     }
 
     /**
@@ -88,7 +90,7 @@ class EconomyManager {
         let oldbal = this.fetch(`money_${userid}`);
         this.db.delete(`money_${userid}`);
         let newbal = this.fetch(`money_${userid}`);
-        return { before: oldbal, after: newbal, user: userid };
+        return { before: oldbal, after: newbal, user: new User(userid, this.db) };
     }
 
     /**
@@ -107,7 +109,7 @@ class EconomyManager {
         if (oldbal - amount < 0) return { error: "New amount is negative." };
         this.db.math(`money_${userid}`, "-", amount);
         let newbal = this.fetch(`money_${userid}`);
-        return { before: oldbal, after: newbal, user: userid, amount: amount };
+        return { before: oldbal, after: newbal, user: new User(userid, this.db), amount: amount };
     }
 
     /**
@@ -131,7 +133,7 @@ class EconomyManager {
         let before = this.fetch(`money_${userid}`);
         let added = this.db.math(`money_${userid}`, "+", amount);
         let newcooldown = this.db.set(`dailycooldown_${userid}`, Date.now());
-        return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: timeout, before: before, after: added, user: userid, amount: amount, time: this.convertTime(timeout, newcooldown) };
+        return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: timeout, before: before, after: added, user: new User(userid, this.db), amount: amount, time: this.convertTime(timeout, newcooldown) };
     }
 
     /**
@@ -155,7 +157,7 @@ class EconomyManager {
         let before = this.fetch(`money_${userid}`);
         let added = this.db.math(`money_${userid}`, "+", amount);
         let newcooldown = this.db.set(`weeklycooldown_${userid}`, Date.now());
-        return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: timeout, before: before, after: added, user: userid, amount: amount, time: this.convertTime(timeout, newcooldown) };
+        return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: timeout, before: before, after: added, user: new User(userid, this.db), amount: amount, time: this.convertTime(timeout, newcooldown) };
     }
     
     /**
@@ -215,7 +217,7 @@ class EconomyManager {
         let before = this.fetch(`money_${userid}`);
         let added = this.db.math(`money_${userid}`, "+", amount);
         let newcooldown = this.db.set(`workcooldown_${userid}`, Date.now());
-        return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: cooldown, before: before, after: added, user: userid, amount: amount, workedAs: workedAs, time: this.convertTime(cooldown, newcooldown) };
+        return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: cooldown, before: before, after: added, user: new User(userid, this.db), amount: amount, workedAs: workedAs, time: this.convertTime(cooldown, newcooldown) };
     }
 
     /**
@@ -223,7 +225,7 @@ class EconomyManager {
      * @param {String} userid user id
      * @param {Number} amount amount 
      * @param {Object} options options = { canLose: false, cooldown: 60000, customName: "beg" }
-     * @returns return { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, time, lost }
+     * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, time, lost }
      */
     beg(userid, amount, options={}) {
         if (!userid) throw new TypeError("User id was not provided.");
@@ -249,7 +251,7 @@ class EconomyManager {
         let before = this.fetch(`money_${userid}`);
         let added = this.db.math(`money_${userid}`, "+", amount);
         let newcooldown = this.db.set(`${options.customName || "beg"}cooldown_${userid}`, Date.now());
-        return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: timeout, before: before, after: added, user: userid, amount: amount, time: this.convertTime(timeout, newcooldown), lost: false };
+        return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: timeout, before: before, after: added, user: new User(userid, this.db), amount: amount, time: this.convertTime(timeout, newcooldown), lost: false };
     }
 
     /**
@@ -257,7 +259,7 @@ class EconomyManager {
      * @param {String} user1 first user id
      * @param {String} user2 Second user id
      * @param {Number} amount Amount
-     * @returns { user1: { id, money }, user2: { id, money }, amount }
+     * @returns { user1, user2, amount }
      */
     transfer(user1, user2, amount) {
         if (!user1) throw new TypeError("User id was not provided.");
@@ -273,7 +275,7 @@ class EconomyManager {
         if (check - amount < 0) return { error: "This user can't share that much amount of money." };
         let newM = this.db.math(`money_${user2}`, "+", amount);
         let newM2 = this.db.math(`money_${user1}`, "-", amount);
-        return { user1: { id: user1, money: newM2 }, user2: { id: user2, money: newM }, amount: amount };
+        return { user1: new User(user1, this.db), user2: new User(user2, this.db), amount: amount };
     }
 
     /**

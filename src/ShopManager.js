@@ -121,7 +121,7 @@ class ShopManager extends Array {
     
     /**
      * collection - Saved data
-     * @returns array
+     * @returns Array
      */
     get collection() {
         return db.get("collection") ? db.get("collection") : [];
