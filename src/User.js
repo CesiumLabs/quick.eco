@@ -2,9 +2,8 @@ class User {
     
     constructor(id, guild, database) {
         this.id = id;
+        this.guild = guild;
         this.db = database;
-        if (guild && typeof guild == "string") this.guild = guild;
-        else this.db = guild;
     }
 
     get balance() {
