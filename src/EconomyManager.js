@@ -12,15 +12,25 @@ class EconomyManager {
     constructor(name) {
         if (name && (typeof name !== "string")) throw new Error("Eco: Name must me a string");
         if (name) db = new db.table(name.replace(/ +/g, ""));
+        
+        /**
+          * Table name
+          * @type {String}
+          */
+        this.name = name ? (typeof name === "string" ? name.replace(/ +/g, "") : null) : null;
+       
+        /**
+          * internal data manager
+          * @type {Object}
+          */
         this.db = db;
-        this.entries = this.db.fetchAll();
     }
 
     /**
      * addMoney - Adds money
      * @param {String} userid User ID
      * @param {Number} amount Amount to add
-     * @returns Object
+     * @returns { before, after, user, amount }
      */
     addMoney(userid, amount) {
         if (!userid) throw new TypeError("User id was not provided.");
@@ -37,23 +47,23 @@ class EconomyManager {
     /**
      * fetchMoney - Returns user's money
      * @param {String} userid user id
-     * @returns Object
+     * @returns { amount, user, position }
      */
     fetchMoney(userid) {
         if (!userid) throw new TypeError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
-        let every = this.leaderboard({limit:19774488});
+        let every = this.leaderboard({ limit: 0 });
         let one = every.filter(data => data.id === userid);
         one = one.length < 1 ? null : one;
 
-        return one ? { amount: one[0].money, user: one[0].id, position: every.indexOf(one[0]) + 1 } : { amount: 0, user: userid, position: every.length + 1 };
+        return one ? { amount: one[0].money, user: one[0].id, position: every.indexOf(one[0]) + 1 } : { amount: 0, user: userid, position: null };
     }
 
     /**
      * setMoney - Sets money
      * @param {String} userid user id
      * @param {Number} amount amount to set
-     * @returns Object
+     * @returns { before, after, user, amount }
      */
     setMoney(userid, amount) {
         if (!userid) throw new TypeError("User id was not provided.");
@@ -70,7 +80,7 @@ class EconomyManager {
     /**
      * deleteUser - Deletes a user from the database
      * @param {String} userid user id
-     * @returns Object
+     * @returns { before, after, user }
      */
     deleteUser(userid) {
         if (!userid) throw new TypeError("User id was not provided.");
@@ -85,7 +95,7 @@ class EconomyManager {
      * removeMoney - Subtracts money of a user
      * @param {String} userid User id
      * @param {Number} amount amount
-     * @returns Object
+     * @returns { befpre, after, user, amount }
      */
     removeMoney(userid, amount) {
         if (!userid) throw new TypeError("User id was not provided.");
@@ -104,7 +114,7 @@ class EconomyManager {
      * daily - daily balance
      * @param {String} userid user id
      * @param {Number} amount amount 
-     * @returns Object
+     * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, time }
      */
     daily(userid, amount) {
         if (!userid) throw new TypeError("User id was not provided.");
@@ -128,7 +138,7 @@ class EconomyManager {
      * weekly - weekly balance
      * @param {String} userid user id
      * @param {Number} amount amount
-     * @returns Object
+     * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, time }
      */
     weekly(userid, amount) {
         if (!userid) throw new TypeError("User id was not provided.");
@@ -152,8 +162,8 @@ class EconomyManager {
      * Work - Work and earn
      * @param {String} userid User id
      * @param {Number} amount amount
-     * @param {Object} options Options = { jobs: ["Doctor", "Singer"], cooldown: 2.7e+6 } 
-     * @returns Object
+     * @param {Object} options Options = { jobs: ["Doctor", "Singer"], cooldown: 2.7e+6 }
+     * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, workedAs, time }
      */
     work(userid, amount, options={}) {
         if (!userid) throw new TypeError("User id was not provided.");
@@ -213,7 +223,7 @@ class EconomyManager {
      * @param {String} userid user id
      * @param {Number} amount amount 
      * @param {Object} options options = { canLose: false, cooldown: 60000, customName: "beg" }
-     * @returns Object
+     * @returns return { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, time, lost }
      */
     beg(userid, amount, options={}) {
         if (!userid) throw new TypeError("User id was not provided.");
@@ -247,7 +257,7 @@ class EconomyManager {
      * @param {String} user1 first user id
      * @param {String} user2 Second user id
      * @param {Number} amount Amount
-     * @returns Object
+     * @returns { user1: { id, money }, user2: { id, money }, amount }
      */
     transfer(user1, user2, amount) {
         if (!user1) throw new TypeError("User id was not provided.");
@@ -269,15 +279,14 @@ class EconomyManager {
     /**
      * leaderboard - leaderboard
      * @param {Object} options Options = { limit: 10, raw: false }
-     * @returns Array
+     * @returns leaderboard[]
      */
     leaderboard(options = {}) {
         let limit = options.limit || 10;
         if (isNaN(limit)) throw new SyntaxError("Limit must be a number.");
-        if (limit <= 0) throw new SyntaxError("Limit must be a number greater than 0.");
         let raw = options.raw || false;
         let lb = this.db.fetchAll().filter(data => data.ID.startsWith(`money`)).sort((a, b) => b.data - a.data);
-        lb.length = parseInt(limit);
+        if (!(parseInt(limit) <= 0)) lb.length = parseInt(limit);
         if (raw === true) return lb;
         var final = [];
         var i = 0;
@@ -291,6 +300,14 @@ class EconomyManager {
             final.push(obj);
         };
         return final;
+    }
+
+    /**
+      * database entries
+      * @type {entries[]}
+      */
+    get entries() {
+        return this.db.all();
     }
 
     /**
