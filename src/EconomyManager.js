@@ -223,7 +223,7 @@ class EconomyManager {
      * @param {String} userid user id
      * @param {Number} amount amount 
      * @param {Object} options options = { canLose: false, cooldown: 60000, customName: "beg" }
-     * @returns return { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, time, lost }
+     * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, time, lost }
      */
     beg(userid, amount, options={}) {
         if (!userid) throw new TypeError("User id was not provided.");

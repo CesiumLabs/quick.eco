@@ -21,7 +21,7 @@ class GuildEconomyManager {
      * @param {String} userid User ID
      * @param {String} guildid Guild ID
      * @param {Number} amount Amount to add
-     * @returns Object
+     * @returns { before, after, user, amount }
      */
     addMoney(userid, guildid, amount) {
         if (!userid) throw new TypeError("User id was not provided.");
@@ -41,7 +41,7 @@ class GuildEconomyManager {
      * fetchMoney - Returns user's money
      * @param {String} userid user id
      * @param {String} guildid Guild ID
-     * @returns Object
+     * @returns { amount, user, position }
      */
     fetchMoney(userid, guildid) {
         if (!userid) throw new TypeError("User id was not provided.");
@@ -60,7 +60,7 @@ class GuildEconomyManager {
      * @param {String} userid user id
      * @param {String} guildid Guild ID
      * @param {Number} amount amount to set
-     * @returns Object
+     * @returns { before, after, user, amount }
      */
     setMoney(userid, guildid, amount) {
         if (!userid) throw new TypeError("User id was not provided.");
@@ -80,7 +80,7 @@ class GuildEconomyManager {
      * deleteUser - Deletes a user from the database
      * @param {String} userid user id
      * @param {String} guildid Guild ID
-     * @returns Object
+     * @returns { before, after, user }
      */
     deleteUser(userid, guildid) {
         if (!userid) throw new TypeError("User id was not provided.");
@@ -98,7 +98,7 @@ class GuildEconomyManager {
      * @param {String} userid User id
      * @param {String} guildid Guild ID
      * @param {Number} amount amount
-     * @returns Object
+     * @returns { before, after, user, amount }
      */
     removeMoney(userid, guildid, amount) {
         if (!userid) throw new TypeError("User id was not provided.");
@@ -120,7 +120,7 @@ class GuildEconomyManager {
      * @param {String} userid user id
      * @param {String} guildid Guild ID
      * @param {Number} amount amount 
-     * @returns Object
+     * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, time }
      */
     daily(userid, guildid, amount) {
         if (!userid) throw new TypeError("User id was not provided.");
@@ -147,7 +147,7 @@ class GuildEconomyManager {
      * @param {String} userid user id
      * @param {String} guildid Guild ID
      * @param {Number} amount amount
-     * @returns Object
+     * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, time }
      */
     weekly(userid, guildid, amount) {
         if (!userid) throw new TypeError("User id was not provided.");
@@ -175,7 +175,7 @@ class GuildEconomyManager {
      * @param {String} guildid Guild ID
      * @param {Number} amount amount
      * @param {Object} options Options = { jobs: ["Doctor", "Singer"], cooldown: 2.7e+6 } 
-     * @returns Object
+     * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, workedAs, time }
      */
     work(userid, guildid, amount, options={}) {
         if (!userid) throw new TypeError("User id was not provided.");
@@ -238,7 +238,7 @@ class GuildEconomyManager {
      * @param {String} guildid Guild ID
      * @param {Number} amount amount 
      * @param {Object} options options = { canLose: false, cooldown: 60000, customName: "beg" }
-     * @returns Object
+     * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, workedAs, time, lost }
      */
     beg(userid, guildid, amount, options={}) {
         if (!userid) throw new TypeError("User id was not provided.");
@@ -275,7 +275,7 @@ class GuildEconomyManager {
      * @param {String} user2 Second user id
      * @param {String} guildid Guild ID
      * @param {Number} amount Amount
-     * @returns Object
+     * @returns { user1: { id, money }, user2: { id, money }, amount }
      */
     transfer(user1, user2, guildid, amount) {
         if (!user1) throw new TypeError("User id was not provided.");
@@ -300,7 +300,7 @@ class GuildEconomyManager {
      * leaderboard - leaderboard
      * @param {String} guildid Guild ID
      * @param {Object} options Options = { limit: 10, raw: false }
-     * @returns Array
+     * @returns Leaderboard[]
      */
     leaderboard(guildid, options = {}) {
         if (!guildid) throw new TypeError("Guild id was not provided.");

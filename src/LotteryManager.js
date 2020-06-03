@@ -77,6 +77,7 @@ class LotteryManager extends EventEmitter {
 
     /**
       * get all registed users
+      * @returns Array
       */
     get users() {
         return (this.db.fetch('lottery') || []);
