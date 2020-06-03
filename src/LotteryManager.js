@@ -23,6 +23,8 @@ class LotteryManager extends EventEmitter {
             lotteryInterval: 60, // mins
             checkInterval: 60 // seconds
         }, options);
+        // this.lotteryInterval = options.lotteryInterval || 60; // mins
+        // this.checkInterval = options.checkInterval || 60; // seconds
     }
 
     /**
@@ -98,7 +100,7 @@ class LotteryManager extends EventEmitter {
         }
         let Winner = u[Math.floor(Math.random() * u.length)];
         this.emit("end", (Winner, u));
-        this.db.all().forEach(d => this.db.delete(d.ID));
+        this.db.delete('lottery');
         this.db.set('lastEnded', Date.now());
         this._started = false;
         this.startedAt = 0;
@@ -112,22 +114,22 @@ class LotteryManager extends EventEmitter {
       */
     _start() {
         if(!this._started) return false;
-        const checkInterval = this.checkInterval * 1000;
-        const lotteryInterval = this.lotteryInterval * 60 * 1000;
+        const checkInterval = this.options.checkInterval * 1000;
+        const lotteryInterval = this.options.lotteryInterval * 60 * 1000;
+        // return;
         setInterval(() => {
             let lastEnded = this.db.fetch('lastEnded') || this.startedAt;
             let lastStarted = this.db.fetch('lastStarted');
             if(!lastEnded && lastStarted) {
                 lastEnded = lastStarted;
-                this.emit("resume");
             }
             if((Date.now() - lastEnded) > lotteryInterval) {
                 const lotteryDB = this.db.fetch('lottery') || [];
                 if (lotteryDB.length < 1) return this.emit("error", "No user participated");
                 let randomUser = lotteryDB[Math.floor(Math.random() * lotteryDB.length)];
-                this.emit('end', (randomUser, lotteryDB));
+                this.emit('end', randomUser, lotteryDB);
                 this.db.set('lastEnded', Date.now());
-                this.db.all().forEach(i => this.db.delete(i.ID));
+                this.db.delete('lottery');
                 this.start();
             }
         }, checkInterval);
@@ -144,11 +146,6 @@ class LotteryManager extends EventEmitter {
   * Emitted whenever error occurs
   * @event LotteryManager#error
   * @param {Error} error
-  */
-
-/**
-  * Emitted whenever lottery resumes
-  * @event LotteryManager#resume
   */
 
 /**

@@ -21,7 +21,7 @@ class GuildEconomyManager {
      * @param {String} userid User ID
      * @param {String} guildid Guild ID
      * @param {Number} amount Amount to add
-     * @returns { before, after, user, amount }
+     * @returns { before, after, user, guild, amount }
      */
     addMoney(userid, guildid, amount) {
         if (!userid) throw new TypeError("User id was not provided.");
@@ -34,14 +34,14 @@ class GuildEconomyManager {
         let oldbal = this.fetch(`money_${guildid}_${userid}`);
         this.db.math(`money_${guildid}_${userid}`, "+", amount);
         let newbal = this.fetch(`money_${guildid}_${userid}`);
-        return { before: oldbal, after: newbal, user: userid, amount: amount };
+        return { before: oldbal, after: newbal, user: userid, guild: guildid, amount: amount };
     }
 
     /**
      * fetchMoney - Returns user's money
      * @param {String} userid user id
      * @param {String} guildid Guild ID
-     * @returns { amount, user, position }
+     * @returns { amount, user, guild, position }
      */
     fetchMoney(userid, guildid) {
         if (!userid) throw new TypeError("User id was not provided.");
@@ -52,7 +52,9 @@ class GuildEconomyManager {
         let one = every.filter(data => data.id === userid);
         one = one.length < 1 ? null : one;
 
-        return one ? { amount: one[0].money, user: one[0].id, position: every.indexOf(one[0]) + 1 } : { amount: 0, user: userid, position: every.length + 1 };
+        return one
+            ? { amount: one[0].money, user: one[0].id, guild: guildid, position: every.indexOf(one[0]) + 1 }
+            : { amount: 0, user: userid, position: every.length + 1 };
     }
 
     /**
@@ -60,7 +62,7 @@ class GuildEconomyManager {
      * @param {String} userid user id
      * @param {String} guildid Guild ID
      * @param {Number} amount amount to set
-     * @returns { before, after, user, amount }
+     * @returns { before, after, user, guild, amount }
      */
     setMoney(userid, guildid, amount) {
         if (!userid) throw new TypeError("User id was not provided.");
@@ -73,14 +75,14 @@ class GuildEconomyManager {
         let oldbal = this.fetch(`money_${guildid}_${userid}`);
         this.db.set(`money_${guildid}_${userid}`, amount);
         let newbal = this.fetch(`money_${guildid}_${userid}`);
-        return { before: oldbal, after: newbal, user: userid, amount: amount };
+        return { before: oldbal, after: newbal, user: userid, guild: guildid, amount: amount };
     }
 
     /**
      * deleteUser - Deletes a user from the database
      * @param {String} userid user id
      * @param {String} guildid Guild ID
-     * @returns { before, after, user }
+     * @returns { before, after, user, guild }
      */
     deleteUser(userid, guildid) {
         if (!userid) throw new TypeError("User id was not provided.");
@@ -90,7 +92,7 @@ class GuildEconomyManager {
         let oldbal = this.fetch(`money_${guildid}_${userid}`);
         this.db.delete(`money_${guildid}_${userid}`);
         let newbal = this.fetch(`money_${guildid}_${userid}`);
-        return { before: oldbal, after: newbal, user: userid };
+        return { before: oldbal, after: newbal, user: userid, guild: guildid };
     }
 
     /**
@@ -98,7 +100,7 @@ class GuildEconomyManager {
      * @param {String} userid User id
      * @param {String} guildid Guild ID
      * @param {Number} amount amount
-     * @returns { before, after, user, amount }
+     * @returns { before, after, user, guild, amount }
      */
     removeMoney(userid, guildid, amount) {
         if (!userid) throw new TypeError("User id was not provided.");
@@ -112,7 +114,7 @@ class GuildEconomyManager {
         if (oldbal - amount < 0) return { error: "New amount is negative." };
         this.db.math(`money_${guildid}_${userid}`, "-", amount);
         let newbal = this.fetch(`money_${guildid}_${userid}`);
-        return { before: oldbal, after: newbal, user: userid, amount: amount };
+        return { before: oldbal, after: newbal, user: userid, guild: guildid, amount: amount };
     }
 
     /**
@@ -120,7 +122,7 @@ class GuildEconomyManager {
      * @param {String} userid user id
      * @param {String} guildid Guild ID
      * @param {Number} amount amount 
-     * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, time }
+     * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, guild, amount, time }
      */
     daily(userid, guildid, amount) {
         if (!userid) throw new TypeError("User id was not provided.");
@@ -139,7 +141,7 @@ class GuildEconomyManager {
         let before = this.fetch(`money_${guildid}_${userid}`);
         let added = this.db.math(`money_${guildid}_${userid}`, "+", amount);
         let newcooldown = this.db.set(`dailycooldown_${guildid}_${userid}`, Date.now());
-        return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: timeout, before: before, after: added, user: userid, amount: amount, time: this.convertTime(timeout, newcooldown) };
+        return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: timeout, before: before, after: added, user: userid, guild: guildid, amount: amount, time: this.convertTime(timeout, newcooldown) };
     }
 
     /**
@@ -147,7 +149,7 @@ class GuildEconomyManager {
      * @param {String} userid user id
      * @param {String} guildid Guild ID
      * @param {Number} amount amount
-     * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, time }
+     * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, guild, amount, time }
      */
     weekly(userid, guildid, amount) {
         if (!userid) throw new TypeError("User id was not provided.");
@@ -166,7 +168,7 @@ class GuildEconomyManager {
         let before = this.fetch(`money_${guildid}_${userid}`);
         let added = this.db.math(`money_${guildid}_${userid}`, "+", amount);
         let newcooldown = this.db.set(`weeklycooldown_${guildid}_${userid}`, Date.now());
-        return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: timeout, before: before, after: added, user: userid, amount: amount, time: this.convertTime(timeout, newcooldown) };
+        return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: timeout, before: before, after: added, user: userid, guild: guildid, amount: amount, time: this.convertTime(timeout, newcooldown) };
     }
     
     /**
@@ -175,7 +177,7 @@ class GuildEconomyManager {
      * @param {String} guildid Guild ID
      * @param {Number} amount amount
      * @param {Object} options Options = { jobs: ["Doctor", "Singer"], cooldown: 2.7e+6 } 
-     * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, workedAs, time }
+     * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, guild, amount, workedAs, time }
      */
     work(userid, guildid, amount, options={}) {
         if (!userid) throw new TypeError("User id was not provided.");
@@ -229,7 +231,7 @@ class GuildEconomyManager {
         let before = this.fetch(`money_${guildid}_${userid}`);
         let added = this.db.math(`money_${guildid}_${userid}`, "+", amount);
         let newcooldown = this.db.set(`workcooldown_${guildid}_${userid}`, Date.now());
-        return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: cooldown, before: before, after: added, user: userid, amount: amount, workedAs: workedAs, time: this.convertTime(cooldown, newcooldown) };
+        return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: cooldown, before: before, after: added, user: userid, guild: guildid, amount: amount, workedAs: workedAs, time: this.convertTime(cooldown, newcooldown) };
     }
 
     /**
@@ -238,7 +240,7 @@ class GuildEconomyManager {
      * @param {String} guildid Guild ID
      * @param {Number} amount amount 
      * @param {Object} options options = { canLose: false, cooldown: 60000, customName: "beg" }
-     * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, workedAs, time, lost }
+     * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, guild, amount, workedAs, time, lost }
      */
     beg(userid, guildid, amount, options={}) {
         if (!userid) throw new TypeError("User id was not provided.");
@@ -266,7 +268,7 @@ class GuildEconomyManager {
         let before = this.fetch(`money_${guildid}_${userid}`);
         let added = this.db.math(`money_${guildid}_${userid}`, "+", amount);
         let newcooldown = this.db.set(`${options.customName || "beg"}cooldown_${guildid}_${userid}`, Date.now());
-        return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: timeout, before: before, after: added, user: userid, amount: amount, time: this.convertTime(timeout, newcooldown), lost: false };
+        return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: timeout, before: before, after: added, user: userid, guild: guildid, amount: amount, time: this.convertTime(timeout, newcooldown), lost: false };
     }
 
     /**
@@ -275,7 +277,7 @@ class GuildEconomyManager {
      * @param {String} user2 Second user id
      * @param {String} guildid Guild ID
      * @param {Number} amount Amount
-     * @returns { user1: { id, money }, user2: { id, money }, amount }
+     * @returns { user1: { id, money }, user2: { id, money }, guild, amount }
      */
     transfer(user1, user2, guildid, amount) {
         if (!user1) throw new TypeError("User id was not provided.");
@@ -293,7 +295,7 @@ class GuildEconomyManager {
         if (check - amount < 0) return { error: "This user can't share that much amount of money." };
         let newM = this.db.math(`money_${guildid}_${user2}`, "+", amount);
         let newM2 = this.db.math(`money_${guildid}_${user1}`, "-", amount);
-        return { user1: { id: user1, money: newM2 }, user2: { id: user2, money: newM }, amount: amount };
+        return { user1: { id: user1, money: newM2 }, user2: { id: user2, money: newM }, guild: guildid, amount: amount };
     }
 
     /**
@@ -324,6 +326,14 @@ class GuildEconomyManager {
             final.push(obj);
         };
         return final;
+    }
+
+    /**
+      * database entries
+      * @type {entries[]}
+      */
+    get entries() {
+        return this.db.all();
     }
 
     /**
