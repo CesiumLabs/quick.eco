@@ -1,6 +1,6 @@
 class User {
     
-    constructor(id, database, guild) {
+    constructor(id, guild, database) {
         this.id = id;
         this.guild = guild;
         this.db = database;
