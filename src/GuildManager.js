@@ -11,11 +11,19 @@ class GuildEconomyManager {
      * @constructor
      * @example const eco = new Eco.GuildManager();
      */
-    constructor(name) {
+    constructor(name="guildeconomy") {
         if (name && (typeof name !== "string")) throw new Error("Eco: Name must me a string");
         if (name) db = new db.table(name.replace(/ +/g, ""));
+        /**
+          * Internal Database Manager
+          * @type {Object}
+          */
         this.db = db;
-        this.entries = this.db.fetchAll();
+        /**
+          * Table Name
+          * @type {String}
+          */ 
+        this.name = name.replace(/ +/g,"");
     }
 
     /**
