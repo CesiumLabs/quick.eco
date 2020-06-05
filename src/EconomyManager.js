@@ -11,7 +11,7 @@ class EconomyManager {
      * @constructor
      * @example const eco = new Eco.Manager();
      */
-    constructor(name) {
+    constructor(name="globaleconomy") {
         if (name && (typeof name !== "string")) throw new Error("Eco: Name must me a string");
         if (name) db = new db.table(name.replace(/ +/g, ""));
         
