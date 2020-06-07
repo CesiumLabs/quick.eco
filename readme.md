@@ -9,8 +9,6 @@ A simple & easy to use economy package for discord bots using quick.db
 # Installing
 `npm i --save quick.eco`
 
-> Note: This package uses `quick.db` to run. Please install it before using this package.
-
 **[Join Our Discord Server](https://discord.gg/uqB8kxh)**
 
 # Getting Started
@@ -77,6 +75,7 @@ work(userid, amount, { options }); // Work function, returns object | options: {
 beg(userid, amount, { options }); // beg function, returns object | options: { canLose: false, cooldown: time_in_ms, customName} | [ can be used in "search" command ]
 transfer(userid1, userid2, amount); // transfer balance from a user to another, returns object | [ Can be used in "rob" command ]
 leaderboard({ options }); // returns leaderboard | options: { raw: false, limit: 10 }
+reset(); // reset data
 ```
 
 # GuildManager Functions
@@ -93,6 +92,7 @@ work(userid, guildid, amount, { options }); // Work function, returns object | o
 beg(userid, guildid, amount, { options }); // beg function, returns object | options: { canLose: false, cooldown: time_in_ms, customName} | [ can be used in "search" command ]
 transfer(userid1, userid2, guildid, amount); // transfer balance from a user to another, returns object | [ Can be used in "rob" command ]
 leaderboard(guildid, { options }); // returns leaderboard | options: { raw: false, limit: 10 }
+reset(); // reset data
 ```
 
 
@@ -104,9 +104,6 @@ This class can be used to create shop. Please check the **[documentation](https:
 
 # **Need help in quick.eco?**
 - Join **[discord.gg/uqB8kxh](https://discord.gg/uqB8kxh)**.
-
-# **Need help in quick.db?**
-- Join **[discord.gg/plexidev](https://discord.gg/plexidev)**.
 
 ## License
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FINEX07%2Fquick.eco.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FINEX07%2Fquick.eco?ref=badge_large)
