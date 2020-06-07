@@ -34,7 +34,7 @@ class EconomyManager {
      * @param {Number} amount Amount to add
      * @returns { before, after, user, amount }
      */
-    addMoney(userid, amount) {
+    static addMoney(userid, amount) {
         if (!userid) throw new TypeError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
         if (!amount) throw new TypeError("Amount was not provided.");
@@ -51,7 +51,7 @@ class EconomyManager {
      * @param {String} userid user id
      * @returns { amount, user, position }
      */
-    fetchMoney(userid) {
+    static fetchMoney(userid) {
         if (!userid) throw new TypeError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
         let every = this.leaderboard({ limit: 0 });
@@ -67,7 +67,7 @@ class EconomyManager {
      * @param {Number} amount amount to set
      * @returns { before, after, user, amount }
      */
-    setMoney(userid, amount) {
+    static setMoney(userid, amount) {
         if (!userid) throw new TypeError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
         if (!amount) throw new TypeError("Amount was not provided.");
@@ -84,7 +84,7 @@ class EconomyManager {
      * @param {String} userid user id
      * @returns { before, after, user }
      */
-    deleteUser(userid) {
+    static deleteUser(userid) {
         if (!userid) throw new TypeError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
         let oldbal = this.fetch(`money_${userid}`);
@@ -99,7 +99,7 @@ class EconomyManager {
      * @param {Number} amount amount
      * @returns { befpre, after, user, amount }
      */
-    removeMoney(userid, amount) {
+    static removeMoney(userid, amount) {
         if (!userid) throw new TypeError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
         if (!amount) throw new TypeError("Amount was not provided.");
@@ -118,7 +118,7 @@ class EconomyManager {
      * @param {Number} amount amount 
      * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, time }
      */
-    daily(userid, amount) {
+    static daily(userid, amount) {
         if (!userid) throw new TypeError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
         if (!amount) throw new TypeError("Amount was not provided.");
@@ -142,7 +142,7 @@ class EconomyManager {
      * @param {Number} amount amount
      * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, time }
      */
-    weekly(userid, amount) {
+    static weekly(userid, amount) {
         if (!userid) throw new TypeError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
         if (!amount) throw new TypeError("Amount was not provided.");
@@ -167,7 +167,7 @@ class EconomyManager {
      * @param {Object} options Options = { jobs: ["Doctor", "Singer"], cooldown: 2.7e+6 }
      * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, workedAs, time }
      */
-    work(userid, amount, options={}) {
+    static work(userid, amount, options={}) {
         if (!userid) throw new TypeError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
         if (!amount) throw new TypeError("Amount was not provided.");
@@ -227,7 +227,7 @@ class EconomyManager {
      * @param {Object} options options = { canLose: false, cooldown: 60000, customName: "beg" }
      * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, time, lost }
      */
-    beg(userid, amount, options={}) {
+    static beg(userid, amount, options={}) {
         if (!userid) throw new TypeError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
         if (!amount) throw new TypeError("Amount was not provided.");
@@ -261,7 +261,7 @@ class EconomyManager {
      * @param {Number} amount Amount
      * @returns { user1, user2, amount }
      */
-    transfer(user1, user2, amount) {
+    static transfer(user1, user2, amount) {
         if (!user1) throw new TypeError("User id was not provided.");
         if (typeof user1 !== "string") throw new SyntaxError("User id must be a string.");
         if (!user2) throw new TypeError("User id was not provided.");
@@ -283,7 +283,7 @@ class EconomyManager {
      * @param {Object} options Options = { limit: 10, raw: false }
      * @returns leaderboard[]
      */
-    leaderboard(options = {}) {
+    static leaderboard(options = {}) {
         let limit = options.limit || 10;
         if (isNaN(limit)) throw new SyntaxError("Limit must be a number.");
         let raw = options.raw || false;
@@ -305,10 +305,24 @@ class EconomyManager {
     }
 
     /**
+      * Drops the table
+      */
+    static reset() {
+        console.warn(`Data wiped out from ${this.name}`);
+        try {
+            this.db.deleteAll();
+            return true;
+        } catch(e) {
+            return false;
+        }
+        return;
+    }
+
+    /**
       * database entries
       * @type {entries[]}
       */
-    get entries() {
+    static get entries() {
         return this.db.all();
     }
 
@@ -316,7 +330,7 @@ class EconomyManager {
       * @ignore
       * @private
       */
-    fetch(param) {
+    static fetch(param) {
         return this.db.fetch(param) ? this.db.fetch(param) : 0;
     }
 
@@ -324,7 +338,7 @@ class EconomyManager {
       * @ignore
       * @private
       */
-    convertTime(cooldown, check) {
+    static convertTime(cooldown, check) {
         let time = this.ms(cooldown - (Date.now() - check));
         return time;
     }
@@ -333,7 +347,7 @@ class EconomyManager {
       * @ignore
       * @private
       */
-    ms(milliseconds) {
+    static ms(milliseconds) {
         const roundTowardsZero = milliseconds > 0 ? Math.floor : Math.ceil;
         return {
             days: roundTowardsZero(milliseconds / 86400000),
