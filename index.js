@@ -28,7 +28,7 @@ function Database() {
         return db.math(key, "+", val, ...ops);
     }
     db.subtract = (key, val, ...ops) => {
-        return db.math(key, "+", val, ...ops);
+        return db.math(key, "-", val, ...ops);
     }
     return db;
 }
