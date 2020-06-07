@@ -17,12 +17,28 @@ function msParse(milliseconds) {
     }
 }
 
+/**
+  * Database
+  * @returns {quick.db}
+  */
+function Database() {
+    const db = require("rex.db");
+    db.init("./json.sqlite");
+    db.add = (key, val, ...ops) => {
+        return db.math(key, "+", val, ...ops);
+    }
+    db.subtract = (key, val, ...ops) => {
+        return db.math(key, "+", val, ...ops);
+    }
+    return db;
+}
+
 module.exports = {
     Manager: require("./src/EconomyManager"),
     GuildManager: require("./src/GuildManager"),
     ShopManager: require("./src/ShopManager"),
     LotteryManager: require("./src/LotteryManager"),
     version: require("./package.json").version,
-    db: require("rex.db"),
+    db: Database,
     ms: msParse
 };
