@@ -7,7 +7,7 @@ class User {
         else this.database = database;
     }
 
-    get balance() {
+    static get balance() {
         if (this.guild) {
             let i = this.db.get(`money_${this.guild}_${this.id}`)
             return (i || 0);
@@ -15,13 +15,13 @@ class User {
         return (this.db.get(`money_${this.id}`) || 0);
     }
 
-    toString() {
+    static toString() {
         return `<@${this.id}>`;
     }
 
-    parseAll() {
+    static parseAll() {
         let data = this.db.all().filter(i => i.ID.includes(this.id));
-        return data ? (data.length ? data : undefined): undefined;
+        return data ? (data.length ? data : []): [];
     }
 }
 
