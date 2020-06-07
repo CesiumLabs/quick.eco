@@ -33,7 +33,7 @@ class GuildEconomyManager {
      * @param {Number} amount Amount to add
      * @returns { before, after, user, amount }
      */
-    addMoney(userid, guildid, amount) {
+    static addMoney(userid, guildid, amount) {
         if (!userid) throw new TypeError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
         if (!guildid) throw new TypeError("Guild id was not provided.");
@@ -58,7 +58,7 @@ class GuildEconomyManager {
      * @param {String} guildid Guild ID
      * @returns { amount, user, position }
      */
-    fetchMoney(userid, guildid) {
+    static fetchMoney(userid, guildid) {
         if (!userid) throw new TypeError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
         if (!guildid) throw new TypeError("Guild id was not provided.");
@@ -79,7 +79,7 @@ class GuildEconomyManager {
      * @param {Number} amount amount to set
      * @returns { before, after, user, amount }
      */
-    setMoney(userid, guildid, amount) {
+    static setMoney(userid, guildid, amount) {
         if (!userid) throw new TypeError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
         if (!guildid) throw new TypeError("Guild id was not provided.");
@@ -99,7 +99,7 @@ class GuildEconomyManager {
      * @param {String} guildid Guild ID
      * @returns { before, after, user }
      */
-    deleteUser(userid, guildid) {
+    static deleteUser(userid, guildid) {
         if (!userid) throw new TypeError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
         if (!guildid) throw new TypeError("Guild id was not provided.");
@@ -117,7 +117,7 @@ class GuildEconomyManager {
      * @param {Number} amount amount
      * @returns { before, after, user, amount }
      */
-    removeMoney(userid, guildid, amount) {
+    static removeMoney(userid, guildid, amount) {
         if (!userid) throw new TypeError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
         if (!guildid) throw new TypeError("Guild id was not provided.");
@@ -139,7 +139,7 @@ class GuildEconomyManager {
      * @param {Number} amount amount 
      * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, time }
      */
-    daily(userid, guildid, amount) {
+    static daily(userid, guildid, amount) {
         if (!userid) throw new TypeError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
         if (!guildid) throw new TypeError("Guild id was not provided.");
@@ -166,7 +166,7 @@ class GuildEconomyManager {
      * @param {Number} amount amount
      * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, time }
      */
-    weekly(userid, guildid, amount) {
+    static weekly(userid, guildid, amount) {
         if (!userid) throw new TypeError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
         if (!guildid) throw new TypeError("Guild id was not provided.");
@@ -194,7 +194,7 @@ class GuildEconomyManager {
      * @param {Object} options Options = { jobs: ["Doctor", "Singer"], cooldown: 2.7e+6 } 
      * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, workedAs, time }
      */
-    work(userid, guildid, amount, options={}) {
+    static work(userid, guildid, amount, options={}) {
         if (!userid) throw new TypeError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
         if (!guildid) throw new TypeError("Guild id was not provided.");
@@ -257,7 +257,7 @@ class GuildEconomyManager {
      * @param {Object} options options = { canLose: false, cooldown: 60000, customName: "beg" }
      * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, workedAs, time, lost }
      */
-    beg(userid, guildid, amount, options={}) {
+    static beg(userid, guildid, amount, options={}) {
         if (!userid) throw new TypeError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
         if (!guildid) throw new TypeError("Guild id was not provided.");
@@ -294,7 +294,7 @@ class GuildEconomyManager {
      * @param {Number} amount Amount
      * @returns { user1, user2, amount }
      */
-    transfer(user1, user2, guildid, amount) {
+    static transfer(user1, user2, guildid, amount) {
         if (!user1) throw new TypeError("User id was not provided.");
         if (typeof user1 !== "string") throw new SyntaxError("User id must be a string.");
         if (!user2) throw new TypeError("User id was not provided.");
@@ -319,7 +319,7 @@ class GuildEconomyManager {
      * @param {Object} options Options = { limit: 10, raw: false }
      * @returns Leaderboard[]
      */
-    leaderboard(guildid, options = {}) {
+    static leaderboard(guildid, options = {}) {
         if (!guildid) throw new TypeError("Guild id was not provided.");
         if (typeof guildid !== "string") throw new SyntaxError("Guild id must be a string.");
         let limit = options.limit || 10;
@@ -347,15 +347,28 @@ class GuildEconomyManager {
       * database entries
       * @type {entries[]}
       */
-    get entries() {
+    static get entries() {
         return this.db.all();
+    }
+
+    /**
+      * Drops the table
+      */
+    static reset() {
+        try {
+            this.db.deleteAll();
+            return true;
+        } catch(e) {
+            return false;
+        }
+        return;
     }
 
     /**
       * @ignore
       * @private
       */
-    fetch(param) {
+    static fetch(param) {
         return this.db.fetch(param) ? this.db.fetch(param) : 0;
     }
 
@@ -363,7 +376,7 @@ class GuildEconomyManager {
       * @ignore
       * @private
       */
-    convertTime(cooldown, check) {
+    static convertTime(cooldown, check) {
         let time = this.ms(cooldown - (Date.now() - check));
         return time;
     }
@@ -372,7 +385,7 @@ class GuildEconomyManager {
       * @ignore
       * @private
       */
-    ms(milliseconds) {
+    static ms(milliseconds) {
         const roundTowardsZero = milliseconds > 0 ? Math.floor : Math.ceil;
         return {
             days: roundTowardsZero(milliseconds / 86400000),
