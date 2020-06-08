@@ -1,3 +1,4 @@
+const EcoError = require("./Error");
 const User = require("./User");
 const Manager = require("./EconomyManager");
 const GuildManager = require("./GuildManager");
@@ -31,11 +32,11 @@ class BankManager {
       * @returns {Bank}
       */
     static createAccount(user, ops={ type, bal=0 }) {
-        if (!user) throw new Error(`User expected!`);
+        if (!user) throw new EcoError(`User expected, received undefined`);
         if (typeof user == "string") user = new User(user, undefined, this.db);
-        if (!(user instanceof User)) throw new Error("Invalid User");
+        if (!(user instanceof User)) throw new EcoError("Invalid User");
         if (this.account(user.id)) return this.account(user.id);
-        if (!ops.type || typeof (ops.type) !== "string") throw new Error("Invalid Account Type");
+        if (!ops.type || typeof (ops.type) !== "string") throw new EcoError("Invalid Account Type");
         switch(type) {
             case "CA":
                 let ca = {
@@ -86,7 +87,7 @@ class BankManager {
                 this.db.db.set(`bank_${user.id}`,rda);
                 break;
             default:
-                throw new Error("Account type must be one of CA, SA, FDA or RDA");
+                throw new EcoError("Account type must be one of CA, SA, FDA or RDA");
         }
         
     }
@@ -100,8 +101,8 @@ class BankManager {
       */
     static deposit({ user, guild, amount }) {
         let account = this.account(user);
-        if (!account) throw new Error("This user doesn't have a bank account");
-        if (!amount || isNaN(amount)) throw new Error("Invalid amount");
+        if (!account) throw new EcoError("This user doesn't have a bank account");
+        if (!amount || isNaN(amount)) throw new EcoError("Invalid amount");
         let holder = account.account_holder.id;
         if (guild) this.db.removeMoney(user.id, guild, amount);
         else this.db.removeMoney(user.id, amount);
@@ -119,8 +120,8 @@ class BankManager {
       */
     static withdraw({ user, guild, amount }) {
         let account = this.account(user);
-        if (!account) throw new Error("This user doesn't have a bank account");
-        if (!amount || isNaN(amount)) throw new Error("Invalid amount");
+        if (!account) throw new EcoError("This user doesn't have a bank account");
+        if (!amount || isNaN(amount)) throw new EcoError("Invalid amount");
         let holder = account.account_holder.id;
         if (guild) this.db.addMoney(user.id, guild, amount);
         else this.db.addMoney(user.id, amount);
@@ -138,9 +139,9 @@ class BankManager {
       * @returns {Amount}
       */
     static balance(user) {
-        if (!user) throw new Error("Invalid User");
+        if (!user) throw new EcoError("Invalid User");
         let account = this.account(user);
-        if (!account) throw new Error("This user doesn't have a bank account!");
+        if (!account) throw new EcoError("This user doesn't have a bank account!");
         return account.balance;
     }
 
@@ -150,7 +151,7 @@ class BankManager {
       * @returns {Account}
       */
     static account(user) {
-        if (!user || !(user instanceof User)) throw new Error("Invalid User");
+        if (!user || !(user instanceof User)) throw new EcoError("Invalid User");
         if (user instanceof User) user = user.id;
         if (this.db.db.get(`bank_${user}`) == null) return false;
         return this.db.db.get(`bank_${user}`);
@@ -170,7 +171,7 @@ class BankManager {
       * @rerurns {Boolean}
       */
     static deleteAccount(user) {
-        if (!user || !(user instanceof User)) throw new Error("Invalid User");
+        if (!user || !(user instanceof User)) throw new EcoError("Invalid User");
         if (user instanceof User) user = user.id;
         return this.db.db.delete(`bank_${user}`);
     }
