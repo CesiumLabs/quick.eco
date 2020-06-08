@@ -47,10 +47,11 @@ function Database(name="./json") {
 }
 
 module.exports = {
-    Manager: require("./src/EconomyManager"),
+    Bank: require("./src/BankManager"),
     GuildManager: require("./src/GuildManager"),
-    ShopManager: require("./src/ShopManager"),
     LotteryManager: require("./src/LotteryManager"),
+    Manager: require("./src/EconomyManager"),
+    ShopManager: require("./src/ShopManager"),
     User: require("./src/User"),
     version: require("./package.json").version,
     db: Database,
