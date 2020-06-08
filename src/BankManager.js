@@ -18,8 +18,8 @@ class BankManager {
       * @params {Database} database Economy Manager Database
       */
     constructor(database) {
-        if (!database) throw new Error("No database provided");
-        if (!(database instanceof Manager) || !(database instanceof GuildManager)) throw new Error("Database must be Manager or GuildManager");
+        if (!database) throw new EcoError("No database provided");
+        if (!(database instanceof Manager) || !(database instanceof GuildManager)) throw new EcoError("Database must be Manager or GuildManager");
         this.db = database;
     }
 
