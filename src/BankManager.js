@@ -162,7 +162,7 @@ class BankManager {
       * @returns {Bank[]}
       */
     static get accounts() {
-        return this.db.db.all().filter(i => i.ID startsWith("bank_"));
+        return this.db.db.all().filter(i => i.ID.startsWith("bank_"));
     }
 
     /**
