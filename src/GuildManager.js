@@ -36,12 +36,12 @@ class GuildEconomyManager {
      */
     static addMoney(userid, guildid, amount) {
         if (!userid) throw new EcoError("User id was not provided.");
-        if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
         if (!guildid) throw new EcoError("Guild id was not provided.");
-        if (typeof guildid !== "string") throw new SyntaxError("Guild id must be a string.");
+        if (typeof guildid !== "string") throw new EcoError("Guild id must be a string.");
         if (!amount) throw new EcoError("Amount was not provided.");
         if (isNaN(amount)) throw new EcoError("Amount must be a number.");
-        if (invalid.includes(Math.sign(amount))) throw new TypeError("Amount can't be negative or zero.");
+        if (invalid.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
         let oldbal = this.fetch(`money_${guildid}_${userid}`);
         this.db.math(`money_${guildid}_${userid}`, "+", amount);
         let newbal = this.fetch(`money_${guildid}_${userid}`);
@@ -82,9 +82,9 @@ class GuildEconomyManager {
      */
     static setMoney(userid, guildid, amount) {
         if (!userid) throw new EcoError("User id was not provided.");
-        if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
         if (!guildid) throw new EcoError("Guild id was not provided.");
-        if (typeof guildid !== "string") throw new SyntaxError("Guild id must be a string.");
+        if (typeof guildid !== "string") throw new EcoError("Guild id must be a string.");
         if (!amount) throw new EcoError("Amount was not provided.");
         if (isNaN(amount)) throw new EcoError("Amount must be a number.");
         if (invL.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
@@ -103,7 +103,7 @@ class GuildEconomyManager {
     static deleteUser(userid, guildid) {
         if (!userid) throw new EcoError("User id was not provided.");
         if (typeof userid !== "string") throw new EcoError("User id must be a string.");
-        if (!guildid) throw new TypeError("Guild id was not provided.");
+        if (!guildid) throw new EcoError("Guild id was not provided.");
         if (typeof guildid !== "string") throw new EcoError("Guild id must be a string.");
         let oldbal = this.fetch(`money_${guildid}_${userid}`);
         this.db.delete(`money_${guildid}_${userid}`);
@@ -169,9 +169,9 @@ class GuildEconomyManager {
      */
     static weekly(userid, guildid, amount) {
         if (!userid) throw new EcoError("User id was not provided.");
-        if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
         if (!guildid) throw new EcoError("Guild id was not provided.");
-        if (typeof guildid !== "string") throw new SyntaxError("Guild id must be a string.");
+        if (typeof guildid !== "string") throw new EcoError("Guild id must be a string.");
         if (!amount) throw new EcoError("Amount was not provided.");
         if (isNaN(amount)) throw new EcoError("Amount must be a number.");
         if (invalid.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
@@ -302,7 +302,7 @@ class GuildEconomyManager {
         if (typeof user2 !== "string") throw new EcoError("User id must be a string.");
         if (!guildid) throw new EcoError("Guild id was not provided.");
         if (typeof guildid !== "string") throw new EcoError("Guild id must be a string.");
-        if (!amount) throw new TypeError("Amount was not provided.");
+        if (!amount) throw new EcoError("Amount was not provided.");
         if (isNaN(amount)) throw new EcoError("Amount must be a number.");
         if (invalid.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
         let check = this.fetch(`money_${guildid}_${user1}`);
