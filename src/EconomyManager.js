@@ -2,6 +2,7 @@ let db = require("rex.db");
 db.init("./economy");
 let invalid = [0, -1, -0];
 let invL = [-1, -0];
+const Shop = require("./ShopManager");
 
 const User = require("./User");
 
@@ -9,9 +10,11 @@ class EconomyManager {
 
     /**
      * @constructor
+     * @params {String} name Name for Economy
+     * @params {ShopManager} store Shop Manager
      * @example const eco = new Eco.Manager();
      */
-    constructor(name="globaleconomy") {
+    constructor(name="globaleconomy", store) {
         if (name && (typeof name !== "string")) throw new Error("Eco: Name must me a string");
         if (name) db = new db.table(name.replace(/ +/g, ""));
         
@@ -26,6 +29,12 @@ class EconomyManager {
           * @type {Object}
           */
         this.db = db;
+        
+        /**
+          * Shop Manager
+          * @type {ShopManager}
+          */
+        this.shop = store ? store : new Shop();
     }
 
     /**
