@@ -104,7 +104,25 @@ class BankManager {
         let holder = account.account_holder.id;
         if (guild) this.db.removeMoney(user.id, guild, amount);
         else this.db.removeMoney(user.id, amount);
-        this.db.db.math(`bank_${holder}.balance`, amount);
+        this.db.db.math(`bank_${holder}.balance`, "+", amount);
+        return this.account(user);
+    }
+
+    /**
+      * withdraw
+      * @params {Data} user User id or Eco.User
+      * @params {Data} guild Guild id (optional)
+      * @params {Data} amount Amount to deposit
+      * @returns {Account}
+      */
+    static withdraw({ user, guild, amount }) {
+        let account = this.account(user);
+        if (!account) throw new Error("This user doesn't have a bank account");
+        if (!amount || isNaN(amount)) throw new Error("Invalid amount");
+        let holder = account.account_holder.id;
+        if (guild) this.db.addMoney(user.id, guild, amount);
+        else this.db.addMoney(user.id, amount);
+        this.db.db.math(`bank_${holder}.balance`, "-", amount);
         return this.account(user);
     }
 
