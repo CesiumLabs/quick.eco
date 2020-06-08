@@ -21,9 +21,9 @@ function msParse(milliseconds) {
   * Database
   * @returns {quick.db}
   */
-function Database() {
+function Database(name="./json") {
     const db = require("rex.db");
-    db.init("./json.sqlite");
+    db.init(name);
     db.add = (key, val, ...ops) => {
         return db.math(key, "+", val, ...ops);
     }
@@ -38,6 +38,7 @@ module.exports = {
     GuildManager: require("./src/GuildManager"),
     ShopManager: require("./src/ShopManager"),
     LotteryManager: require("./src/LotteryManager"),
+    User: require("./src/User"),
     version: require("./package.json").version,
     db: Database,
     ms: msParse
