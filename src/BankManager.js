@@ -7,6 +7,7 @@ const ACCOUNTS = {
     FDA: "Fixed Deposit Account",
     RDA: "Recurring Deposit Account"
 };
+const DUE = 604800000;
 
 class BankManager {
     
@@ -104,6 +105,7 @@ class BankManager {
         let holder = account.account_holder.id;
         if (guild) this.db.removeMoney(user.id, guild, amount);
         else this.db.removeMoney(user.id, amount);
+        if(0 > account.loan) this.db.db.math(`bank_${holder}.loan`, "+", amount);
         this.db.db.math(`bank_${holder}.balance`, "+", amount);
         return this.account(user);
     }
@@ -122,6 +124,10 @@ class BankManager {
         let holder = account.account_holder.id;
         if (guild) this.db.addMoney(user.id, guild, amount);
         else this.db.addMoney(user.id, amount);
+        if(0 > (account.balance - amount)) {
+            this.db.db.math(`bank_${holder}.loan`, "-", amount);
+            this.db.db.set(`bank_${holder}.balance`, 0);
+        }
         this.db.db.math(`bank_${holder}.balance`, "-", amount);
         return this.account(user);
     }
@@ -168,6 +174,18 @@ class BankManager {
         if (user instanceof User) user = user.id;
         return this.db.db.delete(`bank_${user}`);
     }
+
+    static _isLoan(user) {
+        let account = this.account(user);
+        return !!(account.loan < 0);
+    }
+
+    /*static _claim(user) {
+        let data = this.account(user);
+        if (data.loan > 0) return false;
+        let dueOver = this.db.convertTime(DUE,data.loanSince);
+        if (dueOver < 0) this.db.setMoney(data.account_holder
+    }*/
 
 }
 
