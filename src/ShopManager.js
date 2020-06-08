@@ -1,6 +1,7 @@
 const Db = require("rex.db");
 Db.init("./economy");
 const db = new Db.table("ecoshop");
+const EcoError = require("./Error");
 
 class ShopManager extends Array {
 
@@ -22,12 +23,12 @@ class ShopManager extends Array {
      * @returns ShopManager
      */
     static registerItem(itemName, itemInfo = {}) {
-        if(typeof itemName !== "string") throw new TypeError("Item name must be a string.");
-        if(typeof itemInfo !== "object") throw new TypeError("Item info(s) must be a string.");
+        if(typeof itemName !== "string") throw new EcoError("Item name must be a string.");
+        if(typeof itemInfo !== "object") throw new EcoError("Item info(s) must be a string.");
         const name = itemName || itemInfo.name;
-        if(!name) throw new TypeError("Item name was not provided.");
+        if(!name) throw new EcoError("Item name was not provided.");
         const cost = itemInfo.cost || itemInfo.price;
-        if(!cost || typeof cost !== "number") throw new TypeError("Item cost must be a number");
+        if(!cost || typeof cost !== "number") throw new EcoError("Item cost must be a number");
         this.push({
             name, ...itemInfo
         }); // ...itemInfo because user can add excess info about the item
@@ -40,8 +41,8 @@ class ShopManager extends Array {
      * @returns object
      */
     static getItem(itemName) {
-        if(!itemName) throw new TypeError("Item name was not provided.");
-        if(typeof itemName !== "string") throw new TypeError("Item name must be a string.");
+        if(!itemName) throw new EcoError("Item name was not provided.");
+        if(typeof itemName !== "string") throw new EcoError("Item name must be a string.");
         return this.find(item => item.name == itemName);
     }
 
@@ -51,8 +52,8 @@ class ShopManager extends Array {
      * @returns boolean
      */
     static hasItem(itemName) {
-        if(!itemName) throw new TypeError("Item name was not provided.");
-        if(typeof itemName !== "string") throw new TypeError("Item name must be a string.");
+        if(!itemName) throw new EcoError("Item name was not provided.");
+        if(typeof itemName !== "string") throw new EcoError("Item name must be a string.");
         return !!(this.map(item => item.name).includes(itemName));
     }
 
@@ -66,14 +67,14 @@ class ShopManager extends Array {
      * @returns ShopManager
      */
     static updateItem(itemName, newItemInfo = {}) {
-        if(typeof itemName !== "string") throw new TypeError("Item name must be a string.");
-        if(typeof newItemInfo !== "object") throw new TypeError("Item info(s) must be a string.");
+        if(typeof itemName !== "string") throw new EcoError("Item name must be a string.");
+        if(typeof newItemInfo !== "object") throw new EcoError("Item info(s) must be a string.");
         const name = itemName || newItemInfo.name;
-        if(!name) throw new TypeError("Item name was not provided.");
+        if(!name) throw new EcoError("Item name was not provided.");
         let item = this.find(item => item.name == itemName);
-        if(!item) throw new TypeError(`${itemName} was not found.`);
+        if(!item) throw new EcoError(`${itemName} was not found.`);
         const cost = newItemInfo.cost || newItemInfo.price;
-        if(!cost || typeof cost !== "number") throw new TypeError("Item cost must be a number");
+        if(!cost || typeof cost !== "number") throw new EcoError("Item cost must be a number");
         item = {
             ...newItemInfo, name
         }; // name atlast to prevent sneaky ppl changing the name
@@ -86,8 +87,8 @@ class ShopManager extends Array {
      * @returns Boolean
      */
     static deleteItem(itemName) {
-        if(!itemName) throw new TypeError("Item name was not provided.");
-        if(typeof itemName !== "string") throw new TypeError("Item name must be a string.");
+        if(!itemName) throw new EcoError("Item name was not provided.");
+        if(typeof itemName !== "string") throw new EcoError("Item name must be a string.");
         let item = this.map(item => item.name).indexOf(itemName);
         if(!item) return false;
         this.splice(item, 1);
