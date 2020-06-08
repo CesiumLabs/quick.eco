@@ -24,11 +24,24 @@ function msParse(milliseconds) {
 function Database(name="./json") {
     const db = require("rex.db");
     db.init(name);
+
     db.add = (key, val, ...ops) => {
         return db.math(key, "+", val, ...ops);
     }
+
     db.subtract = (key, val, ...ops) => {
         return db.math(key, "-", val, ...ops);
+    }
+
+    db.startsWith = (key, ops={}) => {
+        let sortBy = require("lodash/sortBy");
+        let arb = db.all().filter(i => i.ID.startsWith(key));
+        if (ops.sort && typeof ops.sort === 'string') {
+            if (ops.sort.startsWith('.')) ops.sort = ops.sort.slice(1);
+            ops.sort = ops.sort.split('.');
+            arb = sortBy(arb, ops.sort).reverse();
+        }
+        return arb;
     }
     return db;
 }
