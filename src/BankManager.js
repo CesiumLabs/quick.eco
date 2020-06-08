@@ -31,7 +31,7 @@ class BankManager {
       * @params [ops.bal] balance Account Balance
       * @returns {Bank}
       */
-    static createAccount(user, ops={ type, bal=0 }) {
+    static createAccount(user, ops={ type, bal:0 }) {
         if (!user) throw new EcoError(`User expected, received undefined`);
         if (typeof user == "string") user = new User(user, undefined, this.db);
         if (!(user instanceof User)) throw new EcoError("Invalid User");
