@@ -150,6 +150,25 @@ class BankManager {
         return this.db.db.get(`bank_${user}`);
     }
 
+    /**
+      * All bank Accounts
+      * @returns {Bank[]}
+      */
+    static get accounts() {
+        return this.db.db.all().filter(i => i.ID startsWith("bank_"));
+    }
+
+    /**
+      * delete account
+      * @params {User} user User id or Eco.user
+      * @rerurns {Boolean}
+      */
+    static deleteAccount(user) {
+        if (!user || !(user instanceof User)) throw new Error("Invalid User");
+        if (user instanceof User) user = user.id;
+        return this.db.db.delete(`bank_${user}`);
+    }
+
 }
 
 module.exports = BankManager;
