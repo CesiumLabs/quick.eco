@@ -1,6 +1,9 @@
+const EcoError = require("./Error");
+
 class User {
     
     constructor(id, guild, database) {
+        if (!id) throw new EcoError("No id provided");
         this.id = id;
         if (guild && typeof guild == "string") this.guild = guild;
         if (guild && typeof guild !== "string" && !database) this.db = guild;
@@ -13,7 +16,7 @@ class User {
       * @returns {Balance}
       */
     static get balance() {
-        if (!this.db) throw new Error("Partial users may not have balance");
+        if (!this.db) throw new EcoError("Partial users may not have balance");
         if (this.guild) {
             let i = this.db.get(`money_${this.guild}_${this.id}`)
             return (i || 0);
@@ -35,7 +38,7 @@ class User {
       * @returns data[]
       */
     static parseAll() {
-        if (!this.db) throw new Error("Partial users may not have balance.");
+        if (!this.db) throw new EcoError("Partial users may not have balance.");
         let data = this.db.all().filter(i => i.ID.includes(this.id));
         return data ? (data.length ? data : []): [];
     }
