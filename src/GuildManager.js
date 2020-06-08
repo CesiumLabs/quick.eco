@@ -1,3 +1,4 @@
+const EcoError = require("./Error");
 let db = require("rex.db");
 db.init("./economy");
 let invalid = [0, -1, -0];
@@ -12,7 +13,7 @@ class GuildEconomyManager {
      * @example const eco = new Eco.GuildManager();
      */
     constructor(name="guildeconomy") {
-        if (name && (typeof name !== "string")) throw new Error("Eco: Name must me a string");
+        if (name && (typeof name !== "string")) throw new EcoError("Name must me a string");
         if (name) db = new db.table(name.replace(/ +/g, ""));
         /**
           * Internal Database Manager
@@ -34,12 +35,12 @@ class GuildEconomyManager {
      * @returns { before, after, user, amount }
      */
     static addMoney(userid, guildid, amount) {
-        if (!userid) throw new TypeError("User id was not provided.");
+        if (!userid) throw new EcoError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
-        if (!guildid) throw new TypeError("Guild id was not provided.");
+        if (!guildid) throw new EcoError("Guild id was not provided.");
         if (typeof guildid !== "string") throw new SyntaxError("Guild id must be a string.");
-        if (!amount) throw new TypeError("Amount was not provided.");
-        if (isNaN(amount)) throw new SyntaxError("Amount must be a number.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
         if (invalid.includes(Math.sign(amount))) throw new TypeError("Amount can't be negative or zero.");
         let oldbal = this.fetch(`money_${guildid}_${userid}`);
         this.db.math(`money_${guildid}_${userid}`, "+", amount);
@@ -59,10 +60,10 @@ class GuildEconomyManager {
      * @returns { amount, user, position }
      */
     static fetchMoney(userid, guildid) {
-        if (!userid) throw new TypeError("User id was not provided.");
-        if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
-        if (!guildid) throw new TypeError("Guild id was not provided.");
-        if (typeof guildid !== "string") throw new SyntaxError("Guild id must be a string.");
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
+        if (!guildid) throw new EcoError("Guild id was not provided.");
+        if (typeof guildid !== "string") throw new EcoError("Guild id must be a string.");
         let every = this.leaderboard(guildid, { limit:19774488 });
         let one = every.filter(data => data.id === userid);
         one = one.length < 1 ? null : one;
@@ -80,13 +81,13 @@ class GuildEconomyManager {
      * @returns { before, after, user, amount }
      */
     static setMoney(userid, guildid, amount) {
-        if (!userid) throw new TypeError("User id was not provided.");
+        if (!userid) throw new EcoError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
-        if (!guildid) throw new TypeError("Guild id was not provided.");
+        if (!guildid) throw new EcoError("Guild id was not provided.");
         if (typeof guildid !== "string") throw new SyntaxError("Guild id must be a string.");
-        if (!amount) throw new TypeError("Amount was not provided.");
-        if (isNaN(amount)) throw new SyntaxError("Amount must be a number.");
-        if (invL.includes(Math.sign(amount))) throw new TypeError("Amount can't be negative or zero.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        if (invL.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
         let oldbal = this.fetch(`money_${guildid}_${userid}`);
         this.db.set(`money_${guildid}_${userid}`, amount);
         let newbal = this.fetch(`money_${guildid}_${userid}`);
@@ -100,10 +101,10 @@ class GuildEconomyManager {
      * @returns { before, after, user }
      */
     static deleteUser(userid, guildid) {
-        if (!userid) throw new TypeError("User id was not provided.");
-        if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
         if (!guildid) throw new TypeError("Guild id was not provided.");
-        if (typeof guildid !== "string") throw new SyntaxError("Guild id must be a string.");
+        if (typeof guildid !== "string") throw new EcoError("Guild id must be a string.");
         let oldbal = this.fetch(`money_${guildid}_${userid}`);
         this.db.delete(`money_${guildid}_${userid}`);
         let newbal = this.fetch(`money_${guildid}_${userid}`);
@@ -118,13 +119,13 @@ class GuildEconomyManager {
      * @returns { before, after, user, amount }
      */
     static removeMoney(userid, guildid, amount) {
-        if (!userid) throw new TypeError("User id was not provided.");
-        if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
-        if (!guildid) throw new TypeError("Guild id was not provided.");
-        if (typeof guildid !== "string") throw new SyntaxError("Guild id must be a string.");
-        if (!amount) throw new TypeError("Amount was not provided.");
-        if (isNaN(amount)) throw new SyntaxError("Amount must be a number.");
-        if (invalid.includes(Math.sign(amount))) throw new TypeError("Amount can't be negative or zero.");
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
+        if (!guildid) throw new EcoError("Guild id was not provided.");
+        if (typeof guildid !== "string") throw new EcoError("Guild id must be a string.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        if (invalid.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
         let oldbal = this.fetch(`money_${guildid}_${userid}`);
         if (oldbal - amount < 0) return { error: "New amount is negative." };
         this.db.math(`money_${guildid}_${userid}`, "-", amount);
@@ -140,13 +141,13 @@ class GuildEconomyManager {
      * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, time }
      */
     static daily(userid, guildid, amount) {
-        if (!userid) throw new TypeError("User id was not provided.");
-        if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
-        if (!guildid) throw new TypeError("Guild id was not provided.");
-        if (typeof guildid !== "string") throw new SyntaxError("Guild id must be a string.");
-        if (!amount) throw new TypeError("Amount was not provided.");
-        if (isNaN(amount)) throw new SyntaxError("Amount must be a number.");
-        if (invalid.includes(Math.sign(amount))) throw new TypeError("Amount can't be negative or zero.");
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
+        if (!guildid) throw new EcoError("Guild id was not provided.");
+        if (typeof guildid !== "string") throw new EcoError("Guild id must be a string.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        if (invalid.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
         let timeout = 86400000;
         let check = this.db.fetch(`dailycooldown_${guildid}_${userid}`);
         if (check !== null && timeout - (Date.now() - check) > 0) {
@@ -167,13 +168,13 @@ class GuildEconomyManager {
      * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, time }
      */
     static weekly(userid, guildid, amount) {
-        if (!userid) throw new TypeError("User id was not provided.");
+        if (!userid) throw new EcoError("User id was not provided.");
         if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
-        if (!guildid) throw new TypeError("Guild id was not provided.");
+        if (!guildid) throw new EcoError("Guild id was not provided.");
         if (typeof guildid !== "string") throw new SyntaxError("Guild id must be a string.");
-        if (!amount) throw new TypeError("Amount was not provided.");
-        if (isNaN(amount)) throw new SyntaxError("Amount must be a number.");
-        if (invalid.includes(Math.sign(amount))) throw new TypeError("Amount can't be negative or zero.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        if (invalid.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
         let timeout = 604800000;
         let check = this.db.fetch(`weeklycooldown_${guildid}_${userid}`);
         if (check !== null && timeout - (Date.now() - check) > 0) {
@@ -195,15 +196,15 @@ class GuildEconomyManager {
      * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, workedAs, time }
      */
     static work(userid, guildid, amount, options={}) {
-        if (!userid) throw new TypeError("User id was not provided.");
-        if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
-        if (!guildid) throw new TypeError("Guild id was not provided.");
-        if (typeof guildid !== "string") throw new SyntaxError("Guild id must be a string.");
-        if (!amount) throw new TypeError("Amount was not provided.");
-        if (isNaN(amount)) throw new SyntaxError("Amount must be a number.");
-        if (invalid.includes(Math.sign(amount))) throw new TypeError("Amount can't be negative or zero.");
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
+        if (!guildid) throw new EcoError("Guild id was not provided.");
+        if (typeof guildid !== "string") throw new EcoError("Guild id must be a string.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        if (invalid.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
         let cooldown = options.cooldown || 2.7e+6;
-        if (options.jobs && !Array.isArray(options.jobs)) throw new SyntaxError("Jobs must be an array!");
+        if (options.jobs && !Array.isArray(options.jobs)) throw new EcoError("Jobs must be an array!");
         let jobs = options.jobs || [
             "Doctor",
             "Pornstar",
@@ -258,13 +259,13 @@ class GuildEconomyManager {
      * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, workedAs, time, lost }
      */
     static beg(userid, guildid, amount, options={}) {
-        if (!userid) throw new TypeError("User id was not provided.");
-        if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
-        if (!guildid) throw new TypeError("Guild id was not provided.");
-        if (typeof guildid !== "string") throw new SyntaxError("Guild id must be a string.");
-        if (!amount) throw new TypeError("Amount was not provided.");
-        if (isNaN(amount)) throw new SyntaxError("Amount must be a number.");
-        if (invalid.includes(Math.sign(amount))) throw new TypeError("Amount can't be negative or zero.");
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
+        if (!guildid) throw new EcoError("Guild id was not provided.");
+        if (typeof guildid !== "string") throw new EcoError("Guild id must be a string.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        if (invalid.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
         let lost = false;
         let luck1 = Math.floor(Math.random() * 5);
         let luck2 = Math.floor(Math.random() * 5);
@@ -295,15 +296,15 @@ class GuildEconomyManager {
      * @returns { user1, user2, amount }
      */
     static transfer(user1, user2, guildid, amount) {
-        if (!user1) throw new TypeError("User id was not provided.");
-        if (typeof user1 !== "string") throw new SyntaxError("User id must be a string.");
-        if (!user2) throw new TypeError("User id was not provided.");
-        if (typeof user2 !== "string") throw new SyntaxError("User id must be a string.");
-        if (!guildid) throw new TypeError("Guild id was not provided.");
-        if (typeof guildid !== "string") throw new SyntaxError("Guild id must be a string.");
+        if (!user1) throw new EcoError("User id was not provided.");
+        if (typeof user1 !== "string") throw new EcoError("User id must be a string.");
+        if (!user2) throw new EcoError("User id was not provided.");
+        if (typeof user2 !== "string") throw new EcoError("User id must be a string.");
+        if (!guildid) throw new EcoError("Guild id was not provided.");
+        if (typeof guildid !== "string") throw new EcoError("Guild id must be a string.");
         if (!amount) throw new TypeError("Amount was not provided.");
-        if (isNaN(amount)) throw new SyntaxError("Amount must be a number.");
-        if (invalid.includes(Math.sign(amount))) throw new TypeError("Amount can't be negative or zero.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        if (invalid.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
         let check = this.fetch(`money_${guildid}_${user1}`);
         if (check < 1) return { error: "Money of first user is less than 1." };
         if (check < amount) return { error: "Money of first user is less than given amount." };
@@ -320,11 +321,11 @@ class GuildEconomyManager {
      * @returns Leaderboard[]
      */
     static leaderboard(guildid, options = {}) {
-        if (!guildid) throw new TypeError("Guild id was not provided.");
-        if (typeof guildid !== "string") throw new SyntaxError("Guild id must be a string.");
+        if (!guildid) throw new EcoError("Guild id was not provided.");
+        if (typeof guildid !== "string") throw new EcoError("Guild id must be a string.");
         let limit = options.limit || 10;
-        if (isNaN(limit)) throw new SyntaxError("Limit must be a number.");
-        if (limit <= 0) throw new SyntaxError("Limit must be a number greater than 0.");
+        if (isNaN(limit)) throw new EcoError("Limit must be a number.");
+        if (limit <= 0) throw new EcoError("Limit must be a number greater than 0.");
         let raw = options.raw || false;
         let lb = this.db.fetchAll().filter(data => data.ID.startsWith(`money_${guildid}`)).sort((a, b) => b.data - a.data);
         lb.length = parseInt(limit);
