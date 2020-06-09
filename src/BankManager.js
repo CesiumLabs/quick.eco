@@ -202,7 +202,7 @@ class BankManager {
         let data = this.account(user);
         if (data.loan > 0) return false;
         let dueOver = this.db.convertTime(DUE, data.loanSince);
-        if (dueOver < 0) this.db.setMoney(data.account_holder.id,
+       // if (dueOver < 0) this.db.setMoney(data.account_holder.id,
     }
 
 }
