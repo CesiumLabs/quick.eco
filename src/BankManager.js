@@ -125,11 +125,28 @@ class BankManager {
         let holder = account.account_holder.id;
         if (guild) this.db.addMoney(user.id, guild, amount);
         else this.db.addMoney(user.id, amount);
-        if(0 > (account.balance - amount)) {
-            this.db.db.math(`bank_${holder}.loan`, "-", amount);
-            this.db.db.set(`bank_${holder}.balance`, 0);
-        }
+        if(0 > (account.balance - amount)) throw new EcoError("Cannot withdraw more than bank balance. Use loan() instead!");
         this.db.db.math(`bank_${holder}.balance`, "-", amount);
+        return this.account(user);
+    }
+
+    /**
+      * Bank Loan
+      * @params {User} user user id or Eco.User
+      * @params {amount} amount Amount
+      * @params {type} type Types: add, remove
+      * @returns {Account}
+      */
+    static loan(user, amount, type="add") {
+        if (!this.account(user)) throw new EcoError("This user doesn't have a bank account.");
+        if (this._isLoan(user)) throw new EcoError("Previous loan was not cleared!");
+        let key = `bank_${this.account(user).account_holder.id}`;
+        if (type !== "remove") {
+            this.db.db.math(key+".loan", "-", amount);
+            this.db.db.set(key+".loanSince", Date.now());
+        } else {
+           // this.account(user).loan < 0 ? this.db.math(key+".loan", "+", amount) :;
+        }
         return this.account(user);
     }
 
@@ -181,12 +198,12 @@ class BankManager {
         return !!(account.loan < 0);
     }
 
-    /*static _claim(user) {
+    static _claim(user) {
         let data = this.account(user);
         if (data.loan > 0) return false;
-        let dueOver = this.db.convertTime(DUE,data.loanSince);
-        if (dueOver < 0) this.db.setMoney(data.account_holder
-    }*/
+        let dueOver = this.db.convertTime(DUE, data.loanSince);
+        if (dueOver < 0) this.db.setMoney(data.account_holder.id,
+    }
 
 }
 
