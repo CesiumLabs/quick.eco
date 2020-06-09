@@ -23,7 +23,10 @@
     "discord-economy",
     "discord-eco",
     "discord-xp",
-    "discord-leveling"
+    "discord-leveling",
+    "economy",
+    "leveling",
+    "eco
   ],
   "author": "Snowflake107",
   "license": "MIT",
