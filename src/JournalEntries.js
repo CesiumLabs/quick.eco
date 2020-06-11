@@ -5,35 +5,36 @@ transactions as per the current month
 */
 const User = require("./User");
 const EcoError = require("./Error");
-const db = require("rex.db");
-db.init("./economy");
+const DB = require("rex.db");
+DB.init("./economy");
+const db = new DB.table(`transactions`);
+const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+];
 
 class Journal {
     
     constructor() {
-        this.db = db.table(`transactions`);
-        this.months = [
-             "January",
-             "February",
-             "March",
-             "April",
-             "May",
-             "June",
-             "July",
-             "August",
-             "September",
-             "October",
-             "November",
-             "December"
-       ];
+        throw new Error(`Class ${this.constructor.name} may not be instantiated!`);
     }
 
     static prepare(user, amount, ...details) {
         if (!user || !amount) throw new EcoError("User or amount details missing in statement");
         if (!this._resolveUser(user)) throw new EcoError("Invalid user details.");
         if (typeof amount !== "number") throw new EcoError("Type of amount must be a number");
-        const entries = this.db.all().filter(ent => ent.startsWith("stmt")).length + 1;
-        return this.db.set(`stmt_${new Date().getFullYear()}_${this.months[new Date().getMonth()]}_${ID}`, {
+        const entries = db.all().filter(ent => ent.startsWith("stmt")).length + 1;
+        return db.set(`stmt_${new Date().getFullYear()}_${months[new Date().getMonth()]}_${ID}`, {
             id: entries,
             author: new User(user),
             amount: amount,
@@ -43,22 +44,22 @@ class Journal {
         });
     }
 
-    all() {
-       return this.db.all().filter(i => i.ID.startsWith("stmt_"));
+    static all() {
+       return db.all().filter(i => i.ID.startsWith("stmt_"));
     }
 
-    filter(...args) {
-        return this.db.all().filter(...args);
+    static filter(...args) {
+        return db.all().filter(...args);
     }
 
-    fetchEntries(user) {
+    static fetchEntries(user) {
         if (!this._resolveUser(user)) throw new Error("Invalid User");
-        let statements = this.db.all().filter(i => i.ID.startsWith("stmt_") && i.data.author.id === user).reverse();
+        let statements = db.all().filter(i => i.ID.startsWith("stmt_") && i.data.author.id === user).reverse();
         return statements;
     }
 
     static clear() {
-        return this.db.deleteAll();
+        return db.deleteAll();
     }
 
     static _resolveUser(user) {
