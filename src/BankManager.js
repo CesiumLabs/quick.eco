@@ -31,7 +31,7 @@ class BankManager {
       * @params [ops.bal] balance Account Balance
       * @returns {Bank}
       */
-    static createAccount(user, ops={ type, bal:0 }) {
+    createAccount(user, ops={ type, bal:0 }) {
         if (!user) throw new EcoError(`User expected, received undefined`);
         if (typeof user == "string") user = new User(user, undefined, this.db);
         if (!(user instanceof User)) throw new EcoError("Invalid User");
@@ -99,7 +99,7 @@ class BankManager {
       * @params {Data} amount Amount to deposit
       * @returns {Account}
       */
-    static deposit({ user, guild, amount }) {
+    deposit({ user, guild, amount }) {
         let account = this.account(user);
         if (!account) throw new EcoError("This user doesn't have a bank account");
         if (!amount || isNaN(amount)) throw new EcoError("Invalid amount");
@@ -118,7 +118,7 @@ class BankManager {
       * @params {Data} amount Amount to deposit
       * @returns {Account}
       */
-    static withdraw({ user, guild, amount }) {
+    withdraw({ user, guild, amount }) {
         let account = this.account(user);
         if (!account) throw new EcoError("This user doesn't have a bank account");
         if (!amount || isNaN(amount)) throw new EcoError("Invalid amount");
@@ -137,7 +137,7 @@ class BankManager {
       * @params {type} type Types: add, remove
       * @returns {Account}
       */
-    static loan(user, amount, type="add") {
+    loan(user, amount, type="add") {
         if (!this.account(user)) throw new EcoError("This user doesn't have a bank account.");
         if (this._isLoan(user)) throw new EcoError("Previous loan was not cleared!");
         let key = `bank_${this.account(user).account_holder.id}`;
@@ -155,7 +155,7 @@ class BankManager {
       * @params {User} user User id or Eco.User
       * @returns {Amount}
       */
-    static balance(user) {
+    balance(user) {
         if (!user) throw new EcoError("Invalid User");
         let account = this.account(user);
         if (!account) throw new EcoError("This user doesn't have a bank account!");
@@ -167,7 +167,7 @@ class BankManager {
       * @params {User} user User id or Eco.User
       * @returns {Account}
       */
-    static account(user) {
+    account(user) {
         if (!user || !(user instanceof User)) throw new EcoError("Invalid User");
         if (user instanceof User) user = user.id;
         if (this.db.db.get(`bank_${user}`) == null) return false;
@@ -178,7 +178,7 @@ class BankManager {
       * All bank Accounts
       * @returns {Bank[]}
       */
-    static get accounts() {
+    get accounts() {
         return this.db.db.all().filter(i => i.ID.startsWith("bank_"));
     }
 
@@ -187,18 +187,18 @@ class BankManager {
       * @params {User} user User id or Eco.user
       * @rerurns {Boolean}
       */
-    static deleteAccount(user) {
+    deleteAccount(user) {
         if (!user || !(user instanceof User)) throw new EcoError("Invalid User");
         if (user instanceof User) user = user.id;
         return this.db.db.delete(`bank_${user}`);
     }
 
-    static _isLoan(user) {
+    _isLoan(user) {
         let account = this.account(user);
         return !!(account.loan < 0);
     }
 
-    static _claim(user) {
+    _claim(user) {
         let data = this.account(user);
         if (data.loan > 0) return false;
         let dueOver = this.db.convertTime(DUE, data.loanSince);
