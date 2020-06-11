@@ -36,7 +36,7 @@ class EconomyManager {
      * @param {Number} amount Amount to add
      * @returns { before, after, user, amount }
      */
-    static addMoney(userid, amount) {
+    addMoney(userid, amount) {
         if (!userid) throw new EcoError("User id was not provided.");
         if (typeof userid !== "string") throw new EcoError("User id must be a string.");
         if (!amount) throw new EcoError("Amount was not provided.");
@@ -53,7 +53,7 @@ class EconomyManager {
      * @param {String} userid user id
      * @returns { amount, user, position }
      */
-    static fetchMoney(userid) {
+    fetchMoney(userid) {
         if (!userid) throw new EcoError("User id was not provided.");
         if (typeof userid !== "string") throw new EcoError("User id must be a string.");
         let every = this.leaderboard({ limit: 0 });
@@ -69,7 +69,7 @@ class EconomyManager {
      * @param {Number} amount amount to set
      * @returns { before, after, user, amount }
      */
-    static setMoney(userid, amount) {
+    setMoney(userid, amount) {
         if (!userid) throw new EcoError("User id was not provided.");
         if (typeof userid !== "string") throw new EcoError("User id must be a string.");
         if (!amount) throw new EcoError("Amount was not provided.");
@@ -86,7 +86,7 @@ class EconomyManager {
      * @param {String} userid user id
      * @returns { before, after, user }
      */
-    static deleteUser(userid) {
+    deleteUser(userid) {
         if (!userid) throw new EcoError("User id was not provided.");
         if (typeof userid !== "string") throw new EcoError("User id must be a string.");
         let oldbal = this.fetch(`money_${userid}`);
@@ -101,7 +101,7 @@ class EconomyManager {
      * @param {Number} amount amount
      * @returns { befpre, after, user, amount }
      */
-    static removeMoney(userid, amount) {
+    removeMoney(userid, amount) {
         if (!userid) throw new EcoError("User id was not provided.");
         if (typeof userid !== "string") throw new EcoError("User id must be a string.");
         if (!amount) throw new EcoError("Amount was not provided.");
@@ -120,7 +120,7 @@ class EconomyManager {
      * @param {Number} amount amount 
      * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, time }
      */
-    static daily(userid, amount) {
+    daily(userid, amount) {
         if (!userid) throw new EcoError("User id was not provided.");
         if (typeof userid !== "string") throw new EcoError("User id must be a string.");
         if (!amount) throw new EcoError("Amount was not provided.");
@@ -144,7 +144,7 @@ class EconomyManager {
      * @param {Number} amount amount
      * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, time }
      */
-    static weekly(userid, amount) {
+    weekly(userid, amount) {
         if (!userid) throw new EcoError("User id was not provided.");
         if (typeof userid !== "string") throw new EcoError("User id must be a string.");
         if (!amount) throw new EcoError("Amount was not provided.");
@@ -169,7 +169,7 @@ class EconomyManager {
      * @param {Object} options Options = { jobs: ["Doctor", "Singer"], cooldown: 2.7e+6 }
      * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, workedAs, time }
      */
-    static work(userid, amount, options={}) {
+    work(userid, amount, options={}) {
         if (!userid) throw new EcoError("User id was not provided.");
         if (typeof userid !== "string") throw new EcoError("User id must be a string.");
         if (!amount) throw new EcoError("Amount was not provided.");
@@ -229,7 +229,7 @@ class EconomyManager {
      * @param {Object} options options = { canLose: false, cooldown: 60000, customName: "beg" }
      * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, time, lost }
      */
-    static beg(userid, amount, options={}) {
+    beg(userid, amount, options={}) {
         if (!userid) throw new EcoError("User id was not provided.");
         if (typeof userid !== "string") throw new EcoError("User id must be a string.");
         if (!amount) throw new EcoError("Amount was not provided.");
@@ -263,7 +263,7 @@ class EconomyManager {
      * @param {Number} amount Amount
      * @returns { user1, user2, amount }
      */
-    static transfer(user1, user2, amount) {
+    transfer(user1, user2, amount) {
         if (!user1) throw new EcoError("User id was not provided.");
         if (typeof user1 !== "string") throw new EcoError("User id must be a string.");
         if (!user2) throw new EcoError("User id was not provided.");
@@ -285,7 +285,7 @@ class EconomyManager {
      * @param {Object} options Options = { limit: 10, raw: false }
      * @returns leaderboard[]
      */
-    static leaderboard(options = {}) {
+    leaderboard(options = {}) {
         let limit = options.limit || 10;
         if (isNaN(limit)) throw new EcoError("Limit must be a number.");
         let raw = options.raw || false;
@@ -309,7 +309,7 @@ class EconomyManager {
     /**
       * Drops the table
       */
-    static reset() {
+    reset() {
         console.warn(`Data wiped out from ${this.name}`);
         try {
             this.db.deleteAll();
@@ -324,7 +324,7 @@ class EconomyManager {
       * database entries
       * @type {entries[]}
       */
-    static get entries() {
+    get entries() {
         return this.db.all();
     }
 
@@ -332,7 +332,7 @@ class EconomyManager {
       * @ignore
       * @private
       */
-    static fetch(param) {
+    fetch(param) {
         return this.db.fetch(param) ? this.db.fetch(param) : 0;
     }
 
@@ -340,7 +340,7 @@ class EconomyManager {
       * @ignore
       * @private
       */
-    static convertTime(cooldown, check) {
+    convertTime(cooldown, check) {
         let time = this.ms(cooldown - (Date.now() - check));
         return time;
     }
@@ -349,7 +349,7 @@ class EconomyManager {
       * @ignore
       * @private
       */
-    static ms(milliseconds) {
+    ms(milliseconds) {
         const roundTowardsZero = milliseconds > 0 ? Math.floor : Math.ceil;
         return {
             days: roundTowardsZero(milliseconds / 86400000),
