@@ -34,7 +34,7 @@ class GuildEconomyManager {
      * @param {Number} amount Amount to add
      * @returns { before, after, user, amount }
      */
-    static addMoney(userid, guildid, amount) {
+    addMoney(userid, guildid, amount) {
         if (!userid) throw new EcoError("User id was not provided.");
         if (typeof userid !== "string") throw new EcoError("User id must be a string.");
         if (!guildid) throw new EcoError("Guild id was not provided.");
@@ -59,7 +59,7 @@ class GuildEconomyManager {
      * @param {String} guildid Guild ID
      * @returns { amount, user, position }
      */
-    static fetchMoney(userid, guildid) {
+    fetchMoney(userid, guildid) {
         if (!userid) throw new EcoError("User id was not provided.");
         if (typeof userid !== "string") throw new EcoError("User id must be a string.");
         if (!guildid) throw new EcoError("Guild id was not provided.");
@@ -80,7 +80,7 @@ class GuildEconomyManager {
      * @param {Number} amount amount to set
      * @returns { before, after, user, amount }
      */
-    static setMoney(userid, guildid, amount) {
+    setMoney(userid, guildid, amount) {
         if (!userid) throw new EcoError("User id was not provided.");
         if (typeof userid !== "string") throw new EcoError("User id must be a string.");
         if (!guildid) throw new EcoError("Guild id was not provided.");
@@ -100,7 +100,7 @@ class GuildEconomyManager {
      * @param {String} guildid Guild ID
      * @returns { before, after, user }
      */
-    static deleteUser(userid, guildid) {
+    deleteUser(userid, guildid) {
         if (!userid) throw new EcoError("User id was not provided.");
         if (typeof userid !== "string") throw new EcoError("User id must be a string.");
         if (!guildid) throw new EcoError("Guild id was not provided.");
@@ -118,7 +118,7 @@ class GuildEconomyManager {
      * @param {Number} amount amount
      * @returns { before, after, user, amount }
      */
-    static removeMoney(userid, guildid, amount) {
+    removeMoney(userid, guildid, amount) {
         if (!userid) throw new EcoError("User id was not provided.");
         if (typeof userid !== "string") throw new EcoError("User id must be a string.");
         if (!guildid) throw new EcoError("Guild id was not provided.");
@@ -140,7 +140,7 @@ class GuildEconomyManager {
      * @param {Number} amount amount 
      * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, time }
      */
-    static daily(userid, guildid, amount) {
+    daily(userid, guildid, amount) {
         if (!userid) throw new EcoError("User id was not provided.");
         if (typeof userid !== "string") throw new EcoError("User id must be a string.");
         if (!guildid) throw new EcoError("Guild id was not provided.");
@@ -167,7 +167,7 @@ class GuildEconomyManager {
      * @param {Number} amount amount
      * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, time }
      */
-    static weekly(userid, guildid, amount) {
+    weekly(userid, guildid, amount) {
         if (!userid) throw new EcoError("User id was not provided.");
         if (typeof userid !== "string") throw new EcoError("User id must be a string.");
         if (!guildid) throw new EcoError("Guild id was not provided.");
@@ -195,7 +195,7 @@ class GuildEconomyManager {
      * @param {Object} options Options = { jobs: ["Doctor", "Singer"], cooldown: 2.7e+6 } 
      * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, workedAs, time }
      */
-    static work(userid, guildid, amount, options={}) {
+    work(userid, guildid, amount, options={}) {
         if (!userid) throw new EcoError("User id was not provided.");
         if (typeof userid !== "string") throw new EcoError("User id must be a string.");
         if (!guildid) throw new EcoError("Guild id was not provided.");
@@ -258,7 +258,7 @@ class GuildEconomyManager {
      * @param {Object} options options = { canLose: false, cooldown: 60000, customName: "beg" }
      * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, workedAs, time, lost }
      */
-    static beg(userid, guildid, amount, options={}) {
+    beg(userid, guildid, amount, options={}) {
         if (!userid) throw new EcoError("User id was not provided.");
         if (typeof userid !== "string") throw new EcoError("User id must be a string.");
         if (!guildid) throw new EcoError("Guild id was not provided.");
@@ -295,7 +295,7 @@ class GuildEconomyManager {
      * @param {Number} amount Amount
      * @returns { user1, user2, amount }
      */
-    static transfer(user1, user2, guildid, amount) {
+    transfer(user1, user2, guildid, amount) {
         if (!user1) throw new EcoError("User id was not provided.");
         if (typeof user1 !== "string") throw new EcoError("User id must be a string.");
         if (!user2) throw new EcoError("User id was not provided.");
@@ -320,7 +320,7 @@ class GuildEconomyManager {
      * @param {Object} options Options = { limit: 10, raw: false }
      * @returns Leaderboard[]
      */
-    static leaderboard(guildid, options = {}) {
+    leaderboard(guildid, options = {}) {
         if (!guildid) throw new EcoError("Guild id was not provided.");
         if (typeof guildid !== "string") throw new EcoError("Guild id must be a string.");
         let limit = options.limit || 10;
@@ -348,14 +348,14 @@ class GuildEconomyManager {
       * database entries
       * @type {entries[]}
       */
-    static get entries() {
+    get entries() {
         return this.db.all();
     }
 
     /**
       * Drops the table
       */
-    static reset() {
+    reset() {
         try {
             this.db.deleteAll();
             return true;
@@ -369,7 +369,7 @@ class GuildEconomyManager {
       * @ignore
       * @private
       */
-    static fetch(param) {
+    fetch(param) {
         return this.db.fetch(param) ? this.db.fetch(param) : 0;
     }
 
@@ -377,7 +377,7 @@ class GuildEconomyManager {
       * @ignore
       * @private
       */
-    static convertTime(cooldown, check) {
+    convertTime(cooldown, check) {
         let time = this.ms(cooldown - (Date.now() - check));
         return time;
     }
@@ -386,7 +386,7 @@ class GuildEconomyManager {
       * @ignore
       * @private
       */
-    static ms(milliseconds) {
+    ms(milliseconds) {
         const roundTowardsZero = milliseconds > 0 ? Math.floor : Math.ceil;
         return {
             days: roundTowardsZero(milliseconds / 86400000),
