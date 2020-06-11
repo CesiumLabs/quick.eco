@@ -33,7 +33,7 @@ class LotteryManager extends EventEmitter {
       * starts the lotteryManager
       * @fires LotteryManager#ready
       */
-    static start() {
+    start() {
         this._started = true;
         this.startedAt = Date.now();
         if(!this.db.fetch('lastStarted') || this.db.fetch("lastStarted") == null) this.db.set('lastStarted', Date.now());
@@ -47,7 +47,7 @@ class LotteryManager extends EventEmitter {
       * @param {String} id - ID of a user, generally a Snowflake
       * @fires LotteryManager#entryCreate
       */
-    static registerUser(id) {
+    registerUser(id) {
         if(!id) {
             let emitted = this.emit('error', `User ID was not provided.`);
             if(!emitted) throw new EcoError(`User ID was not provided.`);
@@ -64,7 +64,7 @@ class LotteryManager extends EventEmitter {
       * @param {String} User id
       * @fires LotteryManager#entryDelete
       */
-    static removeUser(id) {
+    removeUser(id) {
         if(!id) {
             let emitted = this.emit('error', `User ID was not provided.`);
             if(!emitted) throw new EcoError(`User ID was not provided.`);
@@ -84,7 +84,7 @@ class LotteryManager extends EventEmitter {
       * get all registed users
       * @returns Array
       */
-    static get users() {
+    get users() {
         return (this.db.fetch('lottery').map(m => new User(m)) || []);
     }
 
@@ -93,7 +93,7 @@ class LotteryManager extends EventEmitter {
       * forcefully end the lottery
       * @returns Boolean
       */
-    static end() {
+    end() {
         if (!this._started) return false;
         let u = this.db.get("lottery");
         if (!u || u == null || u.length < 1) {
