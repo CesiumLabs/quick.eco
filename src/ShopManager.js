@@ -5,10 +5,6 @@ const EcoError = require("./Error");
 
 class ShopManager extends Array {
 
-    /**
-     * @constructor
-     * @example const shop = new Eco.ShopManager();
-     */
     constructor() {
         super();
     }
@@ -22,7 +18,7 @@ class ShopManager extends Array {
      * @param {Any} [itemInfo.any] anything related to item (optional)
      * @returns ShopManager
      */
-    static registerItem(itemName, itemInfo = {}) {
+    registerItem(itemName, itemInfo = {}) {
         if(typeof itemName !== "string") throw new EcoError("Item name must be a string.");
         if(typeof itemInfo !== "object") throw new EcoError("Item info(s) must be a string.");
         const name = itemName || itemInfo.name;
@@ -40,7 +36,7 @@ class ShopManager extends Array {
      * @param {String} itemName Name of the Item
      * @returns object
      */
-    static getItem(itemName) {
+    getItem(itemName) {
         if(!itemName) throw new EcoError("Item name was not provided.");
         if(typeof itemName !== "string") throw new EcoError("Item name must be a string.");
         return this.find(item => item.name == itemName);
@@ -51,7 +47,7 @@ class ShopManager extends Array {
      * @param {String} itemName Name of the Item
      * @returns boolean
      */
-    static hasItem(itemName) {
+    hasItem(itemName) {
         if(!itemName) throw new EcoError("Item name was not provided.");
         if(typeof itemName !== "string") throw new EcoError("Item name must be a string.");
         return !!(this.map(item => item.name).includes(itemName));
@@ -66,7 +62,7 @@ class ShopManager extends Array {
      * @param {Any} [newItemInfo.any] anything related to item (optional)
      * @returns ShopManager
      */
-    static updateItem(itemName, newItemInfo = {}) {
+    updateItem(itemName, newItemInfo = {}) {
         if(typeof itemName !== "string") throw new EcoError("Item name must be a string.");
         if(typeof newItemInfo !== "object") throw new EcoError("Item info(s) must be a string.");
         const name = itemName || newItemInfo.name;
@@ -86,7 +82,7 @@ class ShopManager extends Array {
      * @param {String} itemName Name of the Item
      * @returns Boolean
      */
-    static deleteItem(itemName) {
+    deleteItem(itemName) {
         if(!itemName) throw new EcoError("Item name was not provided.");
         if(typeof itemName !== "string") throw new EcoError("Item name must be a string.");
         let item = this.map(item => item.name).indexOf(itemName);
@@ -99,7 +95,7 @@ class ShopManager extends Array {
      * removeClones - Removes cloned items
      * @returns Array
      */
-    static removeClones() {
+    removeClones() {
         if (this.length < 1) return [];
         return this.from(new Set(this));
     }
@@ -108,7 +104,7 @@ class ShopManager extends Array {
      * allItems - All the Items in the Shop
      * @returns ShopManager
      */
-    static allItems() {
+    allItems() {
         return this;
     }
     
@@ -116,7 +112,7 @@ class ShopManager extends Array {
      * all - alias to allItems
      * @returns ShopManager
      */
-    static all() {
+    all() {
         return this.allItems();
     }
     
@@ -124,7 +120,7 @@ class ShopManager extends Array {
      * collection - Saved data
      * @returns Array
      */
-    static get collection() {
+    get collection() {
         return db.get("collection") ? db.get("collection") : [];
     }
     
