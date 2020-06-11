@@ -15,7 +15,7 @@ class User {
       * @type Number
       * @returns {Balance}
       */
-    static get balance() {
+    get balance() {
         if (!this.db) throw new EcoError("Partial users may not have balance");
         if (this.guild) {
             let i = this.db.get(`money_${this.guild}_${this.id}`)
@@ -29,7 +29,7 @@ class User {
       * @type String
       * @returns String
       */
-    static toString() {
+    toString() {
         return `<@${this.id}>`;
     }
 
@@ -37,7 +37,7 @@ class User {
       * parses everything related to user
       * @returns data[]
       */
-    static parseAll() {
+    parseAll() {
         if (!this.db) throw new EcoError("Partial users may not have balance.");
         let data = this.db.all().filter(i => i.ID.includes(this.id));
         return data ? (data.length ? data : []): [];
