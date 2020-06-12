@@ -49,9 +49,31 @@ class EconomyManager {
     }
 
     /**
+     * depositMoney - Adds money to Bank
+     * @param {String} userid User ID
+     * @param {Number} amount Amount to add
+     * @returns { before: { money, bank }, after: { money, bank }, user, amount }
+     */
+    depositMoney(userid, amount) {
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        if (invalid.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
+        let oldbank = this.fetch(`bank_${userid}`);
+        let oldbal = this.fetch(`money_${userid}`);
+        if(amount > oldbal) throw new EcoError("No enough money to deposit.");
+        this.db.math(`bank_${userid}`, "+", amount);
+        this.db.math(`money_${userid}`, "-", amount);
+        let newbank = this.fetch(`bank_${userid}`);
+        let newbal = this.fetch(`money_${userid}`);
+        return { before: { money: oldbal, bank: oldbank }, after: { money: newbal, bank: newbank }, user: new User(userid, undefined, this.db), amount: amount };
+    }
+
+    /**
      * fetchMoney - Returns user's money
      * @param {String} userid user id
-     * @returns { amount, user, position }
+     * @returns { balance, bank, user, position }
      */
     fetchMoney(userid) {
         if (!userid) throw new EcoError("User id was not provided.");
@@ -59,8 +81,11 @@ class EconomyManager {
         let every = this.leaderboard({ limit: 0 });
         let one = every.filter(data => data.id === userid);
         one = one.length < 1 ? null : one;
+        let bank = this.fetch(`bank_${userid}`);
 
-        return one ? { amount: one[0].money, user: new User(one[0].id, undefined, this.db), position: every.indexOf(one[0]) + 1 } : { amount: 0, user: new User(userid, this.db), position: null };
+        return one
+            ? { balance: one[0].money, bank, user: new User(one[0].id, undefined, this.db), position: every.indexOf(one[0]) + 1 }
+            : { balance: 0, bank, user: new User(userid, undefined, this.db), position: null };
     }
 
     /**
@@ -82,9 +107,27 @@ class EconomyManager {
     }
 
     /**
+     * setBank - Sets Bank Balance
+     * @param {String} userid user id
+     * @param {Number} amount amount to set
+     * @returns { before, after, user, amount }
+     */
+    setBank(userid, amount) {
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        if (invL.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
+        let oldbal = this.fetch(`bank_${userid}`);
+        this.db.set(`bank_${userid}`, amount);
+        let newbal = this.fetch(`bank_${userid}`);
+        return { before: oldbal, after: newbal, user: new User(userid, undefined, this.db), amount: amount };
+    }
+
+    /**
      * deleteUser - Deletes a user from the database
      * @param {String} userid user id
-     * @returns { before, after, user }
+     * @returns { before: { money, bank }, after: { money, bank }, user }
      */
     deleteUser(userid) {
         if (!userid) throw new EcoError("User id was not provided.");
@@ -92,7 +135,10 @@ class EconomyManager {
         let oldbal = this.fetch(`money_${userid}`);
         this.db.delete(`money_${userid}`);
         let newbal = this.fetch(`money_${userid}`);
-        return { before: oldbal, after: newbal, user: new User(userid, undefined, this.db) };
+        let oldbank = this.fetch(`bank_${userid}`);
+        this.db.delete(`bank_${userid}`);
+        let newbank = this.fetch(`bank_${userid}`);
+        return { before: { money: oldbal, bank: oldbank }, after: { money: newbal, bank: newbank }, user: new User(userid, undefined, this.db) };
     }
 
     /**
@@ -112,6 +158,27 @@ class EconomyManager {
         this.db.math(`money_${userid}`, "-", amount);
         let newbal = this.fetch(`money_${userid}`);
         return { before: oldbal, after: newbal, user: new User(userid, undefined, this.db), amount: amount };
+    }
+
+    /**
+     * withdrawMoney - Withdraws money from bank of a user
+     * @param {String} userid User id
+     * @param {Number} amount amount
+     * @returns { before: { money, bank }, after: { money, bank }, user, amount }
+     */
+    withdrawMoney(userid, amount) {
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        let oldbank = this.fetch(`bank_${userid}`);
+        if (oldbank - amount < 0) return { error: "New amount is negative." };
+        let oldbal = this.fetch(`money_${userid}`);
+        this.db.math(`bank_${userid}`, "-", amount);
+        this.db.math(`money_${userid}`, "+", amount);
+        let newbank = this.fetch(`bank_${userid}`);        
+        let newbal = this.fetch(`money_${userid}`);
+        return { before: { money: oldbal, bank: oldbank }, after: { money: newbal, bank: newbank }, user: new User(userid, undefined, this.db), amount: amount };
     }
 
     /**

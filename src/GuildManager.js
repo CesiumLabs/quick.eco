@@ -54,10 +54,40 @@ class GuildEconomyManager {
     }
 
     /**
+     * depositMoney - Deposits money to Bank
+     * @param {String} userid User ID
+     * @param {String} guildid Guild ID
+     * @param {Number} amount Amount to add
+     * @returns { before: { money, bank }, after: { money, bank }, user, amount }
+     */
+    depositMoney(userid, guildid, amount) {
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
+        if (!guildid) throw new EcoError("Guild id was not provided.");
+        if (typeof guildid !== "string") throw new EcoError("Guild id must be a string.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        if (invalid.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
+        let oldbank = this.fetch(`bank_${guildid}_${userid}`);
+        let oldbal = this.fetch(`money_${guildid}_${userid}`);
+        if(oldbal < amount) throw new EcoError("No enough money to deposit");
+        this.db.math(`bank_${guildid}_${userid}`, "+", amount);
+        this.db.math(`money_${guildid}_${userid}`, "-", amount);
+        let newbank = this.fetch(`bank_${guildid}_${userid}`);
+        let newbal = this.fetch(`money_${guildid}_${userid}`);
+        return { 
+            before: { money: oldbal, bank: oldbank },
+            after: { money: newbal, bank: newbank },
+            user: new User(userid, guildid, this.db),
+            amount: amount
+        };
+    }
+
+    /**
      * fetchMoney - Returns user's money
      * @param {String} userid user id
      * @param {String} guildid Guild ID
-     * @returns { amount, user, position }
+     * @returns { balance, bank, user, position }
      */
     fetchMoney(userid, guildid) {
         if (!userid) throw new EcoError("User id was not provided.");
@@ -67,10 +97,11 @@ class GuildEconomyManager {
         let every = this.leaderboard(guildid, { limit:19774488 });
         let one = every.filter(data => data.id === userid);
         one = one.length < 1 ? null : one;
+        let bank = this.fetch(`bank_${guildid}_${userid}`);
 
         return one
-            ? { amount: one[0].money, user: new User(one[0].id, guildid, this.db), position: every.indexOf(one[0]) + 1 }
-            : { amount: 0, user: new User(userid, guildid, this.db), position: every.length + 1 };
+            ? { balance: one[0].money, bank, user: new User(one[0].id, guildid, this.db), position: every.indexOf(one[0]) + 1 }
+            : { balance: 0, bank, user: new User(userid, guildid, this.db), position: every.length + 1 };
     }
 
     /**
@@ -95,10 +126,31 @@ class GuildEconomyManager {
     }
 
     /**
+     * setBank - Sets bank money
+     * @param {String} userid user id
+     * @param {String} guildid Guild ID
+     * @param {Number} amount amount to set
+     * @returns { before, after, user, amount }
+     */
+    setBank(userid, guildid, amount) {
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
+        if (!guildid) throw new EcoError("Guild id was not provided.");
+        if (typeof guildid !== "string") throw new EcoError("Guild id must be a string.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        if (invL.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
+        let oldbal = this.fetch(`bank_${guildid}_${userid}`);
+        this.db.set(`bank_${guildid}_${userid}`, amount);
+        let newbal = this.fetch(`bank_${guildid}_${userid}`);
+        return { before: oldbal, after: newbal, user: new User(userid, guildid, this.db), amount: amount };
+    }
+
+    /**
      * deleteUser - Deletes a user from the database
      * @param {String} userid user id
      * @param {String} guildid Guild ID
-     * @returns { before, after, user }
+     * @returns { before: { money, bank }, after: { money, bank }, user }
      */
     deleteUser(userid, guildid) {
         if (!userid) throw new EcoError("User id was not provided.");
@@ -108,7 +160,10 @@ class GuildEconomyManager {
         let oldbal = this.fetch(`money_${guildid}_${userid}`);
         this.db.delete(`money_${guildid}_${userid}`);
         let newbal = this.fetch(`money_${guildid}_${userid}`);
-        return { before: oldbal, after: newbal, user: new User(userid, guildid, this.db) };
+        let oldbank = this.fetch(`bank_${guildid}_${userid}`);
+        this.db.delete(`bank_${guildid}_${userid}`);
+        let newbank = this.fetch(`bank_${guildid}_${userid}`);
+        return { before: { money: oldbal, bank: oldbank }, after: { money: newbal, bank: newbank }, user: new User(userid, guildid, this.db) };
     }
 
     /**
@@ -131,6 +186,31 @@ class GuildEconomyManager {
         this.db.math(`money_${guildid}_${userid}`, "-", amount);
         let newbal = this.fetch(`money_${guildid}_${userid}`);
         return { before: oldbal, after: newbal, user: new User(userid, guildid, this.db), amount: amount };
+    }
+
+    /**
+     * withdrawMoney - Subtracts money of a user from bank
+     * @param {String} userid User id
+     * @param {String} guildid Guild ID
+     * @param {Number} amount amount
+     * @returns { before: { money, bank }, after: { money, bank }, user, amount }
+     */
+    withdrawMoney(userid, guildid, amount) {
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
+        if (!guildid) throw new EcoError("Guild id was not provided.");
+        if (typeof guildid !== "string") throw new EcoError("Guild id must be a string.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        if (invalid.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
+        let oldbank = this.fetch(`bank_${guildid}_${userid}`);
+        if (oldbank - amount < 0) return { error: "New amount is negative." };
+        let oldbal = this.fetch(`money_${guildid}_${userid}`);
+        this.db.math(`bank_${guildid}_${userid}`, "-", amount);
+        this.db.math(`money_${guildid}_${userid}`, "+", amount);
+        let newbank = this.fetch(`bank_${guildid}_${userid}`);
+        let newbal = this.fetch(`money_${guildid}_${userid}`);
+        return { before: { money: oldbal, bank: oldbank }, after: { money: newbal, bank: newbank }, user: new User(userid, guildid, this.db), amount: amount };
     }
 
     /**

@@ -18,11 +18,35 @@ class User {
     get balance() {
         if (!this.db) throw new EcoError("Partial users may not have balance");
         if (this.guild) {
-            let i = this.db.get(`money_${this.guild}_${this.id}`)
+            let i = this.db.get(`money_${this.guild}_${this.id}`);
             return (i || 0);
         }
         return (this.db.get(`money_${this.id}`) || 0);
     }
+
+    /**
+      * Bank Balance of the user
+      * @type Number
+      * @returns {Balance}
+      */
+     get bank() {
+      if (!this.db) throw new EcoError("Partial users may not have balance");
+      if (this.guild) {
+          let i = this.db.get(`bank_${this.guild}_${this.id}`);
+          return (i || 0);
+      }
+      return (this.db.get(`bank_${this.id}`) || 0);
+  }
+
+  /**
+      * totalWorth of the user
+      * @type Number
+      * @returns {Balance}
+      */
+    get totalWorth() {
+      if (!this.db) throw new EcoError("Partial users may not have balance");
+      return ((this.balance || 0) + (this.bank || 0));
+  }
 
     /**
       * create mention
