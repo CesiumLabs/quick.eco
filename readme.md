@@ -76,6 +76,9 @@ beg(userid, amount, { options }); // beg function, returns object | options: { c
 transfer(userid1, userid2, amount); // transfer balance from a user to another, returns object | [ Can be used in "rob" command ]
 leaderboard({ options }); // returns leaderboard | options: { raw: false, limit: 10 }
 reset(); // reset data
+depositMoney(userid, amount); // deposits money from balance to bank & returns object
+withdrawMoney(userid, amount); // withdraws money from bank to balance & returns object
+setBank(userid, amount); // sets new bank value & returns object
 ```
 
 # GuildManager Functions
@@ -93,6 +96,9 @@ beg(userid, guildid, amount, { options }); // beg function, returns object | opt
 transfer(userid1, userid2, guildid, amount); // transfer balance from a user to another, returns object | [ Can be used in "rob" command ]
 leaderboard(guildid, { options }); // returns leaderboard | options: { raw: false, limit: 10 }
 reset(); // reset data
+depositMoney(userid, guildid, amount); // deposits money from balance to bank & returns object
+withdrawMoney(userid, guildid, amount); // withdraws money from bank to balance & returns object
+setBank(userid, guildid, amount); // sets new bank value & returns object
 ```
 
 
