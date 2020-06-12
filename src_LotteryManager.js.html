@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Global - Documentation</title>
+    <title>src/LotteryManager.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,362 +29,193 @@
 
 <div id="main">
     
-    <h1 class="page-title">Global</h1>
-    
-
-    
-
-
-
-
-<section>
-
-<header>
-    
-        <h2>
-        
-        </h2>
-        
-    
-</header>
-
-<article>
-    <div class="container-overview">
-    
-        
-
-        
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        
-            
-<div class="section-method">
-
-    
-
-    <h4 class="name" id="Database"><span class="type-signature"></span>Database<span class="signature">()</span><span class="type-signature"> &rarr; {quick.db}</span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Database</p>
-</div>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line24">line 24</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div class="section-returns">
-<h5>Returns:</h5>
-
-        
-
-<dl class="param-type">
-    <dt>
-        Type:
-    </dt>
-    <dd>
-        
-<span class="param-type"><code>quick.db</code></span>
-
-
-    </dd>
-</dl>
-
-
-    
-</div>
-
-
-
-</div>
-        
-            
-<div class="section-method">
-
-    
-
-    <h4 class="name" id="msParse"><span class="type-signature"></span>msParse<span class="signature">(milliseconds)</span><span class="type-signature"> &rarr; {Object}</span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>ms
-Milliseconds parser</p>
-</div>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line7">line 7</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>milliseconds</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><code>Number</code></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">
-                <p>Milliseconds to parse</p>
-                
-            </td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div class="section-returns">
-<h5>Returns:</h5>
-
-        
-
-<dl class="param-type">
-    <dt>
-        Type:
-    </dt>
-    <dd>
-        
-<span class="param-type"><code>Object</code></span>
-
-
-    </dd>
-</dl>
-
-
-<div class="param-desc">
-    <p>Time Time object</p>
-</div>
-
-    
-</div>
-
-
-
-</div>
-        
-    
-
-    
-
-    
-</article>
-
-</section>
+    <h1 class="page-title">src/LotteryManager.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const EcoError = require("./Error");
+const db = require("rex.db");
+db.init("./economy");
+const { EventEmitter } = require("events");
+const User = require("./User.js");
+
+/**
+ * LotteryManager - Simple LotteryManager class
+ * This class can be used to create lottery system in your bot
+ */
+class LotteryManager extends EventEmitter {
+
+    /**
+      * @constructor
+      * @param {Object} options - Lottery Options
+      * @param [options.lotteryInterval] - Lottery Interval, time in minutes.
+      * @param [options.checkInterval] - Lottery check interval, time in seconds
+      */
+    constructor(options = {}) {
+        super();
+        this._started = false;
+        this.db = db;
+        this.startedAt = 0;
+        this.options = Object.assign({
+            lotteryInterval: 60, // mins
+            checkInterval: 60 // seconds
+        }, options);
+        // this.lotteryInterval = options.lotteryInterval || 60; // mins
+        // this.checkInterval = options.checkInterval || 60; // seconds
+    }
+
+    /**
+      * starts the lotteryManager
+      * @fires LotteryManager#ready
+      */
+    start() {
+        this._started = true;
+        this.startedAt = Date.now();
+        if(!this.db.fetch('lastStarted') || this.db.fetch("lastStarted") == null) this.db.set('lastStarted', Date.now());
+        this._start();
+        this.emit("ready");
+        return true;
+    }
+    
+    /**
+      * registers the user in lottery
+      * @param {String} id - ID of a user, generally a Snowflake
+      * @fires LotteryManager#entryCreate
+      */
+    registerUser(id) {
+        if(!id) {
+            let emitted = this.emit('error', `User ID was not provided.`);
+            if(!emitted) throw new EcoError(`User ID was not provided.`);
+        }
+        let lotteryDB = this.db.fetch('lottery') || [];
+        lotteryDB.push(id);
+        this.db.set('lottery', lotteryDB);
+        let emitted = this.emit('entryCreate', new User(id));
+        if(!emitted) return true;
+    }
+
+    /**
+      * removes a user
+      * @param {String} User id
+      * @fires LotteryManager#entryDelete
+      */
+    removeUser(id) {
+        if(!id) {
+            let emitted = this.emit('error', `User ID was not provided.`);
+            if(!emitted) throw new EcoError(`User ID was not provided.`);
+        }
+        let lotteryDB = this.db.fetch('lottery') || [];
+        if (!lotteryDB.includes(id)) {
+            let emitted = this.emit('error', `${id} is not enrolled.`);
+            if(!emitted) throw new EcoError(`${id} is not enrolled.`);
+        }
+        lotteryDB.splice(lotteryDB.indexOf(id), 1);
+        this.db.set('lottery', lotteryDB);
+        let emitted = this.emit('entryDelete', new User(id));
+        if(!emitted) return true;
+    }
+
+    /**
+      * get all registed users
+      * @returns Array
+      */
+    get users() {
+        return (this.db.fetch('lottery').map(m => new User(m)) || []);
+    }
+
+
+    /**
+      * forcefully end the lottery
+      * @returns Boolean
+      */
+    end() {
+        if (!this._started) return false;
+        let u = this.db.get("lottery");
+        if (!u || u == null || u.length &lt; 1) {
+            let emitted = this.emit("error", "No user particilated");
+            if (!emitted) throw new EcoError("No user participated");
+            return;
+        }
+        let Winner = u[Math.floor(Math.random() * u.length)];
+        this.emit("end", (new User(Winner), u.map(u => new User(u))));
+        this.db.delete('lottery');
+        this.db.set('lastEnded', Date.now());
+        this._started = false;
+        this.startedAt = 0;
+        return true;
+    }
+    
+    /**
+      * @ignore
+      * @private
+      * Lottery Starter
+      */
+    _start() {
+        if(!this._started) return false;
+        const checkInterval = this.options.checkInterval * 1000;
+        const lotteryInterval = this.options.lotteryInterval * 60 * 1000;
+        // return;
+        setInterval(() => {
+            let lastEnded = this.db.fetch('lastEnded') || this.startedAt;
+            let lastStarted = this.db.fetch('lastStarted');
+            if(!lastEnded &amp;&amp; lastStarted) {
+                lastEnded = lastStarted;
+            }
+            if((Date.now() - lastEnded) > lotteryInterval) {
+                const lotteryDB = this.db.fetch('lottery') || [];
+                if (lotteryDB.length &lt; 1) return this.emit("error", "No user participated");
+                let randomUser = lotteryDB[Math.floor(Math.random() * lotteryDB.length)];
+                this.emit('end', new User(randomUser), lotteryDB.map(w => new User(w)));
+                this.db.set('lastEnded', Date.now());
+                this.db.delete('lottery');
+                this.start();
+            }
+        }, checkInterval);
+    }
+
+}
+
+/**
+  * Emitted whenever the LotteryManager becomes ready
+  * @event LotteryManager#ready
+  */
+
+/**
+  * Emitted whenever error occurs
+  * @event LotteryManager#error
+  * @param {Error} error
+  */
+
+/**
+  * Emitted whenever a user is registered
+  * @event LotteryManager#entryCreate
+  * @param {User} user registered
+  */
+
+/**
+  * Emitted whenever a user is removed from the lottery
+  * @event LotteryManager#entryDelete
+  * @param {User} removed user
+  */
+
+/**
+  * Emitted whenever lottery ends
+  * @event LotteryManager#end
+  * @param {String} winner - Lottery Winner
+  * @param {Array} entries - Array of the entries
+  * @example lotrery.on("end", (winner, entries) => console.log(winner + " won the lottery. Total "+ entries.length + " participated!");
+  */
+
+module.exports = LotteryManager;
+</code></pre>
+        </article>
+    </section>
 
 
 

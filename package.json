@@ -1,0 +1,25 @@
+{
+  "name": "quick.eco-docs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "minami": "^1.2.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "generate": "jsdoc --configure .jsdoc.json --verbose --destination ./ pkg",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Snowflake107/quick.eco.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Snowflake107/quick.eco/issues"
+  },
+  "homepage": "https://github.com/Snowflake107/quick.eco#readme"
+}

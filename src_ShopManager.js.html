@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Global - Documentation</title>
+    <title>src/ShopManager.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,362 +29,167 @@
 
 <div id="main">
     
-    <h1 class="page-title">Global</h1>
-    
-
-    
-
-
-
-
-<section>
-
-<header>
-    
-        <h2>
-        
-        </h2>
-        
-    
-</header>
-
-<article>
-    <div class="container-overview">
-    
-        
-
-        
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        
-            
-<div class="section-method">
-
-    
-
-    <h4 class="name" id="Database"><span class="type-signature"></span>Database<span class="signature">()</span><span class="type-signature"> &rarr; {quick.db}</span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Database</p>
-</div>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line24">line 24</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div class="section-returns">
-<h5>Returns:</h5>
-
-        
-
-<dl class="param-type">
-    <dt>
-        Type:
-    </dt>
-    <dd>
-        
-<span class="param-type"><code>quick.db</code></span>
-
-
-    </dd>
-</dl>
-
-
-    
-</div>
-
-
-
-</div>
-        
-            
-<div class="section-method">
-
-    
-
-    <h4 class="name" id="msParse"><span class="type-signature"></span>msParse<span class="signature">(milliseconds)</span><span class="type-signature"> &rarr; {Object}</span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>ms
-Milliseconds parser</p>
-</div>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line7">line 7</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>milliseconds</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><code>Number</code></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">
-                <p>Milliseconds to parse</p>
-                
-            </td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div class="section-returns">
-<h5>Returns:</h5>
-
-        
-
-<dl class="param-type">
-    <dt>
-        Type:
-    </dt>
-    <dd>
-        
-<span class="param-type"><code>Object</code></span>
-
-
-    </dd>
-</dl>
-
-
-<div class="param-desc">
-    <p>Time Time object</p>
-</div>
-
-    
-</div>
-
-
-
-</div>
-        
-    
-
-    
-
-    
-</article>
-
-</section>
+    <h1 class="page-title">src/ShopManager.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const Db = require("rex.db");
+Db.init("./economy");
+const db = new Db.table("ecoshop");
+const EcoError = require("./Error");
+
+class ShopManager extends Array {
+
+    constructor() {
+        super();
+    }
+
+    /**
+     * registerItem - Adds an Item to the Shop
+     * @param {String} itemName Name of the Item
+     * @param {Object} [itemInfo] About the Item
+     * @param {Number} [itemInfo.cost] Cost of the item
+     * @param {Number} [itemInfo.price] alias of cost
+     * @param {Any} [itemInfo.any] anything related to item (optional)
+     * @returns ShopManager
+     */
+    registerItem(itemName, itemInfo = {}) {
+        if(typeof itemName !== "string") throw new EcoError("Item name must be a string.");
+        if(typeof itemInfo !== "object") throw new EcoError("Item info(s) must be a string.");
+        const name = itemName || itemInfo.name;
+        if(!name) throw new EcoError("Item name was not provided.");
+        const cost = itemInfo.cost || itemInfo.price;
+        if(!cost || typeof cost !== "number") throw new EcoError("Item cost must be a number");
+        this.push({
+            name, ...itemInfo
+        }); // ...itemInfo because user can add excess info about the item
+        return this;
+    }
+
+    /**
+     * getItem - Fetches an Item from the Shop
+     * @param {String} itemName Name of the Item
+     * @returns object
+     */
+    getItem(itemName) {
+        if(!itemName) throw new EcoError("Item name was not provided.");
+        if(typeof itemName !== "string") throw new EcoError("Item name must be a string.");
+        return this.find(item => item.name == itemName);
+    }
+
+    /**
+     * hasItem - Checks if an Item is in Shop
+     * @param {String} itemName Name of the Item
+     * @returns boolean
+     */
+    hasItem(itemName) {
+        if(!itemName) throw new EcoError("Item name was not provided.");
+        if(typeof itemName !== "string") throw new EcoError("Item name must be a string.");
+        return !!(this.map(item => item.name).includes(itemName));
+    }
+
+    /**
+     * updateItem - Checks if an Item is in Shop
+     * @param {String} itemName Name of the Item
+     * @param {newItemInfo} [newItemInfo] Item's new information
+     * @param {Number} [newItemInfo.cost] Cost of the item
+     * @param {Number} [newItemInfo.price] alias of cost
+     * @param {Any} [newItemInfo.any] anything related to item (optional)
+     * @returns ShopManager
+     */
+    updateItem(itemName, newItemInfo = {}) {
+        if(typeof itemName !== "string") throw new EcoError("Item name must be a string.");
+        if(typeof newItemInfo !== "object") throw new EcoError("Item info(s) must be a string.");
+        const name = itemName || newItemInfo.name;
+        if(!name) throw new EcoError("Item name was not provided.");
+        let item = this.find(item => item.name == itemName);
+        if(!item) throw new EcoError(`${itemName} was not found.`);
+        const cost = newItemInfo.cost || newItemInfo.price;
+        if(!cost || typeof cost !== "number") throw new EcoError("Item cost must be a number");
+        item = {
+            ...newItemInfo, name
+        }; // name atlast to prevent sneaky ppl changing the name
+        return this;
+    }
+
+    /**
+     * deleteItem - Deletes an Item from the shop
+     * @param {String} itemName Name of the Item
+     * @returns Boolean
+     */
+    deleteItem(itemName) {
+        if(!itemName) throw new EcoError("Item name was not provided.");
+        if(typeof itemName !== "string") throw new EcoError("Item name must be a string.");
+        let item = this.map(item => item.name).indexOf(itemName);
+        if(!item) return false;
+        this.splice(item, 1);
+        return true;
+    }
+    
+    /**
+     * removeClones - Removes cloned items
+     * @returns Array
+     */
+    removeClones() {
+        if (this.length &lt; 1) return [];
+        return this.from(new Set(this));
+    }
+
+    /**
+     * allItems - All the Items in the Shop
+     * @returns ShopManager
+     */
+    allItems() {
+        return this;
+    }
+    
+    /**
+     * all - alias to allItems
+     * @returns ShopManager
+     */
+    all() {
+        return this.allItems();
+    }
+    
+    /**
+     * collection - Saved data
+     * @returns Array
+     */
+    get collection() {
+        return db.get("collection") ? db.get("collection") : [];
+    }
+    
+    /**
+     * _save - Saves the item in database
+     * @param {Array} i - Array to save. If this option isn't provided, it will save the ShopManager.
+     * @returns Boolean
+     */
+    _save(i) {
+        db.set("collection", i ? (Array.isArray(i) ? i : this ) : this);
+        return true;
+    }
+    
+    /**
+     * _delete - Deletes everything from the collection
+     * @returns Boolean
+     */
+    _delete() {
+        db.delete("collection");
+        return true;
+    }
+
+}
+
+module.exports = ShopManager;
+</code></pre>
+        </article>
+    </section>
 
 
 

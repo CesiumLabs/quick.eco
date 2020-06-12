@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>src/EconomyManager.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="EconomyManager.html">EconomyManager</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="EconomyManager.html#addMoney">addMoney</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="EconomyManager.html#beg">beg</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="EconomyManager.html#daily">daily</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="EconomyManager.html#deleteUser">deleteUser</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="EconomyManager.html#depositMoney">depositMoney</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="EconomyManager.html#fetchMoney">fetchMoney</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="EconomyManager.html#leaderboard">leaderboard</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="EconomyManager.html#removeMoney">removeMoney</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="EconomyManager.html#reset">reset</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="EconomyManager.html#setBank">setBank</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="EconomyManager.html#setMoney">setMoney</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="EconomyManager.html#transfer">transfer</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="EconomyManager.html#weekly">weekly</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="EconomyManager.html#withdrawMoney">withdrawMoney</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="EconomyManager.html#work">work</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="GuildEconomyManager.html">GuildEconomyManager</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="GuildEconomyManager.html#addMoney">addMoney</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="GuildEconomyManager.html#beg">beg</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="GuildEconomyManager.html#daily">daily</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="GuildEconomyManager.html#deleteUser">deleteUser</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="GuildEconomyManager.html#depositMoney">depositMoney</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="GuildEconomyManager.html#fetchMoney">fetchMoney</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="GuildEconomyManager.html#leaderboard">leaderboard</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="GuildEconomyManager.html#removeMoney">removeMoney</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="GuildEconomyManager.html#reset">reset</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="GuildEconomyManager.html#setBank">setBank</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="GuildEconomyManager.html#setMoney">setMoney</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="GuildEconomyManager.html#transfer">transfer</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="GuildEconomyManager.html#weekly">weekly</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="GuildEconomyManager.html#withdrawMoney">withdrawMoney</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="GuildEconomyManager.html#work">work</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="LotteryManager.html">LotteryManager</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="LotteryManager.html#end">end</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="LotteryManager.html#registerUser">registerUser</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="LotteryManager.html#removeUser">removeUser</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="LotteryManager.html#start">start</a></span></li><li class="nav-heading">Events</li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="LotteryManager.html#event:end">end</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="LotteryManager.html#event:entryCreate">entryCreate</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="LotteryManager.html#event:entryDelete">entryDelete</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="LotteryManager.html#event:error">error</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="LotteryManager.html#event:ready">ready</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#Database">Database</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#msParse">msParse</a></span></li>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">src/EconomyManager.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const EcoError = require("./Error");
+let db = require("rex.db");
+db.init("./economy");
+let invalid = [0, -1, -0];
+let invL = [-1, -0];
+
+const User = require("./User");
+
+class EconomyManager {
+
+    /**
+     * @constructor
+     * @params {String} name Name for EconomyManager
+     * @example const eco = new Eco.Manager();
+     */
+    constructor(name="globaleconomy", store) {
+        if (name &amp;&amp; (typeof name !== "string")) throw new EcoError("Eco: Name must me a string");
+        if (name) db = new db.table(name.replace(/ +/g, ""));
+        
+        /**
+          * Table name
+          * @type {String}
+          */
+        this.name = name ? (typeof name === "string" ? name.replace(/ +/g, "") : null) : null;
+       
+        /**
+          * internal data manager
+          * @type {Object}
+          */
+        this.db = db;
+    }
+
+    /**
+     * addMoney - Adds money
+     * @param {String} userid User ID
+     * @param {Number} amount Amount to add
+     * @returns object
+     */
+    addMoney(userid, amount) {
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        if (invalid.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
+        let oldbal = this.fetch(`money_${userid}`);
+        this.db.math(`money_${userid}`, "+", amount);
+        let newbal = this.fetch(`money_${userid}`);
+        return { before: oldbal, after: newbal, user: new User(userid, undefined, this.db), amount: amount };
+    }
+
+    /**
+     * depositMoney - Adds money to Bank
+     * @param {String} userid User ID
+     * @param {Number} amount Amount to add
+     * @returns {Object}
+     */
+    depositMoney(userid, amount) {
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        if (invalid.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
+        let oldbank = this.fetch(`bank_${userid}`);
+        let oldbal = this.fetch(`money_${userid}`);
+        if(amount > oldbal) throw new EcoError("No enough money to deposit.");
+        this.db.math(`bank_${userid}`, "+", amount);
+        this.db.math(`money_${userid}`, "-", amount);
+        let newbank = this.fetch(`bank_${userid}`);
+        let newbal = this.fetch(`money_${userid}`);
+        return { before: { money: oldbal, bank: oldbank }, after: { money: newbal, bank: newbank }, user: new User(userid, undefined, this.db), amount: amount };
+    }
+
+    /**
+     * fetchMoney - Returns user's money
+     * @param {String} userid user id
+     * @returns {Object}
+     */
+    fetchMoney(userid) {
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
+        let every = this.leaderboard({ limit: 0 });
+        let one = every.filter(data => data.id === userid);
+        one = one.length &lt; 1 ? null : one;
+        let bank = this.fetch(`bank_${userid}`);
+
+        return one
+            ? { balance: one[0].money, bank, user: new User(one[0].id, undefined, this.db), position: every.indexOf(one[0]) + 1 }
+            : { balance: 0, bank, user: new User(userid, undefined, this.db), position: null };
+    }
+
+    /**
+     * setMoney - Sets money
+     * @param {String} userid user id
+     * @param {Number} amount amount to set
+     * @returns {Object}
+     */
+    setMoney(userid, amount) {
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        if (invL.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
+        let oldbal = this.fetch(`money_${userid}`);
+        this.db.set(`money_${userid}`, amount);
+        let newbal = this.fetch(`money_${userid}`);
+        return { before: oldbal, after: newbal, user: new User(userid, undefined, this.db), amount: amount };
+    }
+
+    /**
+     * setBank - Sets Bank Balance
+     * @param {String} userid user id
+     * @param {Number} amount amount to set
+     * @returns {Object}
+     */
+    setBank(userid, amount) {
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        if (invL.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
+        let oldbal = this.fetch(`bank_${userid}`);
+        this.db.set(`bank_${userid}`, amount);
+        let newbal = this.fetch(`bank_${userid}`);
+        return { before: oldbal, after: newbal, user: new User(userid, undefined, this.db), amount: amount };
+    }
+
+    /**
+     * deleteUser - Deletes a user from the database
+     * @param {String} userid user id
+     * @returns {Object}
+     */
+    deleteUser(userid) {
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
+        let oldbal = this.fetch(`money_${userid}`);
+        this.db.delete(`money_${userid}`);
+        let newbal = this.fetch(`money_${userid}`);
+        let oldbank = this.fetch(`bank_${userid}`);
+        this.db.delete(`bank_${userid}`);
+        let newbank = this.fetch(`bank_${userid}`);
+        return { before: { money: oldbal, bank: oldbank }, after: { money: newbal, bank: newbank }, user: new User(userid, undefined, this.db) };
+    }
+
+    /**
+     * removeMoney - Subtracts money of a user
+     * @param {String} userid User id
+     * @param {Number} amount amount
+     * @returns {Object}
+     */
+    removeMoney(userid, amount) {
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        if (invalid.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
+        let oldbal = this.fetch(`money_${userid}`);
+        if (oldbal - amount &lt; 0) return { error: "New amount is negative." };
+        this.db.math(`money_${userid}`, "-", amount);
+        let newbal = this.fetch(`money_${userid}`);
+        return { before: oldbal, after: newbal, user: new User(userid, undefined, this.db), amount: amount };
+    }
+
+    /**
+     * withdrawMoney - Withdraws money from bank of a user
+     * @param {String} userid User id
+     * @param {Number} amount amount
+     * @returns {Object}
+     */
+    withdrawMoney(userid, amount) {
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        let oldbank = this.fetch(`bank_${userid}`);
+        if (oldbank - amount &lt; 0) return { error: "New amount is negative." };
+        let oldbal = this.fetch(`money_${userid}`);
+        this.db.math(`bank_${userid}`, "-", amount);
+        this.db.math(`money_${userid}`, "+", amount);
+        let newbank = this.fetch(`bank_${userid}`);        
+        let newbal = this.fetch(`money_${userid}`);
+        return { before: { money: oldbal, bank: oldbank }, after: { money: newbal, bank: newbank }, user: new User(userid, undefined, this.db), amount: amount };
+    }
+
+    /**
+     * daily - daily balance
+     * @param {String} userid user id
+     * @param {Number} amount amount 
+     * @returns {Object}
+     */
+    daily(userid, amount) {
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        if (invalid.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
+        let timeout = 86400000;
+        let check = this.db.fetch(`dailycooldown_${userid}`);
+        if (check !== null &amp;&amp; timeout - (Date.now() - check) > 0) {
+            let time = this.ms(timeout - (Date.now() - check));
+            return { onCooldown: true, time: time, user: userid };
+        }
+        let before = this.fetch(`money_${userid}`);
+        let added = this.db.math(`money_${userid}`, "+", amount);
+        let newcooldown = this.db.set(`dailycooldown_${userid}`, Date.now());
+        return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: timeout, before: before, after: added, user: new User(userid, undefined, this.db), amount: amount, time: this.convertTime(timeout, newcooldown) };
+    }
+
+    /**
+     * weekly - weekly balance
+     * @param {String} userid user id
+     * @param {Number} amount amount
+     * @returns {Object}
+     */
+    weekly(userid, amount) {
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        if (invalid.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
+        let timeout = 604800000;
+        let check = this.db.fetch(`weeklycooldown_${userid}`);
+        if (check !== null &amp;&amp; timeout - (Date.now() - check) > 0) {
+            let time = this.ms(timeout - (Date.now() - check));
+            return { onCooldown: true, time: time, user: userid };
+        }
+        let before = this.fetch(`money_${userid}`);
+        let added = this.db.math(`money_${userid}`, "+", amount);
+        let newcooldown = this.db.set(`weeklycooldown_${userid}`, Date.now());
+        return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: timeout, before: before, after: added, user: new User(userid, undefined, this.db), amount: amount, time: this.convertTime(timeout, newcooldown) };
+    }
+    
+    /**
+     * Work - Work and earn
+     * @param {String} userid User id
+     * @param {Number} amount amount
+     * @param {Object} options Options = { jobs: ["Doctor", "Singer"], cooldown: 2.7e+6 }
+     * @returns {Object}
+     */
+    work(userid, amount, options={}) {
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        if (invalid.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
+        let cooldown = options.cooldown || 2.7e+6;
+        if (options.jobs &amp;&amp; !Array.isArray(options.jobs)) throw new EcoError("Jobs must be an array!");
+        let jobs = options.jobs || [
+            "Doctor",
+            "Pornstar",
+            "Dishwasher",
+            "Memer",
+            "Shit eater",
+            "YouTuber",
+            "Developer",
+            "Musician",
+            "Professional sleeper",
+            "Teacher",
+            "Scientist",
+            "Baby maker",
+            "Twitch Streamer",
+            "Twitch Pornstar",
+            "StickAnimator",
+            "Strict Math Teacher",
+            "Tik Toker",
+            "Miner", 
+            "Bartender", 
+            "Cashier", 
+            "Cleaner", 
+            "Drugdealer",
+            "Assistant", 
+            "Nurse",
+            "Accountants", 
+            "Security Guard", 
+            "Sheriff", 
+            "Lawyer",
+            "Electrician", 
+            "Singer", 
+            "Dancer"
+        ];
+        let check = this.db.fetch(`workcooldown_${userid}`);
+        if (check !== null &amp;&amp; cooldown - (Date.now() - check) > 0) {
+            let time = this.ms(cooldown - (Date.now() - check));
+            return { onCooldown: true, time: time, user: new User(userid, undefined, this.db) };
+        }
+        let workedAs = jobs[Math.floor(Math.random() * jobs.length)];
+        let before = this.fetch(`money_${userid}`);
+        let added = this.db.math(`money_${userid}`, "+", amount);
+        let newcooldown = this.db.set(`workcooldown_${userid}`, Date.now());
+        return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: cooldown, before: before, after: added, user: new User(userid, undefined, this.db), amount: amount, workedAs: workedAs, time: this.convertTime(cooldown, newcooldown) };
+    }
+
+    /**
+     * beg - beg and earn
+     * @param {String} userid user id
+     * @param {Number} amount amount 
+     * @param {Object} options options = { canLose: false, cooldown: 60000, customName: "beg" }
+     * @returns {Object}
+     */
+    beg(userid, amount, options={}) {
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        if (invalid.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
+        let lost = false;
+        let luck1 = Math.floor(Math.random() * 5);
+        let luck2 = Math.floor(Math.random() * 5);
+        if (luck1 === luck2) lost = true;
+        let timeout = options.cooldown ? (!isNaN(options.cooldown) ? parseInt(options.cooldown) : 60000) : 60000;
+        let check = this.db.fetch(`${options.customName || "beg"}cooldown_${userid}`);
+        if (check !== null &amp;&amp; timeout - (Date.now() - check) > 0) {
+            let time = this.ms(timeout - (Date.now() - check));
+            return { onCooldown: true, time: time, user: new User(userid, undefined, this.db) };
+        }
+        if (options.canLose &amp;&amp; lost) {
+            let before = this.fetch(`money_${userid}`);
+            let newcooldown = this.db.set(`${options.customName || "beg"}cooldown_${userid}`, Date.now());
+            return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: timeout, before: before, after: before, user: new User(userid, undefined, this.db), amount: amount, time: this.convertTime(timeout, newcooldown), lost: true };
+        }
+        let before = this.fetch(`money_${userid}`);
+        let added = this.db.math(`money_${userid}`, "+", amount);
+        let newcooldown = this.db.set(`${options.customName || "beg"}cooldown_${userid}`, Date.now());
+        return { onCooldown: false, newCooldown: true, claimedAt: newcooldown, timeout: timeout, before: before, after: added, user: new User(userid, undefined, this.db), amount: amount, time: this.convertTime(timeout, newcooldown), lost: false };
+    }
+
+    /**
+     * transfer - Transfer money from one user to another
+     * @param {String} user1 first user id
+     * @param {String} user2 Second user id
+     * @param {Number} amount Amount
+     * @returns {Object}
+     */
+    transfer(user1, user2, amount) {
+        if (!user1) throw new EcoError("User id was not provided.");
+        if (typeof user1 !== "string") throw new EcoError("User id must be a string.");
+        if (!user2) throw new EcoError("User id was not provided.");
+        if (typeof user2 !== "string") throw new EcoError("User id must be a string.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        if (invalid.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
+        let check = this.fetch(`money_${user1}`);
+        if (check &lt; 1) return { error: "Money of first user is less than 1." };
+        if (check &lt; amount) return { error: "Money of first user is less than given amount." };
+        if (check - amount &lt; 0) return { error: "This user can't share that much amount of money." };
+        let newM = this.db.math(`money_${user2}`, "+", amount);
+        let newM2 = this.db.math(`money_${user1}`, "-", amount);
+        return { user1: new User(user1, undefined, this.db), user2: new User(user2, undefined, this.db), amount: amount };
+    }
+
+    /**
+     * leaderboard - leaderboard
+     * @param {Object} options Options = { limit: 10, raw: false }
+     * @returns leaderboard[]
+     */
+    leaderboard(options = {}) {
+        let limit = options.limit || 10;
+        if (isNaN(limit)) throw new EcoError("Limit must be a number.");
+        let raw = options.raw || false;
+        let lb = this.db.fetchAll().filter(data => data.ID.startsWith(`money`)).sort((a, b) => b.data - a.data);
+        if (!(parseInt(limit) &lt;= 0)) lb.length = parseInt(limit);
+        if (raw === true) return lb;
+        var final = [];
+        var i = 0;
+        for (i in lb) {
+
+            let obj = {
+                position: lb.indexOf(lb[i]) + 1,
+                id: lb[i].ID.split('_')[1],
+                money: lb[i].data
+            };
+            final.push(obj);
+        };
+        return final;
+    }
+
+    /**
+      * Drops the table
+      */
+    reset() {
+        console.warn(`Data wiped out from ${this.name}`);
+        try {
+            this.db.deleteAll();
+            return true;
+        } catch(e) {
+            return false;
+        }
+        return;
+    }
+
+    /**
+      * database entries
+      * @type {entries[]}
+      */
+    get entries() {
+        return this.db.all();
+    }
+
+    /**
+      * @ignore
+      * @private
+      */
+    fetch(param) {
+        return this.db.fetch(param) ? this.db.fetch(param) : 0;
+    }
+
+    /**
+      * @ignore
+      * @private
+      */
+    convertTime(cooldown, check) {
+        let time = this.ms(cooldown - (Date.now() - check));
+        return time;
+    }
+
+    /**
+      * @ignore
+      * @private
+      */
+    ms(milliseconds) {
+        const roundTowardsZero = milliseconds > 0 ? Math.floor : Math.ceil;
+        return {
+            days: roundTowardsZero(milliseconds / 86400000),
+            hours: roundTowardsZero(milliseconds / 3600000) % 24,
+            minutes: roundTowardsZero(milliseconds / 60000) % 60,
+            seconds: roundTowardsZero(milliseconds / 1000) % 60,
+            milliseconds: roundTowardsZero(milliseconds) % 1000,
+            microseconds: roundTowardsZero(milliseconds * 1000) % 1000,
+            nanoseconds: roundTowardsZero(milliseconds * 1e6) % 1000
+        }
+    }
+}
+
+module.exports = EconomyManager;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a> on Fri Jun 12 2020 10:14:40 GMT+0530 (India Standard Time) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

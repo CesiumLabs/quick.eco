@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Global - Documentation</title>
+    <title>index.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,362 +29,78 @@
 
 <div id="main">
     
-    <h1 class="page-title">Global</h1>
-    
-
-    
-
-
-
-
-<section>
-
-<header>
-    
-        <h2>
-        
-        </h2>
-        
-    
-</header>
-
-<article>
-    <div class="container-overview">
-    
-        
-
-        
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        
-            
-<div class="section-method">
-
-    
-
-    <h4 class="name" id="Database"><span class="type-signature"></span>Database<span class="signature">()</span><span class="type-signature"> &rarr; {quick.db}</span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Database</p>
-</div>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line24">line 24</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div class="section-returns">
-<h5>Returns:</h5>
-
-        
-
-<dl class="param-type">
-    <dt>
-        Type:
-    </dt>
-    <dd>
-        
-<span class="param-type"><code>quick.db</code></span>
-
-
-    </dd>
-</dl>
-
-
-    
-</div>
-
-
-
-</div>
-        
-            
-<div class="section-method">
-
-    
-
-    <h4 class="name" id="msParse"><span class="type-signature"></span>msParse<span class="signature">(milliseconds)</span><span class="type-signature"> &rarr; {Object}</span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>ms
-Milliseconds parser</p>
-</div>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line7">line 7</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>milliseconds</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><code>Number</code></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">
-                <p>Milliseconds to parse</p>
-                
-            </td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div class="section-returns">
-<h5>Returns:</h5>
-
-        
-
-<dl class="param-type">
-    <dt>
-        Type:
-    </dt>
-    <dd>
-        
-<span class="param-type"><code>Object</code></span>
-
-
-    </dd>
-</dl>
-
-
-<div class="param-desc">
-    <p>Time Time object</p>
-</div>
-
-    
-</div>
-
-
-
-</div>
-        
-    
-
-    
-
-    
-</article>
-
-</section>
+    <h1 class="page-title">index.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+  * ms
+  * Milliseconds parser
+  * @param {Number} milliseconds Milliseconds to parse
+  * @returns {Object} Time Time object
+  */
+function msParse(milliseconds) {
+    const roundTowardsZero = milliseconds > 0 ? Math.floor : Math.ceil;
+    return {
+        days: roundTowardsZero(milliseconds / 86400000),
+        hours: roundTowardsZero(milliseconds / 3600000) % 24,
+        minutes: roundTowardsZero(milliseconds / 60000) % 60,
+        seconds: roundTowardsZero(milliseconds / 1000) % 60,
+        milliseconds: roundTowardsZero(milliseconds) % 1000,
+        microseconds: roundTowardsZero(milliseconds * 1000) % 1000,
+        nanoseconds: roundTowardsZero(milliseconds * 1e6) % 1000
+    }
+}
+
+/**
+  * Database
+  * @returns {quick.db}
+  */
+function Database(name="./json") {
+    const db = require("rex.db");
+    db.init(name);
+
+    db.add = (key, val, ...ops) => {
+        return db.math(key, "+", val, ...ops);
+    }
+
+    db.subtract = (key, val, ...ops) => {
+        return db.math(key, "-", val, ...ops);
+    }
+
+    db.startsWith = (key, ops={}) => {
+        let sortBy = require("lodash/sortBy");
+        let arb = db.all().filter(i => i.ID.startsWith(key));
+        if (ops.sort &amp;&amp; typeof ops.sort === 'string') {
+            if (ops.sort.startsWith('.')) ops.sort = ops.sort.slice(1);
+            ops.sort = ops.sort.split('.');
+            arb = sortBy(arb, ops.sort).reverse();
+        }
+        return arb;
+    }
+    return db;
+}
+
+module.exports = {
+    // Bank: require("./src/BankManager"),
+    GuildManager: require("./src/GuildManager"),
+    LotteryManager: require("./src/LotteryManager"),
+    Manager: require("./src/EconomyManager"),
+    ShopManager: require("./src/ShopManager"),
+    User: require("./src/User"),
+    version: require("./package.json").version,
+    db: Database,
+    ms: msParse
+};
+</code></pre>
+        </article>
+    </section>
 
 
 
