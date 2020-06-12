@@ -105,3 +105,4 @@ dist
 
 private.js
 package-lock.json
+economy.sqlite
