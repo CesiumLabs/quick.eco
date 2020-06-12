@@ -1,6 +1,8 @@
+const EcoError = require("./Error");
 const db = require("rex.db");
 db.init("./economy");
 const { EventEmitter } = require("events");
+const User = require("./User.js");
 
 /**
  * LotteryManager - Simple LotteryManager class
@@ -34,9 +36,10 @@ class LotteryManager extends EventEmitter {
     start() {
         this._started = true;
         this.startedAt = Date.now();
-        this.emit('ready');
         if(!this.db.fetch('lastStarted') || this.db.fetch("lastStarted") == null) this.db.set('lastStarted', Date.now());
-        return this._start();
+        this._start();
+        this.emit("ready");
+        return true;
     }
     
     /**
@@ -47,12 +50,12 @@ class LotteryManager extends EventEmitter {
     registerUser(id) {
         if(!id) {
             let emitted = this.emit('error', `User ID was not provided.`);
-            if(!emitted) throw new TypeError(`User ID was not provided.`);
+            if(!emitted) throw new EcoError(`User ID was not provided.`);
         }
         let lotteryDB = this.db.fetch('lottery') || [];
         lotteryDB.push(id);
         this.db.set('lottery', lotteryDB);
-        let emitted = this.emit('entryCreate', id);
+        let emitted = this.emit('entryCreate', new User(id));
         if(!emitted) return true;
     }
 
@@ -64,16 +67,16 @@ class LotteryManager extends EventEmitter {
     removeUser(id) {
         if(!id) {
             let emitted = this.emit('error', `User ID was not provided.`);
-            if(!emitted) throw new TypeError(`User ID was not provided.`);
+            if(!emitted) throw new EcoError(`User ID was not provided.`);
         }
         let lotteryDB = this.db.fetch('lottery') || [];
         if (!lotteryDB.includes(id)) {
             let emitted = this.emit('error', `${id} is not enrolled.`);
-            if(!emitted) throw new TypeError(`${id} is not enrolled.`);
+            if(!emitted) throw new EcoError(`${id} is not enrolled.`);
         }
         lotteryDB.splice(lotteryDB.indexOf(id), 1);
         this.db.set('lottery', lotteryDB);
-        let emitted = this.emit('entryDelete', id);
+        let emitted = this.emit('entryDelete', new User(id));
         if(!emitted) return true;
     }
 
@@ -82,7 +85,7 @@ class LotteryManager extends EventEmitter {
       * @returns Array
       */
     get users() {
-        return (this.db.fetch('lottery') || []);
+        return (this.db.fetch('lottery').map(m => new User(m)) || []);
     }
 
 
@@ -95,11 +98,11 @@ class LotteryManager extends EventEmitter {
         let u = this.db.get("lottery");
         if (!u || u == null || u.length < 1) {
             let emitted = this.emit("error", "No user particilated");
-            if (!emitted) throw new Error("No user participated");
+            if (!emitted) throw new EcoError("No user participated");
             return;
         }
         let Winner = u[Math.floor(Math.random() * u.length)];
-        this.emit("end", (Winner, u));
+        this.emit("end", (new User(Winner), u.map(u => new User(u))));
         this.db.delete('lottery');
         this.db.set('lastEnded', Date.now());
         this._started = false;
@@ -127,7 +130,7 @@ class LotteryManager extends EventEmitter {
                 const lotteryDB = this.db.fetch('lottery') || [];
                 if (lotteryDB.length < 1) return this.emit("error", "No user participated");
                 let randomUser = lotteryDB[Math.floor(Math.random() * lotteryDB.length)];
-                this.emit('end', randomUser, lotteryDB);
+                this.emit('end', new User(randomUser), lotteryDB.map(w => new User(w)));
                 this.db.set('lastEnded', Date.now());
                 this.db.delete('lottery');
                 this.start();

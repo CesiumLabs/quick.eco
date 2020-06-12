@@ -1,7 +1,7 @@
 {
   "name": "quick.eco",
   "version": "3.0.2-dev",
-  "description": "A simple & easy to use economy package for discord bots using quick.db",
+  "description": "Simple & easy to use economy framework for discord bots.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -17,15 +17,25 @@
     "discord.js",
     "discord.js-economy",
     "quick.db-economy",
-    "eris-economy"
+    "eris-economy",
+    "framework",
+    "sqlite",
+    "discord-economy",
+    "discord-eco",
+    "discord-xp",
+    "discord-leveling",
+    "economy",
+    "leveling",
+    "eco"
   ],
-  "author": "Snowflake7",
+  "author": "Snowflake107",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Snowflake107/quick.eco/issues"
   },
   "homepage": "https://quickeco.cf",
   "dependencies": {
-    "rex.db": "^1.0.0"
+    "rex.db": "^1.0.0",
+    "lodash": "^4.17.15"
   }
 }

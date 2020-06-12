@@ -1,3 +1,4 @@
+const EcoError = require("./Error");
 let db = require("rex.db");
 db.init("./economy");
 let invalid = [0, -1, -0];
@@ -9,10 +10,11 @@ class EconomyManager {
 
     /**
      * @constructor
+     * @params {String} name Name for EconomyManager
      * @example const eco = new Eco.Manager();
      */
-    constructor(name) {
-        if (name && (typeof name !== "string")) throw new Error("Eco: Name must me a string");
+    constructor(name="globaleconomy", store) {
+        if (name && (typeof name !== "string")) throw new EcoError("Eco: Name must me a string");
         if (name) db = new db.table(name.replace(/ +/g, ""));
         
         /**
@@ -35,11 +37,11 @@ class EconomyManager {
      * @returns { before, after, user, amount }
      */
     addMoney(userid, amount) {
-        if (!userid) throw new TypeError("User id was not provided.");
-        if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
-        if (!amount) throw new TypeError("Amount was not provided.");
-        if (isNaN(amount)) throw new SyntaxError("Amount must be a number.");
-        if (invalid.includes(Math.sign(amount))) throw new TypeError("Amount can't be negative or zero.");
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        if (invalid.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
         let oldbal = this.fetch(`money_${userid}`);
         this.db.math(`money_${userid}`, "+", amount);
         let newbal = this.fetch(`money_${userid}`);
@@ -52,8 +54,8 @@ class EconomyManager {
      * @returns { amount, user, position }
      */
     fetchMoney(userid) {
-        if (!userid) throw new TypeError("User id was not provided.");
-        if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
         let every = this.leaderboard({ limit: 0 });
         let one = every.filter(data => data.id === userid);
         one = one.length < 1 ? null : one;
@@ -68,11 +70,11 @@ class EconomyManager {
      * @returns { before, after, user, amount }
      */
     setMoney(userid, amount) {
-        if (!userid) throw new TypeError("User id was not provided.");
-        if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
-        if (!amount) throw new TypeError("Amount was not provided.");
-        if (isNaN(amount)) throw new SyntaxError("Amount must be a number.");
-        if (invL.includes(Math.sign(amount))) throw new TypeError("Amount can't be negative or zero.");
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        if (invL.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
         let oldbal = this.fetch(`money_${userid}`);
         this.db.set(`money_${userid}`, amount);
         let newbal = this.fetch(`money_${userid}`);
@@ -85,8 +87,8 @@ class EconomyManager {
      * @returns { before, after, user }
      */
     deleteUser(userid) {
-        if (!userid) throw new TypeError("User id was not provided.");
-        if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
         let oldbal = this.fetch(`money_${userid}`);
         this.db.delete(`money_${userid}`);
         let newbal = this.fetch(`money_${userid}`);
@@ -100,11 +102,11 @@ class EconomyManager {
      * @returns { befpre, after, user, amount }
      */
     removeMoney(userid, amount) {
-        if (!userid) throw new TypeError("User id was not provided.");
-        if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
-        if (!amount) throw new TypeError("Amount was not provided.");
-        if (isNaN(amount)) throw new SyntaxError("Amount must be a number.");
-        if (invalid.includes(Math.sign(amount))) throw new TypeError("Amount can't be negative or zero.");
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        if (invalid.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
         let oldbal = this.fetch(`money_${userid}`);
         if (oldbal - amount < 0) return { error: "New amount is negative." };
         this.db.math(`money_${userid}`, "-", amount);
@@ -119,11 +121,11 @@ class EconomyManager {
      * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, time }
      */
     daily(userid, amount) {
-        if (!userid) throw new TypeError("User id was not provided.");
-        if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
-        if (!amount) throw new TypeError("Amount was not provided.");
-        if (isNaN(amount)) throw new SyntaxError("Amount must be a number.");
-        if (invalid.includes(Math.sign(amount))) throw new TypeError("Amount can't be negative or zero.");
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        if (invalid.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
         let timeout = 86400000;
         let check = this.db.fetch(`dailycooldown_${userid}`);
         if (check !== null && timeout - (Date.now() - check) > 0) {
@@ -143,11 +145,11 @@ class EconomyManager {
      * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, time }
      */
     weekly(userid, amount) {
-        if (!userid) throw new TypeError("User id was not provided.");
-        if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
-        if (!amount) throw new TypeError("Amount was not provided.");
-        if (isNaN(amount)) throw new SyntaxError("Amount must be a number.");
-        if (invalid.includes(Math.sign(amount))) throw new TypeError("Amount can't be negative or zero.");
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        if (invalid.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
         let timeout = 604800000;
         let check = this.db.fetch(`weeklycooldown_${userid}`);
         if (check !== null && timeout - (Date.now() - check) > 0) {
@@ -168,13 +170,13 @@ class EconomyManager {
      * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, workedAs, time }
      */
     work(userid, amount, options={}) {
-        if (!userid) throw new TypeError("User id was not provided.");
-        if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
-        if (!amount) throw new TypeError("Amount was not provided.");
-        if (isNaN(amount)) throw new SyntaxError("Amount must be a number.");
-        if (invalid.includes(Math.sign(amount))) throw new TypeError("Amount can't be negative or zero.");
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        if (invalid.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
         let cooldown = options.cooldown || 2.7e+6;
-        if (options.jobs && !Array.isArray(options.jobs)) throw new SyntaxError("Jobs must be an array!");
+        if (options.jobs && !Array.isArray(options.jobs)) throw new EcoError("Jobs must be an array!");
         let jobs = options.jobs || [
             "Doctor",
             "Pornstar",
@@ -228,11 +230,11 @@ class EconomyManager {
      * @returns { onCooldown, newCooldown, claimedAt, timeout, before, after, user, amount, time, lost }
      */
     beg(userid, amount, options={}) {
-        if (!userid) throw new TypeError("User id was not provided.");
-        if (typeof userid !== "string") throw new SyntaxError("User id must be a string.");
-        if (!amount) throw new TypeError("Amount was not provided.");
-        if (isNaN(amount)) throw new SyntaxError("Amount must be a number.");
-        if (invalid.includes(Math.sign(amount))) throw new TypeError("Amount can't be negative or zero.");
+        if (!userid) throw new EcoError("User id was not provided.");
+        if (typeof userid !== "string") throw new EcoError("User id must be a string.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        if (invalid.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
         let lost = false;
         let luck1 = Math.floor(Math.random() * 5);
         let luck2 = Math.floor(Math.random() * 5);
@@ -262,13 +264,13 @@ class EconomyManager {
      * @returns { user1, user2, amount }
      */
     transfer(user1, user2, amount) {
-        if (!user1) throw new TypeError("User id was not provided.");
-        if (typeof user1 !== "string") throw new SyntaxError("User id must be a string.");
-        if (!user2) throw new TypeError("User id was not provided.");
-        if (typeof user2 !== "string") throw new SyntaxError("User id must be a string.");
-        if (!amount) throw new TypeError("Amount was not provided.");
-        if (isNaN(amount)) throw new SyntaxError("Amount must be a number.");
-        if (invalid.includes(Math.sign(amount))) throw new TypeError("Amount can't be negative or zero.");
+        if (!user1) throw new EcoError("User id was not provided.");
+        if (typeof user1 !== "string") throw new EcoError("User id must be a string.");
+        if (!user2) throw new EcoError("User id was not provided.");
+        if (typeof user2 !== "string") throw new EcoError("User id must be a string.");
+        if (!amount) throw new EcoError("Amount was not provided.");
+        if (isNaN(amount)) throw new EcoError("Amount must be a number.");
+        if (invalid.includes(Math.sign(amount))) throw new EcoError("Amount can't be negative or zero.");
         let check = this.fetch(`money_${user1}`);
         if (check < 1) return { error: "Money of first user is less than 1." };
         if (check < amount) return { error: "Money of first user is less than given amount." };
@@ -285,7 +287,7 @@ class EconomyManager {
      */
     leaderboard(options = {}) {
         let limit = options.limit || 10;
-        if (isNaN(limit)) throw new SyntaxError("Limit must be a number.");
+        if (isNaN(limit)) throw new EcoError("Limit must be a number.");
         let raw = options.raw || false;
         let lb = this.db.fetchAll().filter(data => data.ID.startsWith(`money`)).sort((a, b) => b.data - a.data);
         if (!(parseInt(limit) <= 0)) lb.length = parseInt(limit);
@@ -302,6 +304,20 @@ class EconomyManager {
             final.push(obj);
         };
         return final;
+    }
+
+    /**
+      * Drops the table
+      */
+    reset() {
+        console.warn(`Data wiped out from ${this.name}`);
+        try {
+            this.db.deleteAll();
+            return true;
+        } catch(e) {
+            return false;
+        }
+        return;
     }
 
     /**

@@ -17,12 +17,43 @@ function msParse(milliseconds) {
     }
 }
 
+/**
+  * Database
+  * @returns {quick.db}
+  */
+function Database(name="./json") {
+    const db = require("rex.db");
+    db.init(name);
+
+    db.add = (key, val, ...ops) => {
+        return db.math(key, "+", val, ...ops);
+    }
+
+    db.subtract = (key, val, ...ops) => {
+        return db.math(key, "-", val, ...ops);
+    }
+
+    db.startsWith = (key, ops={}) => {
+        let sortBy = require("lodash/sortBy");
+        let arb = db.all().filter(i => i.ID.startsWith(key));
+        if (ops.sort && typeof ops.sort === 'string') {
+            if (ops.sort.startsWith('.')) ops.sort = ops.sort.slice(1);
+            ops.sort = ops.sort.split('.');
+            arb = sortBy(arb, ops.sort).reverse();
+        }
+        return arb;
+    }
+    return db;
+}
+
 module.exports = {
-    Manager: require("./src/EconomyManager"),
+    Bank: require("./src/BankManager"),
     GuildManager: require("./src/GuildManager"),
-    ShopManager: require("./src/ShopManager"),
     LotteryManager: require("./src/LotteryManager"),
+    Manager: require("./src/EconomyManager"),
+    ShopManager: require("./src/ShopManager"),
+    User: require("./src/User"),
     version: require("./package.json").version,
-    db: require("rex.db"),
+    db: Database,
     ms: msParse
 };
