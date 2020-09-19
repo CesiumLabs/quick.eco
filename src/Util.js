@@ -1,5 +1,8 @@
 class Util {
 
+    /**
+     * This class can not be instantiated
+     */
     constructor() {
         throw new Error(`The ${this.constructor.name} class may not be instantiated!`);
     }
@@ -54,7 +57,7 @@ class Util {
     }
 
     /**
-     * Default Cooldown
+     * Default Cooldown table
      */
     static get COOLDOWN() {
         return {

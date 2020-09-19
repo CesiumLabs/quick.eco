@@ -1,9 +1,10 @@
 {
   "name": "quick.eco",
-  "version": "5.0.0-dev",
+  "version": "5.0.0-dev1",
   "description": "Powerful economy framework for discord bots.",
   "main": "index.js",
   "scripts": {
+    "docsgen": "jsdoc --configure .jsdoc.json --verbose",
     "test": "cd test && node index.js"
   },
   "repository": {
@@ -35,6 +36,8 @@
   },
   "homepage": "https://github.com/Snowflake107/quick.eco",
   "devDependencies": {
-    "quickmongo": "^1.1.4"
+    "jsdoc": "^3.6.5",
+    "jsdoc-skyceil": "github:zyrouge/jsdoc-skyceil",
+    "quickmongo": "^1.1.5"
   }
 }

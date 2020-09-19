@@ -10,16 +10,25 @@ class Manager {
      * @param {object} ops Manager options
      * @param {string} [ops.storage] Storage path
      */
-    constructor(ops = Defaults) {
-        if (typeof ops !== "object") ops = Defaults;
-        if (!!ops.storage && typeof ops.storage !== "string") throw new Error("Invalid storage");
-        if (!ops.storage.endsWith(".json")) throw new Error("Storage string must end with \".json\"!");
+    constructor(ops) {
+        if (ops) {
+            if (typeof ops !== "object") ops = Defaults;
+            if (!!ops.storage && typeof ops.storage !== "string") throw new Error("Invalid storage");
+            if (!ops.storage.endsWith(".json")) throw new Error("Storage string must end with \".json\"!");
+
+            /**
+             * If the manager is custom
+             */
+            this.isCustomManager = false;
+        } else {
+            this.isCustomManager = true;
+        }
 
         /**
          * Storage path
-         * @type {string}
+         * @type {string|null}
          */
-        this.storage = ops.storage || Defaults.storage;
+        this.storage = ops ? ops.storage : null;
 
         this.initDatabase();
     }
@@ -31,6 +40,7 @@ class Manager {
      */
     initDatabase(force=false) {
         return new Promise((resolve, reject) => {
+            if (!this.storage) return resolve(false);
             if (!fs.existsSync(this.storage) || !!force) {
                 fs.writeFile(this.storage, "[]", (error) => {
                     if (error) return reject(error);

@@ -8,7 +8,8 @@ class CustomManager extends Eco.Manager {
         return new Promise((resolve) => {
             // to wipe out data
             if (force) {
-                db.all().forEach(x => db.delete(x.ID));
+                db.deleteAll();
+                resolve(true);
             } else {
                 // don't forget to return something
                 resolve(true);
@@ -53,5 +54,5 @@ db.once("ready", () => {
         useDefaultManager: false
     }, CustomManager);
 
-    eco.leaderboard().then(console.log);
+    eco.beg("16").then(console.log);
 });

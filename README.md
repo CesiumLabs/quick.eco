@@ -7,7 +7,10 @@ Powerful economy framework for discord bots.
 
 
 # Installing
-`npm i --save quick.eco`
+
+```sh
+npm i --save quick.eco
+```
 
 **[Join Our Discord Server](https://discord.gg/uqB8kxh)**
 
@@ -19,12 +22,6 @@ Powerful economy framework for discord bots.
 - Configurable
 - Custom storage/database
 - & much more...
-
-# ToDo
-- Better examples
-- Documentation
-- Guides
-- Typings
 
 # Getting Started
 
@@ -69,7 +66,6 @@ client.on("message", async (message) => {
 });
 
 client.login("XXXXXXXXXXXXXX");
-
 ```
 
 > By default, `quick.eco` uses `JSON` file to store data. You can use custom database like this:
@@ -79,10 +75,10 @@ client.login("XXXXXXXXXXXXXX");
 
 ```js
 const eco = new Eco.EconomyManager({ storage: "./customFile.json" });
-
 ```
 
 ## Using Custom Manager
+> **Note:** Your custom manager must extend `Eco.Manager`.
 
 ```js
 const Eco = require("quick.eco");
@@ -95,7 +91,8 @@ class CustomManager extends Eco.Manager {
         return new Promise((resolve) => {
             // to wipe out data
             if (force) {
-                db.all().forEach(x => db.delete(x.ID));
+                db.deleteAll();
+                resolve(true);
             } else {
                 // don't forget to return something
                 resolve(true);
@@ -135,6 +132,7 @@ class CustomManager extends Eco.Manager {
 
 }
 
+// make sure to do everything after db#ready event.
 db.once("ready", () => {
     const eco = new Eco.EconomyManager({
         useDefaultManager: false

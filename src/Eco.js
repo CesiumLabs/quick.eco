@@ -3,6 +3,15 @@ const Util = require("./Util");
 
 class EconomyManager {
 
+    /**
+     * Creates quick.eco instance
+     * @param {object} ops Manager options
+     * @param {boolean} [ops.useDefaultManager=true] If it should use default manager
+     * @param {string} [ops.storage] Storage path for default manager
+     * @param {string} [ops.prefix] Prefix for the key
+     * @param {boolean} [ops.noNegative=false] If it should not go below 0
+     * @param {Manager} customManager Custom storage manager instance.
+     */
     constructor(ops = { useDefaultManager: true, storage: "./quick.eco.json", prefix: "money", noNegative: false }, customManager) {
 
         /**
@@ -15,7 +24,10 @@ class EconomyManager {
             noNegative: !!ops.noNegative
         };
 
-        if (!this.options.isDefault && customManager) this.db = new customManager();
+        if (!this.options.isDefault && customManager) {
+            if (!(customManager.prototype instanceof Manager)) throw new Error("CustomManager must be the instance of default manager!");
+            this.db = new customManager();
+        }
         else if (!this.options.isDefault && !customManager) throw new Error("Invalid manager!");
 
         if (this.options.isDefault) this.__makeManager();
@@ -334,6 +346,8 @@ class EconomyManager {
     /**
      * Fetches something
      * @param {string} key key
+     * @rpivate
+     * @ignore
      */
     async _get(key) {
         this.__checkManager();
@@ -347,6 +361,8 @@ class EconomyManager {
      * Sets something
      * @param {string} key key
      * @param {number} data data
+     * @rpivate
+     * @ignore
      */
     async _set(key, data) {
         this.__checkManager();
