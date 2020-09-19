@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Source: Eco.js</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <script src="scripts/nav.js"></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link type="text/css" rel="stylesheet" href="styles/skyceil.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+</head>
+
+<body>
+
+<nav class="navbar">
+    <div class="utilities">
+        <center>
+            <button class="theme" data-theme="light">🌙 Turn off the lights</button>
+        </center>
+    </div>
+    <hr>
+    <h4><a href="index.html">Home</a></h4><h5 class="no-bottom must-underline">Classes</h5><ul><li><span class="small-icon C">C</span><b><a href="EconomyManager.html">EconomyManager</a></b><ul class="has-class-methods"><li><span class="small-icon F">F</span><a href="EconomyManager.html#.makeKey">makeKey</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#.parseKey">parseKey</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#addMoney">addMoney</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#all">all</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#beg">beg</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#custom">custom</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#daily">daily</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#fetchMoney">fetchMoney</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#leaderboard">leaderboard</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#monthly">monthly</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#random">random</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#reset">reset</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#search">search</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#setMoney">setMoney</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#subtractMoney">subtractMoney</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#weekly">weekly</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#work">work</a></li><li><span class="small-icon M">M</span><a href="EconomyManager.html#db">db</a></li><li><span class="small-icon M">M</span><a href="EconomyManager.html#options">options</a></li></ul></li><li><span class="small-icon C">C</span><b><a href="Util.html">Util</a></b><ul class="has-class-methods"><li><span class="small-icon F">F</span><a href="Util.html#.getCooldown">getCooldown</a></li><li><span class="small-icon F">F</span><a href="Util.html#.ms">ms</a></li><li><span class="small-icon F">F</span><a href="Util.html#.onCooldown">onCooldown</a></li><li><span class="small-icon M">M</span><a href="Util.html#.COOLDOWN">COOLDOWN</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    <div class="burger">
+        <div class="burger-line-1"></div>
+        <div class="burger-line-2"></div>
+        <div class="burger-line-3"></div>
+    </div>
+
+    <h1 class="page-title">Source: Eco.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const Manager = require("./Manager");
+const Util = require("./Util");
+
+class EconomyManager {
+
+    /**
+     * Creates quick.eco instance
+     * @param {object} ops Manager options
+     * @param {boolean} [ops.useDefaultManager=true] If it should use default manager
+     * @param {string} [ops.storage] Storage path for default manager
+     * @param {string} [ops.prefix] Prefix for the key
+     * @param {boolean} [ops.noNegative=false] If it should not go below 0
+     * @param {Manager} customManager Custom storage manager instance.
+     */
+    constructor(ops = { useDefaultManager: true, storage: "./quick.eco.json", prefix: "money", noNegative: false }, customManager) {
+
+        /**
+         * Options
+         */
+        this.options = {
+            isDefault: ops &amp;&amp; !!ops.useDefaultManager,
+            storage: typeof ops.storage === "string" ? ops.storage : !!ops.storage,
+            prefix: ops &amp;&amp; ops.prefix || "money",
+            noNegative: !!ops.noNegative
+        };
+
+        if (!this.options.isDefault &amp;&amp; customManager) {
+            if (!(customManager.prototype instanceof Manager)) throw new Error("CustomManager must be the instance of default manager!");
+            this.db = new customManager();
+        }
+        else if (!this.options.isDefault &amp;&amp; !customManager) throw new Error("Invalid manager!");
+
+        if (this.options.isDefault) this.__makeManager();
+    }
+
+    /**
+     * Sets moeny
+     * @param {string} userID User id
+     * @param {string} guildID Guild id
+     * @param {number} money Money to set
+     * @returns {Promise&lt;number>}
+     */
+    async setMoney(userID, guildID, money) {
+        this.__checkManager();
+        if (!userID || typeof userID !== "string") throw new Error("Invalid User ID!");
+        if (typeof money !== "number") throw new Error(`"money" must be a number, received ${typeof money}!`);
+        const key = EconomyManager.makeKey(userID, guildID, this.options.prefix);
+
+        await this.db.write({
+            ID: key,
+            data: money
+        });
+        return money;
+    }
+
+    /**
+     * Adds money
+     * @param {string} userID User id
+     * @param {string} guildID Guild id
+     * @param {number} money amount
+     */
+    async addMoney(userID, guildID, money) {
+        this.__checkManager();
+        if (!userID || typeof userID !== "string") throw new Error("Invalid User ID!");
+        if (typeof money !== "number") throw new Error(`"money" must be a number, received ${typeof money}!`);
+        const key = EconomyManager.makeKey(userID, guildID, this.options.prefix);
+
+        const prev = await this.fetchMoney(userID, guildID);
+        await this.db.write({
+            ID: key,
+            data: prev + money
+        });
+        return prev + money;
+    }
+
+    /**
+     * Subtracts money
+     * @param {string} userID User id
+     * @param {string} guildID Guild id
+     * @param {number} money amount
+     */
+    async subtractMoney(userID, guildID, money) {
+        this.__checkManager();
+        if (!userID || typeof userID !== "string") throw new Error("Invalid User ID!");
+        if (typeof money !== "number") throw new Error(`"money" must be a number, received ${typeof money}!`);
+        const key = EconomyManager.makeKey(userID, guildID, this.options.prefix);
+
+        const prev = await this.fetchMoney(userID, guildID);
+
+        await this.db.write({
+            ID: key,
+            data: prev - money
+        });
+
+        return prev - money;
+    }
+
+    /**
+     * Creates leaderboard object
+     * @param {string} guildID Guild id
+     * @param {number} limit data limit
+     * @returns {Promise&lt;any[]>}
+     */
+    async leaderboard(guildID, limit) {
+        this.__checkManager();
+        let data = (await this.all(limit)).filter(x => x.ID.startsWith(this.options.prefix));
+        if (guildID) data = data.filter(x => x.ID.includes(guildID));
+
+        let arr = [];
+        data.sort((a, b) => b.data - a.data).forEach((item, index) => {
+            const parsedKey = EconomyManager.parseKey(item.ID);
+
+            const data = {
+                position: index + 1,
+                user: `${parsedKey.userID}`,
+                guild: `${parsedKey.guildID || ""}`,
+                money: isNaN(item.data) ? 0 : item.data
+            };
+
+            arr.push(data);
+        });
+
+        return arr;
+    }
+
+    /**
+     * Returns everything from the database
+     * @returns {Promise&lt;any[]>}
+     */
+    async all(limit = 0) {
+        this.__checkManager();
+        const data = await this.db.read();
+        if (limit &lt; 1) return data || [];
+        return data.slice(0, limit) || [];
+    }
+
+    /**
+     * Daily reward
+     * @param {string} userID User id
+     * @param {string} guildID Guild id
+     * @param {number} amount Custom Amount
+     * @param {object} ops Options
+     * @param {number[]} [ops.range] Amount range
+     * @param {number} [ops.timeout] Timeout
+     */
+    async daily(userID, guildID, amount, ops = { range: [], timeout: 0 }) {
+        this.__checkManager();
+        if (!userID || typeof userID !== "string") throw new Error("User id was not provided!");
+        if (!amount) amount = this.random(ops &amp;&amp; ops.range &amp;&amp; ops.range[0] || 100, ops &amp;&amp; ops.range &amp;&amp; ops.range[1] || 250);
+        const key = EconomyManager.makeKey(userID, guildID, "daily");
+        const cooldownRaw = await this._get(key);
+        const cooldown = Util.onCooldown(ops.timeout || Util.COOLDOWN.DAILY, cooldownRaw || 0);
+        if (cooldown) return { cooldown: true, time: Util.getCooldown(ops.timeout || Util.COOLDOWN.DAILY, cooldownRaw || 0) };
+
+        const newAmount = await this.addMoney(userID, guildID, amount);
+        await this._set(key, Date.now());
+
+        return { cooldown: false, time: null, amount: amount, money: newAmount };
+    }
+
+    /**
+     * Weekly reward
+     * @param {string} userID User id
+     * @param {string} guildID Guild id
+     * @param {number} amount Custom Amount
+     * @param {object} ops Options
+     * @param {number[]} [ops.range] Amount range
+     * @param {number} [ops.timeout] Timeout
+     */
+    async weekly(userID, guildID, amount, ops = { range: [], timeout: 0 }) {
+        this.__checkManager();
+        if (!userID || typeof userID !== "string") throw new Error("User id was not provided!");
+        if (!amount) amount = this.random(ops &amp;&amp; ops.range &amp;&amp; ops.range[0] || 200, ops &amp;&amp; ops.range &amp;&amp; ops.range[1] || 750);
+        const key = EconomyManager.makeKey(userID, guildID, "weekly");
+        const cooldownRaw = await this._get(key);
+        const cooldown = Util.onCooldown(ops.timeout || Util.COOLDOWN.WEEKLY, cooldownRaw || 0);
+        if (cooldown) return { cooldown: true, time: Util.getCooldown(ops.timeout || Util.COOLDOWN.WEEKLY, cooldownRaw || 0) };
+
+        const newAmount = await this.addMoney(userID, guildID, amount);
+        await this._set(key, Date.now());
+
+        return { cooldown: false, time: null, amount: newAmount };
+    }
+
+    /**
+     * Monthly reward
+     * @param {string} userID User id
+     * @param {string} guildID Guild id
+     * @param {number} amount Custom Amount
+     * @param {object} ops Options
+     * @param {number[]} [ops.range] Amount range
+     * @param {number} [ops.timeout] Timeout
+     */
+    async monthly(userID, guildID, amount, ops = { range: [], timeout: 0 }) {
+        this.__checkManager();
+        if (!userID || typeof userID !== "string") throw new Error("User id was not provided!");
+        if (!amount) amount = this.random(ops &amp;&amp; ops.range &amp;&amp; ops.range[0] || 1000, ops &amp;&amp; ops.range &amp;&amp; ops.range[1] || 5000);
+        const key = EconomyManager.makeKey(userID, guildID, "monthly");
+        const cooldownRaw = await this._get(key);
+        const cooldown = Util.onCooldown(ops.timeout || Util.COOLDOWN.MONTHLY, cooldownRaw || 0);
+        if (cooldown) return { cooldown: true, time: Util.getCooldown(ops.timeout || Util.COOLDOWN.MONTHLY, cooldownRaw || 0) };
+
+        const newAmount = await this.addMoney(userID, guildID, amount);
+        await this._set(key, Date.now());
+
+        return { cooldown: false, time: null, amount: newAmount };
+    }
+
+    /**
+     * Work reward
+     * @param {string} userID User id
+     * @param {string} guildID Guild id
+     * @param {number} amount Custom Amount
+     * @param {object} ops Options
+     * @param {number[]} [ops.range] Amount range
+     * @param {number} [ops.timeout] Timeout
+     */
+    async work(userID, guildID, amount, ops = { range: [], timeout: 0 }) {
+        this.__checkManager();
+        if (!userID || typeof userID !== "string") throw new Error("User id was not provided!");
+        if (!amount) amount = this.random(ops &amp;&amp; ops.range &amp;&amp; ops.range[0] || 500, ops &amp;&amp; ops.range &amp;&amp; ops.range[1] || 1000);
+        const key = EconomyManager.makeKey(userID, guildID, "work");
+        const cooldownRaw = await this._get(key);
+        const cooldown = Util.onCooldown(ops.timeout || Util.COOLDOWN.WORK, cooldownRaw || 0);
+        if (cooldown) return { cooldown: true, time: Util.getCooldown(ops.timeout || Util.COOLDOWN.WORK, cooldownRaw || 0) };
+
+        const newAmount = await this.addMoney(userID, guildID, amount);
+        await this._set(key, Date.now());
+
+        return { cooldown: false, time: null, amount: newAmount };
+    }
+
+    /**
+     * Search reward
+     * @param {string} userID User id
+     * @param {string} guildID Guild id
+     * @param {number} amount Custom Amount
+     * @param {object} ops Options
+     * @param {number[]} [ops.range] Amount range
+     * @param {number} [ops.timeout] Timeout
+     */
+    async search(userID, guildID, amount, ops = { range: [], timeout: 0 }) {
+        this.__checkManager();
+        if (!userID || typeof userID !== "string") throw new Error("User id was not provided!");
+        if (!amount) amount = this.random(ops &amp;&amp; ops.range &amp;&amp; ops.range[0] || 1, ops &amp;&amp; ops.range &amp;&amp; ops.range[1] || 70);
+        const key = EconomyManager.makeKey(userID, guildID, "search");
+        const cooldownRaw = await this._get(key);
+        const cooldown = Util.onCooldown(ops.timeout || Util.COOLDOWN.SEARCH, cooldownRaw || 0);
+        if (cooldown) return { cooldown: true, time: Util.getCooldown(ops.timeout || Util.COOLDOWN.SEARCH, cooldownRaw || 0) };
+
+        const newAmount = await this.addMoney(userID, guildID, amount);
+        await this._set(key, Date.now());
+
+        return { cooldown: false, time: null, amount: newAmount };
+    }
+
+    /**
+     * Custom reward
+     * @param {string} userID User id
+     * @param {string} guildID Guild id
+     * @param {number} amount Custom Amount
+     * @param {object} ops Options
+     * @param {number[]} [ops.range] Amount range
+     * @param {number} [ops.timeout] Timeout
+     * @param {string} [ops.prefix] Data prefix
+     */
+    async custom(userID, guildID, amount, ops = { range: [], timeout: 0, prefix: "custom" }) {
+        this.__checkManager();
+        if (!userID || typeof userID !== "string") throw new Error("User id was not provided!");
+        if (!amount) amount = this.random(ops &amp;&amp; ops.range &amp;&amp; ops.range[0] || 1, ops &amp;&amp; ops.range &amp;&amp; ops.range[1] || 70);
+        const key = EconomyManager.makeKey(userID, guildID, ops.prefix || "custom");
+        const cooldownRaw = await this._get(key);
+        const cooldown = Util.onCooldown(ops.timeout || Util.COOLDOWN.DAILY, cooldownRaw || 0);
+        if (cooldown) return { cooldown: true, time: Util.getCooldown(ops.timeout || Util.COOLDOWN.DAILY, cooldownRaw || 0) };
+
+        const newAmount = await this.addMoney(userID, guildID, amount);
+        await this._set(key, Date.now());
+
+        return { cooldown: false, time: null, amount: newAmount };
+    }
+
+    /**
+     * Beg reward
+     * @param {string} userID User id
+     * @param {string} guildID Guild id
+     * @param {number} amount Custom Amount
+     * @param {object} ops Options
+     * @param {number[]} [ops.range] Amount range
+     * @param {number} [ops.timeout] Timeout
+     */
+    async beg(userID, guildID, amount, ops = { range: [], timeout: 0 }) {
+        this.__checkManager();
+        if (!userID || typeof userID !== "string") throw new Error("User id was not provided!");
+        if (!amount) amount = this.random(ops &amp;&amp; ops.range[0] || 1, ops &amp;&amp; ops.range[1] || 70);
+        const key = EconomyManager.makeKey(userID, guildID, "beg");
+        const cooldownRaw = await this._get(key);
+        const cooldown = Util.onCooldown(ops.timeout || Util.COOLDOWN.BEG, cooldownRaw || 0);
+        if (cooldown) return { cooldown: true, time: Util.getCooldown(ops.timeout || Util.COOLDOWN.BEG, cooldownRaw || 0) };
+
+        const newAmount = await this.addMoney(userID, guildID, amount);
+        await this._set(key, Date.now());
+
+        return { cooldown: false, time: null, amount: newAmount };
+    }
+
+    /**
+     * Returns random number
+     * @param {number} from inclusive number
+     * @param {number} to exclusive number
+     */
+    random(from, to) {
+        if (typeof from !== "number" || typeof to !== "number") return 0;
+        const amt = Math.floor(Math.random() * (to - from + 1)) + from;
+        return amt;
+    }
+
+    /**
+     * Fetches money
+     * @param {string} userID User id
+     * @param {string} guildID Guild id
+     * @returns {Promise&lt;number>}
+     */
+    async fetchMoney(userID, guildID) {
+        this.__checkManager();
+        if (!userID || typeof userID !== "string") throw new Error("Invalid User ID!");
+        const key = EconomyManager.makeKey(userID, guildID, this.options.prefix);
+
+        const data = await this.db.read(key);
+        const amt = data[0] ? data[0].data : 0;
+        if (!amt || isNaN(amt)) {
+            if (this.options.noNegative) await this.db.write({
+                ID: key,
+                data: 0
+            });
+            return 0;
+        };
+
+        if (this.options.noNegative &amp;&amp; amt &lt; 0) await this.db.write({
+            ID: key,
+            data: 0
+        });
+        
+        return amt;
+    }
+
+    /**
+     * Fetches something
+     * @param {string} key key
+     * @rpivate
+     * @ignore
+     */
+    async _get(key) {
+        this.__checkManager();
+        if (typeof key !== "string") throw new Error("key must be a string!");
+        const data = await this.db.read(key);
+        if (!data[0]) return null;
+        return data[0].data;
+    }
+
+    /**
+     * Sets something
+     * @param {string} key key
+     * @param {number} data data
+     * @rpivate
+     * @ignore
+     */
+    async _set(key, data) {
+        this.__checkManager();
+        if (typeof key !== "string") throw new Error("key must be a string!");
+        if (typeof data === "undefined") data = null;
+
+        await this.db.write({
+            ID: key,
+            data: data
+        });
+
+        return true;
+    }
+
+    /**
+     * Reset storage
+     * @param {string} id Any matching id to remove
+     */
+    async reset(id) {
+        this.__checkManager();
+        if (id) {
+            const all = await this.db.read();
+            await this.db.write(all.filter(i => !i.ID.includes(id)));
+        } else {
+            this.db.initDatabase(true);
+        }
+
+        return true;
+    }
+
+    /**
+     * Creates database manager
+     * @private
+     */
+    __makeManager() {
+        /**
+         * Database manager
+         * @type {Manager}
+         */
+        this.db = new Manager(this.options);
+    }
+
+    /**
+     * Makes key
+     * @param {string} user User id
+     * @param {string} guild Guild id
+     * @param {string} prefix Prefix
+     */
+    static makeKey(user, guild, prefix) {
+        return `${prefix}_${guild ? guild + "_" : ""}${user}`;
+    }
+
+    /**
+     * Parse key
+     * @param {string} key Data key
+     */
+    static parseKey(key) {
+        if (!key) throw new Error("Invalid key");
+        const chunk = key.split("_");
+        if (chunk.length >= 3) {
+            const obj = {
+                prefix: chunk[0],
+                guildID: chunk[1],
+                userID: chunk[2]
+            };
+
+            return obj;
+        } else {
+            const obj = {
+                prefix: chunk[0],
+                guildID: null,
+                userID: chunk[1]
+            };
+
+            return obj;
+        }
+    }
+
+    __checkManager() {
+        if (!this.db) throw new Error("Manager is not ready yet!");
+    }
+
+}
+
+module.exports = EconomyManager;</code></pre>
+        </article>
+    </section>
+
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.5</a> on Sat Sep 19 2020 18:48:54 GMT+0545 (Nepal Time) using <a href="https://github.com/zyrouge/jsdoc-skyceil">Skyceil Theme</a>
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+
+</body>
+</html>

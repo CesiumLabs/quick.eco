@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Home</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <script src="scripts/nav.js"></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link type="text/css" rel="stylesheet" href="styles/skyceil.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+</head>
+
+<body>
+
+<nav class="navbar">
+    <div class="utilities">
+        <center>
+            <button class="theme" data-theme="light">🌙 Turn off the lights</button>
+        </center>
+    </div>
+    <hr>
+    <h4><a href="index.html">Home</a></h4><h5 class="no-bottom must-underline">Classes</h5><ul><li><span class="small-icon C">C</span><b><a href="EconomyManager.html">EconomyManager</a></b><ul class="has-class-methods"><li><span class="small-icon F">F</span><a href="EconomyManager.html#.makeKey">makeKey</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#.parseKey">parseKey</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#addMoney">addMoney</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#all">all</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#beg">beg</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#custom">custom</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#daily">daily</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#fetchMoney">fetchMoney</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#leaderboard">leaderboard</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#monthly">monthly</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#random">random</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#reset">reset</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#search">search</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#setMoney">setMoney</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#subtractMoney">subtractMoney</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#weekly">weekly</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#work">work</a></li><li><span class="small-icon M">M</span><a href="EconomyManager.html#db">db</a></li><li><span class="small-icon M">M</span><a href="EconomyManager.html#options">options</a></li></ul></li><li><span class="small-icon C">C</span><b><a href="Util.html">Util</a></b><ul class="has-class-methods"><li><span class="small-icon F">F</span><a href="Util.html#.getCooldown">getCooldown</a></li><li><span class="small-icon F">F</span><a href="Util.html#.ms">ms</a></li><li><span class="small-icon F">F</span><a href="Util.html#.onCooldown">onCooldown</a></li><li><span class="small-icon M">M</span><a href="Util.html#.COOLDOWN">COOLDOWN</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    <div class="burger">
+        <div class="burger-line-1"></div>
+        <div class="burger-line-2"></div>
+        <div class="burger-line-3"></div>
+    </div>
+
+    <h1 class="page-title">Home</h1>
+
+    
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <hr>
+    <section>
+        <article><h1>quick.eco</h1>
+<p>Powerful economy framework for discord bots.</p>
+<p><a href="https://nodei.co/npm/quick.eco/"><img src="https://nodei.co/npm/quick.eco.png?downloads=true&amp;downloadRank=true&amp;stars=true" alt="NPM"></a></p>
+<p><a href="https://app.fossa.io/projects/git%2Bgithub.com%2FINEX07%2Fquick.eco?ref=badge_shield"><img src="https://app.fossa.io/api/projects/git%2Bgithub.com%2FINEX07%2Fquick.eco.svg?type=shield" alt="FOSSA Status"></a></p>
+<h1>Installing</h1>
+<pre class="prettyprint linenums source lang-sh"><code>npm i --save quick.eco
+</code></pre>
+<p><strong><a href="https://discord.gg/uqB8kxh">Join Our Discord Server</a></strong></p>
+<h1>Features</h1>
+<ul>
+<li>Global Economy</li>
+<li>Per-guild Economy</li>
+<li>Built-in cooldown</li>
+<li>Randomizer</li>
+<li>Configurable</li>
+<li>Custom storage/database</li>
+<li>&amp; much more...</li>
+</ul>
+<h1>Getting Started</h1>
+<pre class="prettyprint linenums source lang-js"><code>const { EconomyManager } = require(&quot;quick.eco&quot;);
+const eco = new EconomyManager();
+</code></pre>
+<h1>Quick Example</h1>
+<pre class="prettyprint linenums source lang-js"><code>const Discord = require(&quot;discord.js&quot;);
+const client = new Discord.Client();
+const { EconomyManager } = require(&quot;quick.eco&quot;)
+const eco = new EconomyManager();
+
+client.on(&quot;ready&quot;, () => {
+    console.log(&quot;I'm alive!&quot;);
+});
+
+client.on(&quot;message&quot;, async (message) => {
+    if (!message.guild || message.author.bot) return;
+    if (message.content === &quot;daily&quot;) {
+        let add = eco.daily(message.author.id, false, 500);
+        if (add.cooldown) return message.reply(`You already claimed your daily coins. Come back after ${add.time.days} days, ${add.time.hours} hours, ${add.time.minutes} minutes & ${add.time.seconds} seconds.`);
+        return message.reply(`you claimed ${add.amount} as your daily coins and now you have total ${add.money} coins.`);
+    }
+    if (message.content === &quot;bal&quot;) {
+        let money = eco.fetchMoney(message.author.id);
+        return message.channel.send(`${message.author} has ${money} coins.`);
+    }
+    if (message.content === &quot;leaderboard&quot;) {
+        let lb = await eco.leaderboard(false, 10);
+        const embed = new Discord.RichEmbed()
+        .setAuthor(&quot;Leaderboard&quot;)
+        .setColor(&quot;BLURPLE&quot;);
+        lb.forEach(u => {
+            embed.addField(`${u.position}. ${client.users.get(u.user).tag}`, `Money: ${u.money} 💸`);
+        });
+        return message.channel.send(embed);
+    }
+});
+
+client.login(&quot;XXXXXXXXXXXXXX&quot;);
+</code></pre>
+<blockquote>
+<p>By default, <code>quick.eco</code> uses <code>JSON</code> file to store data. You can use custom database like this:</p>
+</blockquote>
+<h1>Custom storage</h1>
+<h2>Using Custom File</h2>
+<pre class="prettyprint linenums source lang-js"><code>const eco = new Eco.EconomyManager({ storage: &quot;./customFile.json&quot; });
+</code></pre>
+<h2>Using Custom Manager</h2>
+<blockquote>
+<p><strong>Note:</strong> Your custom manager must extend <code>Eco.Manager</code>.</p>
+</blockquote>
+<pre class="prettyprint linenums source lang-js"><code>const Eco = require(&quot;quick.eco&quot;);
+const { Database } = require(&quot;quickmongo&quot;);
+const db = new Database(&quot;mongodb://localhost/quickeco&quot;);
+
+class CustomManager extends Eco.Manager {
+
+    initDatabase(force = false) {
+        return new Promise((resolve) => {
+            // to wipe out data
+            if (force) {
+                db.deleteAll();
+                resolve(true);
+            } else {
+                // don't forget to return something
+                resolve(true);
+            }
+        });
+    }
+
+    write(rdata) {
+        return new Promise(async (resolve, reject) => {
+            if (!rdata || typeof rdata !== &quot;object&quot;) return reject(new Error(&quot;Invalid data&quot;));
+            let { ID, data } = rdata;
+            if (!ID || typeof ID !== &quot;string&quot;) return reject(&quot;Invalid data id!&quot;);
+            if (typeof data === &quot;undefined&quot;) data = null;
+
+            let prev = await this.read();
+
+            // remove existing
+            prev = prev.filter(rs => rs.ID !== ID);
+
+            // set data
+            prev.push({
+                ID: ID,
+                data: data
+            });
+            prev.forEach(x => db.set(x.ID, x.data));
+            resolve(prev);
+        });
+    }
+
+    read(id) {
+        return new Promise(async (resolve) => {
+            let json = await db.all();
+            if (!!id && typeof id === &quot;string&quot;) return resolve(json.filter(x => x.ID === id) || null);
+            return resolve(json);
+        });
+    }
+
+}
+
+// make sure to do everything after db#ready event.
+db.once(&quot;ready&quot;, () => {
+    const eco = new Eco.EconomyManager({
+        useDefaultManager: false
+    }, CustomManager);
+
+    eco.daily(&quot;123456789&quot;).then(console.log);
+});
+</code></pre>
+<h1>Join our discord</h1>
+<ul>
+<li><strong><a href="https://discord.gg/uqB8kxh">discord.gg/uqB8kxh</a></strong>.</li>
+</ul>
+<h2>© Snowflake Studio ❄️ - 2020</h2></article>
+    </section>
+
+
+
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.5</a> on Sat Sep 19 2020 18:48:54 GMT+0545 (Nepal Time) using <a href="https://github.com/zyrouge/jsdoc-skyceil">Skyceil Theme</a>
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+
+</body>
+</html>

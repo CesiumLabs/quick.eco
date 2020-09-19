@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Source: Util.js</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <script src="scripts/nav.js"></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link type="text/css" rel="stylesheet" href="styles/skyceil.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+</head>
+
+<body>
+
+<nav class="navbar">
+    <div class="utilities">
+        <center>
+            <button class="theme" data-theme="light">🌙 Turn off the lights</button>
+        </center>
+    </div>
+    <hr>
+    <h4><a href="index.html">Home</a></h4><h5 class="no-bottom must-underline">Classes</h5><ul><li><span class="small-icon C">C</span><b><a href="EconomyManager.html">EconomyManager</a></b><ul class="has-class-methods"><li><span class="small-icon F">F</span><a href="EconomyManager.html#.makeKey">makeKey</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#.parseKey">parseKey</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#addMoney">addMoney</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#all">all</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#beg">beg</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#custom">custom</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#daily">daily</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#fetchMoney">fetchMoney</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#leaderboard">leaderboard</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#monthly">monthly</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#random">random</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#reset">reset</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#search">search</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#setMoney">setMoney</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#subtractMoney">subtractMoney</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#weekly">weekly</a></li><li><span class="small-icon F">F</span><a href="EconomyManager.html#work">work</a></li><li><span class="small-icon M">M</span><a href="EconomyManager.html#db">db</a></li><li><span class="small-icon M">M</span><a href="EconomyManager.html#options">options</a></li></ul></li><li><span class="small-icon C">C</span><b><a href="Util.html">Util</a></b><ul class="has-class-methods"><li><span class="small-icon F">F</span><a href="Util.html#.getCooldown">getCooldown</a></li><li><span class="small-icon F">F</span><a href="Util.html#.ms">ms</a></li><li><span class="small-icon F">F</span><a href="Util.html#.onCooldown">onCooldown</a></li><li><span class="small-icon M">M</span><a href="Util.html#.COOLDOWN">COOLDOWN</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    <div class="burger">
+        <div class="burger-line-1"></div>
+        <div class="burger-line-2"></div>
+        <div class="burger-line-3"></div>
+    </div>
+
+    <h1 class="page-title">Source: Util.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>class Util {
+
+    /**
+     * This class can not be instantiated
+     */
+    constructor() {
+        throw new Error(`The ${this.constructor.name} class may not be instantiated!`);
+    }
+
+    /**
+     * Milliseconds Parser
+     * @param {number} ms Time in milliseconds to parse
+     */
+    static ms(ms) {
+        if (typeof ms !== "number") throw new Error(`Expected milliseconds to be a number, received ${typeof ms}!`);
+
+        const apply = ms > 0 ? Math.floor : Math.ceil;
+        return {
+            days: apply(ms / 86400000),
+            hours: apply(ms / 3600000) % 24,
+            minutes: apply(ms / 60000) % 60,
+            seconds: apply(ms / 1000) % 60,
+            milliseconds: apply(ms) % 1000,
+            microseconds: apply(ms * 1000) % 1000,
+            nanoseconds: apply(ms * 1e6) % 1000
+        }
+    }
+
+    /**
+     * Returns cooldown time object
+     * @param {number} cooldownTime Cooldown timeout
+     * @param {number} collectedTime Collected timestamp
+     */
+    static getCooldown(cooldownTime, collectedTime) {
+        if (cooldownTime instanceof Date) cooldownTime = cooldownTime.getTime();
+        if (collectedTime instanceof Date) collectedTime = collectedTime.getTime();
+        if (typeof cooldownTime !== "number") throw new Error(`Expected cooldownTime to be a number, received ${typeof cooldownTime}!`);
+        if (typeof collectedTime !== "number") throw new Error(`Expected collectedTime to be a number, received ${typeof collectedTime}!`);
+
+        if (collectedTime !== null &amp;&amp; cooldownTime - (Date.now() - collectedTime) > 0) return Util.ms(cooldownTime - (Date.now() - collectedTime));
+        return Util.ms(0);
+    }
+
+    /**
+     * Checks for cooldown
+     * @param {number} cooldownTime Cooldown timeout
+     * @param {number} collectedTime Timestamp when last item was collected
+     */
+    static onCooldown(cooldownTime, collectedTime) {
+        if (cooldownTime instanceof Date) cooldownTime = cooldownTime.getTime();
+        if (collectedTime instanceof Date) collectedTime = collectedTime.getTime();
+        if (typeof cooldownTime !== "number") throw new Error(`Expected cooldownTime to be a number, received ${typeof cooldownTime}!`);
+        if (typeof collectedTime !== "number") throw new Error(`Expected collectedTime to be a number, received ${typeof collectedTime}!`);
+
+        if (collectedTime !== null &amp;&amp; cooldownTime - (Date.now() - collectedTime) > 0) return true;
+        return false;
+    }
+
+    /**
+     * Default Cooldown table
+     */
+    static get COOLDOWN() {
+        return {
+            DAILY: 86400000,
+            WEEKLY: 604800000,
+            WORK: 2700000,
+            BEG: 60000,
+            MONTHLY: 2628000000,
+            SEARCH: 300000
+        };
+    }
+
+}
+
+module.exports = Util;</code></pre>
+        </article>
+    </section>
+
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.5</a> on Sat Sep 19 2020 18:48:54 GMT+0545 (Nepal Time) using <a href="https://github.com/zyrouge/jsdoc-skyceil">Skyceil Theme</a>
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+
+</body>
+</html>
