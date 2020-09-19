@@ -1,6 +1,6 @@
 {
   "name": "quick.eco",
-  "version": "5.0.0",
+  "version": "5.0.0-dev",
   "description": "Powerful economy framework for discord bots.",
   "main": "index.js",
   "scripts": {
