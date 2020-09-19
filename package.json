@@ -1,0 +1,40 @@
+{
+  "name": "quick.eco",
+  "version": "5.0.0",
+  "description": "Powerful economy framework for discord bots.",
+  "main": "index.js",
+  "scripts": {
+    "test": "cd test && node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Snowflake107/quick.eco.git"
+  },
+  "keywords": [
+    "quick.eco",
+    "quick.db",
+    "discord",
+    "discord.js",
+    "discord.js-economy",
+    "quick.db-economy",
+    "eris-economy",
+    "framework",
+    "sqlite",
+    "discord-economy",
+    "discord-eco",
+    "discord-xp",
+    "discord-leveling",
+    "economy",
+    "leveling",
+    "eco"
+  ],
+  "author": "Snowflake107",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Snowflake107/quick.eco/issues"
+  },
+  "homepage": "https://github.com/Snowflake107/quick.eco",
+  "devDependencies": {
+    "quickmongo": "^1.1.4"
+  }
+}
