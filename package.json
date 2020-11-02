@@ -1,11 +1,10 @@
 {
-  "name": "quick.eco",
-  "version": "5.0.0-dev1",
-  "description": "Powerful economy framework for discord bots.",
+  "name": "quick.eco-rewrite",
+  "version": "5.0.0",
   "main": "index.js",
   "scripts": {
-    "docsgen": "jsdoc --configure .jsdoc.json --verbose",
-    "test": "cd test && node index.js"
+    "test": "cd test && node index.js",
+    "doc": "jsdoc test ./src/Eco.js"
   },
   "repository": {
     "type": "git",
@@ -29,15 +28,13 @@
     "leveling",
     "eco"
   ],
-  "author": "Snowflake107",
+  "author": "DevSnowflake",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Snowflake107/quick.eco/issues"
   },
-  "homepage": "https://github.com/Snowflake107/quick.eco",
+  "dependencies": {},
   "devDependencies": {
-    "jsdoc": "^3.6.5",
-    "jsdoc-skyceil": "github:zyrouge/jsdoc-skyceil",
-    "quickmongo": "^1.1.5"
+    "jsdoc": "^3.6.6"
   }
 }

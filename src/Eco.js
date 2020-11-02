@@ -1,56 +1,74 @@
-const Manager = require("./Manager");
-const Util = require("./Util");
+const Util = require('./Util');
+const VALID_ADAPTERS = {
+    sqlite: '@quick.eco/sqlite',
+    mongo: '@quick.eco/mongo',
+    mysql: '@quick.eco/mysql'
+}
 
 class EconomyManager {
-
     /**
-     * Creates quick.eco instance
-     * @param {object} ops Manager options
-     * @param {boolean} [ops.useDefaultManager=true] If it should use default manager
-     * @param {string} [ops.storage] Storage path for default manager
-     * @param {string} [ops.prefix] Prefix for the key
-     * @param {boolean} [ops.noNegative=false] If it should not go below 0
-     * @param {Manager} customManager Custom storage manager instance.
+     * 
+     * @param {object} options Options
+     * @param {string} [options.adapter] Adapter
+     * @param {object} [options.adapterOptions] Adapter Options
+     * @param {string} [options.prefix] Prefix
+     * @param {boolean} [options.noNegative=false] If it should not go below 0
      */
-    constructor(ops = { useDefaultManager: true, storage: "./quick.eco.json", prefix: "money", noNegative: false }, customManager) {
+    constructor(options = { adapterOptions: {}, prefix: 'money', noNegative: false }) {
 
         /**
-         * Options
+         * If it should not go below 0
          */
-        this.options = {
-            isDefault: ops && !!ops.useDefaultManager,
-            storage: typeof ops.storage === "string" ? ops.storage : !!ops.storage,
-            prefix: ops && ops.prefix || "money",
-            noNegative: !!ops.noNegative
+        this.noNegative = options.noNegative;
+
+        /**
+         * Prefix
+         */
+        this.prefix = options.prefix
+
+        /**
+         * Adapter
+         */
+        this.adapter = {
+            name: typeof options.adapter === 'string' ? options.adapter : undefined,
+            options: options.adapterOptions
         };
 
-        if (!this.options.isDefault && customManager) {
-            if (!(customManager.prototype instanceof Manager)) throw new Error("CustomManager must be the instance of default manager!");
-            this.db = new customManager();
-        }
-        else if (!this.options.isDefault && !customManager) throw new Error("Invalid manager!");
+        /**
+         * Database Manager
+         */
+        this.db;
 
-        if (this.options.isDefault) this.__makeManager();
+        if (this.adapter.name && Object.keys(VALID_ADAPTERS).includes(this.adapter.name)) this.__makeAdapter()
+        else throw new Error(`Invalid Adapter: ${this.adapter.name}`)
+
     }
 
     /**
-     * Sets moeny
-     * @param {string} userID User id
-     * @param {string} guildID Guild id
-     * @param {number} money Money to set
-     * @returns {Promise<number>}
+     * @ignore
+     * @private
      */
-    async setMoney(userID, guildID, money) {
-        this.__checkManager();
-        if (!userID || typeof userID !== "string") throw new Error("Invalid User ID!");
-        if (typeof money !== "number") throw new Error(`"money" must be a number, received ${typeof money}!`);
-        const key = EconomyManager.makeKey(userID, guildID, this.options.prefix);
+    __makeAdapter() {
+        try {
+            const adapter = require(VALID_ADAPTERS[this.adapter.name]);
 
-        await this.db.write({
-            ID: key,
-            data: money
-        });
-        return money;
+            switch (this.adapter.name) {
+                case 'mongo':
+                    if (this.adapter.name === 'mongo' && !this.adapter.options.uri) throw new Error('Mongo URI Not provided');
+
+                    this.db = new adapter(this.adapter.options.uri, this.adapter.options);
+
+                    break;
+                default:
+
+                    this.db = new adapter(this.adapter.options);
+
+                    break;
+            }
+
+        } catch (err) {
+            throw new Error(`Could not find ${VALID_ADAPTERS[this.adapter.name]}`);
+        }
     }
 
     /**
@@ -59,17 +77,17 @@ class EconomyManager {
      * @param {string} guildID Guild id
      * @param {number} money amount
      */
-    async addMoney(userID, guildID, money) {
+    async addMoney(userID, guildID = false, money) {
+
         this.__checkManager();
+
         if (!userID || typeof userID !== "string") throw new Error("Invalid User ID!");
         if (typeof money !== "number") throw new Error(`"money" must be a number, received ${typeof money}!`);
-        const key = EconomyManager.makeKey(userID, guildID, this.options.prefix);
 
+        const key = Util.makeKey(userID, guildID, this.prefix);
         const prev = await this.fetchMoney(userID, guildID);
-        await this.db.write({
-            ID: key,
-            data: prev + money
-        });
+
+        await this.db.write({ ID: key, data: prev + money });
         return prev + money;
     }
 
@@ -79,20 +97,99 @@ class EconomyManager {
      * @param {string} guildID Guild id
      * @param {number} money amount
      */
-    async subtractMoney(userID, guildID, money) {
+    async subtractMoney(userID, guildID = false, money) {
+
         this.__checkManager();
+
         if (!userID || typeof userID !== "string") throw new Error("Invalid User ID!");
         if (typeof money !== "number") throw new Error(`"money" must be a number, received ${typeof money}!`);
-        const key = EconomyManager.makeKey(userID, guildID, this.options.prefix);
 
+        const key = Util.makeKey(userID, guildID, this.prefix);
         const prev = await this.fetchMoney(userID, guildID);
 
-        await this.db.write({
-            ID: key,
-            data: prev - money
-        });
+        await this.db.write({ ID: key, data: prev - money });
 
         return prev - money;
+    }
+
+    /**
+     * Sets money
+     * @param {string} userID User id
+     * @param {string} guildID Guild id
+     * @param {number} money amount
+     */
+    async setMoney(userID, guildID = false, money) {
+        this.__checkManager();
+
+        if (!userID || typeof userID !== "string") throw new Error("Invalid User ID!");
+        if (typeof money !== "number") throw new Error(`"money" must be a number, received ${typeof money}!`);
+
+        const key = Util.makeKey(userID, guildID, this.prefix);
+
+        await this.db.write({ ID: key, data: money });
+        return money;
+    }
+
+    /**
+     * Deletes a user
+     * @param {string} userID User id
+     * @param {string} guildID Guild id
+     */
+    async delete(userID, guildID = false) {
+        this.__checkManager();
+
+        if (!userID || typeof userID !== "string") throw new Error("Invalid User ID!");
+
+        const key = Util.makeKey(userID, guildID, this.prefix);
+
+        await this.db.delete(key);
+        return true;
+    }
+
+    /**
+     * Deletes all the data from a specific guild
+     * @param {string} guildID Guild ID
+     */
+    async deleteAllFromGuild(guildID) {
+        if (!guildID || typeof guildID !== 'string') throw new Error('Invalid Guild ID');
+
+        let all = await this.all();
+
+        all = all.filter(r => r.ID.includes(guildID));
+
+        if (all[0]) {
+            let i = 0, len = all.length;
+
+            while (i < len) {
+                this.db.delete(all[i].ID);
+                i++;
+            };
+
+            return true;
+        } else return;
+    }
+
+    /**
+     * Deletes all the data from a specific user
+     * @param {string} userID User ID
+     */
+    async deleteAllFromUser(userID) {
+        if (!userID || typeof userID !== 'string') throw new Error('Invalid User ID');
+
+        let all = await this.all();
+
+        all = all.filter(r => r.ID.includes(userID));
+
+        if (all[0]) {
+            let i = 0, len = all.length;
+
+            while (i < len) {
+                this.db.delete(all[i].ID);
+                i++;
+            };
+
+            return true;
+        } else return;
     }
 
     /**
@@ -101,14 +198,18 @@ class EconomyManager {
      * @param {number} limit data limit
      * @returns {Promise<any[]>}
      */
-    async leaderboard(guildID, limit) {
+    async leaderboard(guildID = false, limit) {
+
         this.__checkManager();
-        let data = (await this.all(limit)).filter(x => x.ID.startsWith(this.options.prefix));
+
+        let data = (await this.all(limit)).filter(x => x.ID.startsWith(this.prefix));
+
         if (guildID) data = data.filter(x => x.ID.includes(guildID));
 
         let arr = [];
+
         data.sort((a, b) => b.data - a.data).forEach((item, index) => {
-            const parsedKey = EconomyManager.parseKey(item.ID);
+            const parsedKey = Util.parseKey(item.ID);
 
             const data = {
                 position: index + 1,
@@ -125,11 +226,11 @@ class EconomyManager {
 
     /**
      * Returns everything from the database
-     * @returns {Promise<any[]>}
+     * @returns {Promise<object[]>}
      */
     async all(limit = 0) {
         this.__checkManager();
-        const data = await this.db.read();
+        const data = await this.db.readAll();
         if (limit < 1) return data || [];
         return data.slice(0, limit) || [];
     }
@@ -143,19 +244,23 @@ class EconomyManager {
      * @param {number[]} [ops.range] Amount range
      * @param {number} [ops.timeout] Timeout
      */
-    async daily(userID, guildID, amount, ops = { range: [], timeout: 0 }) {
+    async daily(userID, guildID = false, amount, ops = { range: [], timeout: 0 }) {
         this.__checkManager();
+
         if (!userID || typeof userID !== "string") throw new Error("User id was not provided!");
-        if (!amount) amount = this.random(ops && ops.range && ops.range[0] || 100, ops && ops.range && ops.range[1] || 250);
-        const key = EconomyManager.makeKey(userID, guildID, "daily");
+        if (!amount) amount = Util.random(ops.range[0] || 100, ops.range[1] || 250);
+
+        const key = Util.makeKey(userID, guildID, "daily");
         const cooldownRaw = await this._get(key);
-        const cooldown = Util.onCooldown(ops.timeout || Util.COOLDOWN.DAILY, cooldownRaw || 0);
-        if (cooldown) return { cooldown: true, time: Util.getCooldown(ops.timeout || Util.COOLDOWN.DAILY, cooldownRaw || 0) };
+        const cooldown = Util.onCooldown(ops.timeout || Util.COOLDOWN.DAILY, cooldownRaw ? cooldownRaw.data : 0);
+
+        if (cooldown) return { cooldown: true, time: Util.getCooldown(ops.timeout || Util.COOLDOWN.DAILY, cooldownRaw ? cooldownRaw.data : 0) };
 
         const newAmount = await this.addMoney(userID, guildID, amount);
+
         await this._set(key, Date.now());
 
-        return { cooldown: false, time: null, amount: amount, money: newAmount };
+        return { cooldown: false, time: null, amount, money: newAmount };
     }
 
     /**
@@ -167,19 +272,23 @@ class EconomyManager {
      * @param {number[]} [ops.range] Amount range
      * @param {number} [ops.timeout] Timeout
      */
-    async weekly(userID, guildID, amount, ops = { range: [], timeout: 0 }) {
+    async weekly(userID, guildID = false, amount, ops = { range: [], timeout: 0 }) {
         this.__checkManager();
+
         if (!userID || typeof userID !== "string") throw new Error("User id was not provided!");
-        if (!amount) amount = this.random(ops && ops.range && ops.range[0] || 200, ops && ops.range && ops.range[1] || 750);
-        const key = EconomyManager.makeKey(userID, guildID, "weekly");
+        if (!amount) amount = Util.random(ops.range[0] || 200, ops.range[1] || 750);
+
+        const key = Util.makeKey(userID, guildID, "weekly");
         const cooldownRaw = await this._get(key);
-        const cooldown = Util.onCooldown(ops.timeout || Util.COOLDOWN.WEEKLY, cooldownRaw || 0);
-        if (cooldown) return { cooldown: true, time: Util.getCooldown(ops.timeout || Util.COOLDOWN.WEEKLY, cooldownRaw || 0) };
+        const cooldown = Util.onCooldown(ops.timeout || Util.COOLDOWN.WEEKLY, cooldownRaw ? cooldownRaw.data : 0);
+
+        if (cooldown) return { cooldown: true, time: Util.getCooldown(ops.timeout || Util.COOLDOWN.WEEKLY, cooldownRaw ? cooldownRaw.data : 0) };
 
         const newAmount = await this.addMoney(userID, guildID, amount);
+
         await this._set(key, Date.now());
 
-        return { cooldown: false, time: null, amount: newAmount };
+        return { cooldown: false, time: null, amount, money: newAmount };
     }
 
     /**
@@ -191,19 +300,22 @@ class EconomyManager {
      * @param {number[]} [ops.range] Amount range
      * @param {number} [ops.timeout] Timeout
      */
-    async monthly(userID, guildID, amount, ops = { range: [], timeout: 0 }) {
+    async monthly(userID, guildID = false, amount, ops = { range: [], timeout: 0 }) {
         this.__checkManager();
+
         if (!userID || typeof userID !== "string") throw new Error("User id was not provided!");
-        if (!amount) amount = this.random(ops && ops.range && ops.range[0] || 1000, ops && ops.range && ops.range[1] || 5000);
-        const key = EconomyManager.makeKey(userID, guildID, "monthly");
+        if (!amount) amount = Util.random(ops.range[0] || 1000, ops.range[1] || 5000);
+
+        const key = Util.makeKey(userID, guildID, "monthly");
         const cooldownRaw = await this._get(key);
-        const cooldown = Util.onCooldown(ops.timeout || Util.COOLDOWN.MONTHLY, cooldownRaw || 0);
-        if (cooldown) return { cooldown: true, time: Util.getCooldown(ops.timeout || Util.COOLDOWN.MONTHLY, cooldownRaw || 0) };
+        const cooldown = Util.onCooldown(ops.timeout || Util.COOLDOWN.MONTHLY, cooldownRaw ? cooldownRaw.data : 0);
+
+        if (cooldown) return { cooldown: true, time: Util.getCooldown(ops.timeout || Util.COOLDOWN.MONTHLY, cooldownRaw ? cooldownRaw.data : 0) };
 
         const newAmount = await this.addMoney(userID, guildID, amount);
         await this._set(key, Date.now());
 
-        return { cooldown: false, time: null, amount: newAmount };
+        return { cooldown: false, time: null, amount, money: newAmount };
     }
 
     /**
@@ -215,14 +327,17 @@ class EconomyManager {
      * @param {number[]} [ops.range] Amount range
      * @param {number} [ops.timeout] Timeout
      */
-    async work(userID, guildID, amount, ops = { range: [], timeout: 0 }) {
+    async work(userID, guildID = false, amount, ops = { range: [], timeout: 0 }) {
         this.__checkManager();
+
         if (!userID || typeof userID !== "string") throw new Error("User id was not provided!");
-        if (!amount) amount = this.random(ops && ops.range && ops.range[0] || 500, ops && ops.range && ops.range[1] || 1000);
-        const key = EconomyManager.makeKey(userID, guildID, "work");
+        if (!amount) amount = Util.random(ops.range[0] || 500, ops.range[1] || 1000);
+
+        const key = Util.makeKey(userID, guildID, "work");
         const cooldownRaw = await this._get(key);
-        const cooldown = Util.onCooldown(ops.timeout || Util.COOLDOWN.WORK, cooldownRaw || 0);
-        if (cooldown) return { cooldown: true, time: Util.getCooldown(ops.timeout || Util.COOLDOWN.WORK, cooldownRaw || 0) };
+        const cooldown = Util.onCooldown(ops.timeout || Util.COOLDOWN.WORK, cooldownRaw ? cooldownRaw.data : 0);
+
+        if (cooldown) return { cooldown: true, time: Util.getCooldown(ops.timeout || Util.COOLDOWN.WORK, cooldownRaw ? cooldownRaw.data : 0) };
 
         const newAmount = await this.addMoney(userID, guildID, amount);
         await this._set(key, Date.now());
@@ -239,14 +354,16 @@ class EconomyManager {
      * @param {number[]} [ops.range] Amount range
      * @param {number} [ops.timeout] Timeout
      */
-    async search(userID, guildID, amount, ops = { range: [], timeout: 0 }) {
+    async search(userID, guildID = false, amount, ops = { range: [], timeout: 0 }) {
         this.__checkManager();
+
         if (!userID || typeof userID !== "string") throw new Error("User id was not provided!");
-        if (!amount) amount = this.random(ops && ops.range && ops.range[0] || 1, ops && ops.range && ops.range[1] || 70);
-        const key = EconomyManager.makeKey(userID, guildID, "search");
+        if (!amount) amount = Util.random(ops.range[0] || 1, ops.range[1] || 70);
+
+        const key = Util.makeKey(userID, guildID, "search");
         const cooldownRaw = await this._get(key);
-        const cooldown = Util.onCooldown(ops.timeout || Util.COOLDOWN.SEARCH, cooldownRaw || 0);
-        if (cooldown) return { cooldown: true, time: Util.getCooldown(ops.timeout || Util.COOLDOWN.SEARCH, cooldownRaw || 0) };
+        const cooldown = Util.onCooldown(ops.timeout || Util.COOLDOWN.SEARCH, cooldownRaw ? cooldownRaw.data : 0);
+        if (cooldown) return { cooldown: true, time: Util.getCooldown(ops.timeout || Util.COOLDOWN.SEARCH, cooldownRaw ? cooldownRaw.data : 0) };
 
         const newAmount = await this.addMoney(userID, guildID, amount);
         await this._set(key, Date.now());
@@ -264,14 +381,16 @@ class EconomyManager {
      * @param {number} [ops.timeout] Timeout
      * @param {string} [ops.prefix] Data prefix
      */
-    async custom(userID, guildID, amount, ops = { range: [], timeout: 0, prefix: "custom" }) {
+    async custom(userID, guildID = false, amount, ops = { range: [], timeout: 0, prefix: "custom" }) {
         this.__checkManager();
         if (!userID || typeof userID !== "string") throw new Error("User id was not provided!");
-        if (!amount) amount = this.random(ops && ops.range && ops.range[0] || 1, ops && ops.range && ops.range[1] || 70);
-        const key = EconomyManager.makeKey(userID, guildID, ops.prefix || "custom");
+        if (!amount) amount = Util.random(ops.range[0] || 1, ops.range[1] || 70);
+
+        const key = Util.makeKey(userID, guildID, ops.prefix || "custom");
         const cooldownRaw = await this._get(key);
-        const cooldown = Util.onCooldown(ops.timeout || Util.COOLDOWN.DAILY, cooldownRaw || 0);
-        if (cooldown) return { cooldown: true, time: Util.getCooldown(ops.timeout || Util.COOLDOWN.DAILY, cooldownRaw || 0) };
+        const cooldown = Util.onCooldown(ops.timeout || Util.COOLDOWN.DAILY, cooldownRaw ? cooldownRaw.data : 0);
+
+        if (cooldown) return { cooldown: true, time: Util.getCooldown(ops.timeout || Util.COOLDOWN.DAILY, cooldownRaw ? cooldownRaw.data : 0) };
 
         const newAmount = await this.addMoney(userID, guildID, amount);
         await this._set(key, Date.now());
@@ -288,14 +407,17 @@ class EconomyManager {
      * @param {number[]} [ops.range] Amount range
      * @param {number} [ops.timeout] Timeout
      */
-    async beg(userID, guildID, amount, ops = { range: [], timeout: 0 }) {
+    async beg(userID, guildID = false, amount, ops = { range: [], timeout: 0 }) {
         this.__checkManager();
+
         if (!userID || typeof userID !== "string") throw new Error("User id was not provided!");
-        if (!amount) amount = this.random(ops && ops.range[0] || 1, ops && ops.range[1] || 70);
-        const key = EconomyManager.makeKey(userID, guildID, "beg");
+        if (!amount) amount = Util.random(ops && ops.range[0] || 1, ops && ops.range[1] || 70);
+
+        const key = Util.makeKey(userID, guildID, "beg");
         const cooldownRaw = await this._get(key);
-        const cooldown = Util.onCooldown(ops.timeout || Util.COOLDOWN.BEG, cooldownRaw || 0);
-        if (cooldown) return { cooldown: true, time: Util.getCooldown(ops.timeout || Util.COOLDOWN.BEG, cooldownRaw || 0) };
+        const cooldown = Util.onCooldown(ops.timeout || Util.COOLDOWN.BEG, cooldownRaw ? cooldownRaw.data : 0);
+
+        if (cooldown) return { cooldown: true, time: Util.getCooldown(ops.timeout || Util.COOLDOWN.BEG, cooldownRaw ? cooldownRaw.data : 0) };
 
         const newAmount = await this.addMoney(userID, guildID, amount);
         await this._set(key, Date.now());
@@ -303,16 +425,7 @@ class EconomyManager {
         return { cooldown: false, time: null, amount: newAmount };
     }
 
-    /**
-     * Returns random number
-     * @param {number} from inclusive number
-     * @param {number} to exclusive number
-     */
-    random(from, to) {
-        if (typeof from !== "number" || typeof to !== "number") return 0;
-        const amt = Math.floor(Math.random() * (to - from + 1)) + from;
-        return amt;
-    }
+
 
     /**
      * Fetches money
@@ -320,131 +433,76 @@ class EconomyManager {
      * @param {string} guildID Guild id
      * @returns {Promise<number>}
      */
-    async fetchMoney(userID, guildID) {
+    async fetchMoney(userID, guildID = false) {
         this.__checkManager();
         if (!userID || typeof userID !== "string") throw new Error("Invalid User ID!");
-        const key = EconomyManager.makeKey(userID, guildID, this.options.prefix);
 
-        const data = await this.db.read(key);
-        const amt = data[0] ? data[0].data : 0;
-        if (!amt || isNaN(amt)) {
-            if (this.options.noNegative) await this.db.write({
+        const key = Util.makeKey(userID, guildID, this.prefix);
+
+        const userData = await this.db.read(key);
+
+        if (!userData || isNaN(userData.data)) {
+            if (this.noNegative) await this.db.write({
                 ID: key,
                 data: 0
             });
             return 0;
         };
 
-        if (this.options.noNegative && amt < 0) await this.db.write({
+        if (this.noNegative && amt < 0) await this.db.write({
             ID: key,
             data: 0
         });
-        
-        return amt;
+
+        return userData.data;
     }
 
     /**
      * Fetches something
      * @param {string} key key
-     * @rpivate
+     * @private
      * @ignore
      */
     async _get(key) {
         this.__checkManager();
         if (typeof key !== "string") throw new Error("key must be a string!");
         const data = await this.db.read(key);
-        if (!data[0]) return null;
-        return data[0].data;
+        if (!data) return null;
+        return data;
     }
 
     /**
      * Sets something
      * @param {string} key key
      * @param {number} data data
-     * @rpivate
+     * @private
      * @ignore
      */
     async _set(key, data) {
         this.__checkManager();
+
         if (typeof key !== "string") throw new Error("key must be a string!");
-        if (typeof data === "undefined") data = null;
+        if (typeof data === "undefined") data = 0;
 
-        await this.db.write({
-            ID: key,
-            data: data
-        });
+        await this.db.write({ ID: key, data });
 
         return true;
     }
 
     /**
-     * Reset storage
-     * @param {string} id Any matching id to remove
+     * Resets database
      */
-    async reset(id) {
+    async reset() {
         this.__checkManager();
-        if (id) {
-            const all = await this.db.read();
-            await this.db.write(all.filter(i => !i.ID.includes(id)));
-        } else {
-            this.db.initDatabase(true);
-        }
+
+        this.db.deleteAll();
 
         return true;
     }
 
-    /**
-     * Creates database manager
-     * @private
-     */
-    __makeManager() {
-        /**
-         * Database manager
-         * @type {Manager}
-         */
-        this.db = new Manager(this.options);
-    }
-
-    /**
-     * Makes key
-     * @param {string} user User id
-     * @param {string} guild Guild id
-     * @param {string} prefix Prefix
-     */
-    static makeKey(user, guild, prefix) {
-        return `${prefix}_${guild ? guild + "_" : ""}${user}`;
-    }
-
-    /**
-     * Parse key
-     * @param {string} key Data key
-     */
-    static parseKey(key) {
-        if (!key) throw new Error("Invalid key");
-        const chunk = key.split("_");
-        if (chunk.length >= 3) {
-            const obj = {
-                prefix: chunk[0],
-                guildID: chunk[1],
-                userID: chunk[2]
-            };
-
-            return obj;
-        } else {
-            const obj = {
-                prefix: chunk[0],
-                guildID: null,
-                userID: chunk[1]
-            };
-
-            return obj;
-        }
-    }
 
     __checkManager() {
         if (!this.db) throw new Error("Manager is not ready yet!");
     }
 
-}
-
-module.exports = EconomyManager;
+};

@@ -1,6 +1,5 @@
 module.exports = {
-    EconomyManager: require("./src/Eco"),
-    Manager: require("./src/Manager"),
-    Util: require("./src/Util"),
-    version: require("./package.json").version
-};
+    EconomyManager: require('./src/Eco'),
+    version: require ('./package.json').version,
+    Util: require('./src/Util')
+}

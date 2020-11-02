@@ -1,16 +1,8 @@
 class Util {
-
-    /**
-     * This class can not be instantiated
-     */
     constructor() {
-        throw new Error(`The ${this.constructor.name} class may not be instantiated!`);
+        throw new Error(`${this.constructor.name} May not be instantiated`);
     }
 
-    /**
-     * Milliseconds Parser
-     * @param {number} ms Time in milliseconds to parse
-     */
     static ms(ms) {
         if (typeof ms !== "number") throw new Error(`Expected milliseconds to be a number, received ${typeof ms}!`);
 
@@ -57,6 +49,53 @@ class Util {
     }
 
     /**
+     * Parse key
+     * @param {string} key Data key
+     */
+    static parseKey(key) {
+        if (!key) throw new Error("Invalid key");
+        const chunk = key.split("_");
+        if (chunk.length >= 3) {
+            const obj = {
+                prefix: chunk[0],
+                guildID: chunk[1],
+                userID: chunk[2]
+            };
+
+            return obj;
+        } else {
+            const obj = {
+                prefix: chunk[0],
+                guildID: null,
+                userID: chunk[1]
+            };
+
+            return obj;
+        }
+    }
+
+    /**
+    * Makes key
+    * @param {string} user User id
+    * @param {string} guild Guild id
+    * @param {string} prefix Prefix
+    */
+    static makeKey(user, guild, prefix) {
+        return `${prefix}_${guild ? guild + "_" : ""}${user}`;
+    }
+
+    /**
+     * Returns random number
+     * @param {number} from inclusive number
+     * @param {number} to exclusive number
+     */
+    static random(from, to) {
+        if (typeof from !== "number" || typeof to !== "number") return 0;
+        const amt = Math.floor(Math.random() * (to - from + 1)) + from;
+        return amt;
+    }
+
+    /**
      * Default Cooldown table
      */
     static get COOLDOWN() {
@@ -70,6 +109,42 @@ class Util {
         };
     }
 
-}
+    /**
+     * Mysql Options
+     */
+    static get MYSQL_OPTIONS() {
+        return {
+            table: 'money',
+            database: '',
+            user: '',
+            password: '',
+            host: '',
+            port: 3306,
+            additionalOptions: {}
+        }
+    }
+
+    /**
+     * Mongo options
+     */
+    static get MONGO_OPTIONS() {
+        return {
+            schema: 'userBalance',
+            collection: 'money',
+            additionalOptions: {}
+        }
+    }
+
+    /**
+     * SQLite Options
+     */
+    static get SQLITE_OPTIONS() {
+        return {
+            table: 'money',
+            filename: 'eco',
+            sqliteOptions: {}
+        }
+    }
+};
 
 module.exports = Util;
