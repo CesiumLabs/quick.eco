@@ -1,4 +1,8 @@
 class Util {
+
+    /**
+     * <warn>This is a funny static class.</warn>
+     */
     constructor() {
         throw new Error(`${this.constructor.name} May not be instantiated`);
     }

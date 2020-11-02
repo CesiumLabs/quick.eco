@@ -39,6 +39,7 @@ class EconomyManager {
 
         /**
          * Database Manager
+         * @type {any}
          */
         this.db;
 
