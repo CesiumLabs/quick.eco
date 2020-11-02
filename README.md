@@ -26,8 +26,6 @@ $ npm i @quick.eco/mysql
 - **[MongoDB](https://npmjs.com/package/@quick.eco/mongo)**
 - **[MySQL](https://npmjs.com/package/@quick.eco/mysql)**
 
-**[Join Our Discord Server](https://discord.gg/uqB8kxh)**
-
 # Features
 - Global Economy
 - Per-guild Economy
@@ -64,13 +62,13 @@ client.on("message", async (message) => {
     if (!message.guild || message.author.bot) return;
 
     if (message.content === "daily") {
-        let add = eco.daily(message.author.id, false, 500);
+        let add = await eco.daily(message.author.id, false, 500);
         if (add.cooldown) return message.reply(`You already claimed your daily coins. Come back after ${add.time.days} days, ${add.time.hours} hours, ${add.time.minutes} minutes & ${add.time.seconds} seconds.`);
         return message.reply(`you claimed ${add.amount} as your daily coins and now you have total ${add.money} coins.`);
     }
 
     if (message.content === "bal") {
-        let money = eco.fetchMoney(message.author.id);
+        let money = await eco.fetchMoney(message.author.id);
         return message.channel.send(`${message.author} has ${money} coins.`);
     }
 
