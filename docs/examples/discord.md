@@ -1,53 +1,3 @@
-# Quick.eco
-Powerful economy framework for discord bots.
-
-[![NPM](https://nodei.co/npm/quick.eco.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/quick.eco/)
-
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FINEX07%2Fquick.eco.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FINEX07%2Fquick.eco?ref=badge_shield)
-
-
-### Installing
-
-```sh
-$ npm i quick.eco -s
-
-// Add one of the following adapters [required]
-
-$ npm i @quick.eco/sqlite
-
-$ npm i @quick.eco/mongo
-
-$ npm i @quick.eco/mysql 
-```
-
-# Adapter Usage
-
-- **[SQLite](https://npmjs.com/package/@quick.eco/sqlite)**
-- **[MongoDB](https://npmjs.com/package/@quick.eco/mongo)**
-- **[MySQL](https://npmjs.com/package/@quick.eco/mysql)**
-
-# Features
-- Global Economy
-- Per-guild Economy
-- Built-in cooldown
-- Flexible
-- Randomizer
-- Configurable
-- Storage Adapters 
-- & much more...
-
-# Getting Started
-
-```js
-const { EconomyManager } = require("quick.eco");
-const eco = new EconomyManager({
-    adapter: '', // => sqlite, mongo or mysql
-    adapterOptions: {} // => Options
-});
-```
-
-# Example
-
 ```js
 const Discord = require("discord.js");
 const client = new Discord.Client();
@@ -86,9 +36,3 @@ client.on("message", async (message) => {
 
 client.login("XXXXXXXXXXXXXX");
 ```
-
-# Links
-- **[Discord](https://discord.gg/uqB8kxh)**
-- **[Documentation](https://eco.js.org)**
-
-## © Snowflake Studio ❄️ - 2020

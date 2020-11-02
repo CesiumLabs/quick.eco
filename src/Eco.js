@@ -7,27 +7,30 @@ const VALID_ADAPTERS = {
 
 class EconomyManager {
     /**
-     * 
+     * Economy manager
      * @param {object} options Options
-     * @param {string} [options.adapter] Adapter
-     * @param {object} [options.adapterOptions] Adapter Options
-     * @param {string} [options.prefix] Prefix
+     * @param {"sqlite"|"mongo"|"mysql"} options.adapter Adapter
+     * @param {object} [options.adapterOptions={}] Adapter Options
+     * @param {string} [options.prefix="money"] Prefix
      * @param {boolean} [options.noNegative=false] If it should not go below 0
      */
     constructor(options = { adapterOptions: {}, prefix: 'money', noNegative: false }) {
 
         /**
          * If it should not go below 0
+         * @type {boolean}
          */
         this.noNegative = options.noNegative;
 
         /**
          * Prefix
+         * @type {string}
          */
         this.prefix = options.prefix
 
         /**
          * Adapter
+         * @type {object}
          */
         this.adapter = {
             name: typeof options.adapter === 'string' ? options.adapter : undefined,
@@ -44,10 +47,6 @@ class EconomyManager {
 
     }
 
-    /**
-     * @ignore
-     * @private
-     */
     __makeAdapter() {
         try {
             const adapter = require(VALID_ADAPTERS[this.adapter.name]);
@@ -74,8 +73,9 @@ class EconomyManager {
     /**
      * Adds money
      * @param {string} userID User id
-     * @param {string} guildID Guild id
+     * @param {string} [guildID=false] Guild id
      * @param {number} money amount
+     * @returns {Promise<number>}
      */
     async addMoney(userID, guildID = false, money) {
 
@@ -94,8 +94,9 @@ class EconomyManager {
     /**
      * Subtracts money
      * @param {string} userID User id
-     * @param {string} guildID Guild id
+     * @param {string} [guildID=false] Guild id
      * @param {number} money amount
+     * @returns {Promise<number>}
      */
     async subtractMoney(userID, guildID = false, money) {
 
@@ -115,8 +116,9 @@ class EconomyManager {
     /**
      * Sets money
      * @param {string} userID User id
-     * @param {string} guildID Guild id
+     * @param {string} [guildID=false] Guild id
      * @param {number} money amount
+     * @returns {Promise<number>}
      */
     async setMoney(userID, guildID = false, money) {
         this.__checkManager();
@@ -133,7 +135,8 @@ class EconomyManager {
     /**
      * Deletes a user
      * @param {string} userID User id
-     * @param {string} guildID Guild id
+     * @param {string} [guildID=false] Guild id
+     * @returns {Promise<boolean>}
      */
     async delete(userID, guildID = false) {
         this.__checkManager();
@@ -149,6 +152,7 @@ class EconomyManager {
     /**
      * Deletes all the data from a specific guild
      * @param {string} guildID Guild ID
+     * @returns {Promise<boolean>}
      */
     async deleteAllFromGuild(guildID) {
         if (!guildID || typeof guildID !== 'string') throw new Error('Invalid Guild ID');
@@ -172,6 +176,7 @@ class EconomyManager {
     /**
      * Deletes all the data from a specific user
      * @param {string} userID User ID
+     * @returns {Promise<boolean>}
      */
     async deleteAllFromUser(userID) {
         if (!userID || typeof userID !== 'string') throw new Error('Invalid User ID');
@@ -193,10 +198,18 @@ class EconomyManager {
     }
 
     /**
+     * @typedef {object} Leaderboard
+     * @property {number} position User position
+     * @property {string} user The user
+     * @property {string} guild Guild id (optional)
+     * @property {number} money Money
+     */
+
+    /**
      * Creates leaderboard object
      * @param {string} guildID Guild id
      * @param {number} limit data limit
-     * @returns {Promise<any[]>}
+     * @returns {Promise<Leaderboard[]>}
      */
     async leaderboard(guildID = false, limit) {
 
@@ -236,6 +249,14 @@ class EconomyManager {
     }
 
     /**
+     * @typedef {object} RewardData
+     * @property {boolean} cooldown If the user is on cooldown
+     * @property {MS?} time Cooldown time
+     * @property {number|undefined} amount The amount
+     * @property {number|undefined} money Total balance
+     */
+
+    /**
      * Daily reward
      * @param {string} userID User id
      * @param {string} guildID Guild id
@@ -243,6 +264,7 @@ class EconomyManager {
      * @param {object} ops Options
      * @param {number[]} [ops.range] Amount range
      * @param {number} [ops.timeout] Timeout
+     * @returns {Promise<RewardData>}
      */
     async daily(userID, guildID = false, amount, ops = { range: [], timeout: 0 }) {
         this.__checkManager();
@@ -271,6 +293,7 @@ class EconomyManager {
      * @param {object} ops Options
      * @param {number[]} [ops.range] Amount range
      * @param {number} [ops.timeout] Timeout
+     * @returns {Promise<RewardData>}
      */
     async weekly(userID, guildID = false, amount, ops = { range: [], timeout: 0 }) {
         this.__checkManager();
@@ -299,6 +322,7 @@ class EconomyManager {
      * @param {object} ops Options
      * @param {number[]} [ops.range] Amount range
      * @param {number} [ops.timeout] Timeout
+     * @returns {Promise<RewardData>}
      */
     async monthly(userID, guildID = false, amount, ops = { range: [], timeout: 0 }) {
         this.__checkManager();
@@ -319,6 +343,13 @@ class EconomyManager {
     }
 
     /**
+     * @typedef {object} JobData
+     * @property {boolean} cooldown If the user is on cooldown
+     * @property {MS?} time Cooldown time
+     * @property {number|undefined} amount The amount
+     */
+
+    /**
      * Work reward
      * @param {string} userID User id
      * @param {string} guildID Guild id
@@ -326,6 +357,7 @@ class EconomyManager {
      * @param {object} ops Options
      * @param {number[]} [ops.range] Amount range
      * @param {number} [ops.timeout] Timeout
+     * @returns {Promise<JobData>}
      */
     async work(userID, guildID = false, amount, ops = { range: [], timeout: 0 }) {
         this.__checkManager();
@@ -353,6 +385,7 @@ class EconomyManager {
      * @param {object} ops Options
      * @param {number[]} [ops.range] Amount range
      * @param {number} [ops.timeout] Timeout
+     * @returns {Promise<JobData>}
      */
     async search(userID, guildID = false, amount, ops = { range: [], timeout: 0 }) {
         this.__checkManager();
@@ -380,6 +413,7 @@ class EconomyManager {
      * @param {number[]} [ops.range] Amount range
      * @param {number} [ops.timeout] Timeout
      * @param {string} [ops.prefix] Data prefix
+     * @returns {Promise<JobData>}
      */
     async custom(userID, guildID = false, amount, ops = { range: [], timeout: 0, prefix: "custom" }) {
         this.__checkManager();
@@ -406,6 +440,7 @@ class EconomyManager {
      * @param {object} ops Options
      * @param {number[]} [ops.range] Amount range
      * @param {number} [ops.timeout] Timeout
+     * @returns {Promise<JobData>}
      */
     async beg(userID, guildID = false, amount, ops = { range: [], timeout: 0 }) {
         this.__checkManager();
@@ -457,12 +492,6 @@ class EconomyManager {
         return userData.data;
     }
 
-    /**
-     * Fetches something
-     * @param {string} key key
-     * @private
-     * @ignore
-     */
     async _get(key) {
         this.__checkManager();
         if (typeof key !== "string") throw new Error("key must be a string!");
@@ -471,13 +500,6 @@ class EconomyManager {
         return data;
     }
 
-    /**
-     * Sets something
-     * @param {string} key key
-     * @param {number} data data
-     * @private
-     * @ignore
-     */
     async _set(key, data) {
         this.__checkManager();
 
@@ -491,6 +513,7 @@ class EconomyManager {
 
     /**
      * Resets database
+     * @returns {Promise<boolean>}
      */
     async reset() {
         this.__checkManager();
@@ -506,3 +529,5 @@ class EconomyManager {
     }
 
 };
+
+module.exports = EconomyManager;

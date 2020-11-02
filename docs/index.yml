@@ -1,0 +1,8 @@
+- name: Examples
+  files:
+    - name: Discord Bot
+      path: discord.md
+- name: General
+  files:
+    - name: Welcome
+      path: welcome.md

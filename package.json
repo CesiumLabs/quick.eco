@@ -1,11 +1,17 @@
 {
   "name": "quick.eco",
-  "version": "5.0.0",
+  "version": "6.0.0",
   "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "docs": "docgen --source src --custom docs/index.yml --output docs/docs.json",
+    "docs:test": "docgen --source src --custom docs/index.yml"
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Snowflake107/quick.eco.git"
+    "url": "git+https://github.com/DevSnowflake/quick.eco.git"
   },
+  "homepage": "https://eco.js.org",
   "keywords": [
     "quick.eco",
     "quick.db",
@@ -24,13 +30,15 @@
     "leveling",
     "eco"
   ],
-  "author": "DevSnowflake",
+  "author": "zsaif",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Snowflake107/quick.eco/issues"
+    "url": "https://github.com/DevSnowflake/quick.eco/issues"
   },
-  "dependencies": {},
   "devDependencies": {
-    "jsdoc": "^3.6.6"
+    "@quick.eco/mongo": "^1.0.4",
+    "@quick.eco/mysql": "^1.0.2",
+    "@quick.eco/sqlite": "^1.0.3",
+    "discord.js-docgen": "github:discordjs/docgen"
   }
 }

@@ -3,6 +3,11 @@ class Util {
         throw new Error(`${this.constructor.name} May not be instantiated`);
     }
 
+    /**
+     * Parse milliseconds
+     * @param {number} ms Milliseconds to parse
+     * @returns {MS}
+     */
     static ms(ms) {
         if (typeof ms !== "number") throw new Error(`Expected milliseconds to be a number, received ${typeof ms}!`);
 
@@ -19,9 +24,21 @@ class Util {
     }
 
     /**
+     * @typedef {object} MS
+     * @property {number} days Days
+     * @property {number} hours Hours
+     * @property {number} minutes Minutes
+     * @property {number} seconds Seconds
+     * @property {number} milliseconds Milliseconds
+     * @property {number} microseconds Microseconds
+     * @property {number} nanoseconds Nanoseconds
+     */
+
+    /**
      * Returns cooldown time object
      * @param {number} cooldownTime Cooldown timeout
      * @param {number} collectedTime Collected timestamp
+     * @returns {MS}
      */
     static getCooldown(cooldownTime, collectedTime) {
         if (cooldownTime instanceof Date) cooldownTime = cooldownTime.getTime();
@@ -37,6 +54,7 @@ class Util {
      * Checks for cooldown
      * @param {number} cooldownTime Cooldown timeout
      * @param {number} collectedTime Timestamp when last item was collected
+     * @returns {boolean}
      */
     static onCooldown(cooldownTime, collectedTime) {
         if (cooldownTime instanceof Date) cooldownTime = cooldownTime.getTime();
@@ -49,8 +67,16 @@ class Util {
     }
 
     /**
+     * @typedef {object} ParsedKey
+     * @property {string} prefix Key prefix
+     * @property {?string} guildID Guild id
+     * @property {string} userID User id
+     */
+
+    /**
      * Parse key
      * @param {string} key Data key
+     * @returns {ParsedKey}
      */
     static parseKey(key) {
         if (!key) throw new Error("Invalid key");
@@ -79,6 +105,7 @@ class Util {
     * @param {string} user User id
     * @param {string} guild Guild id
     * @param {string} prefix Prefix
+    * @returns {string}
     */
     static makeKey(user, guild, prefix) {
         return `${prefix}_${guild ? guild + "_" : ""}${user}`;
@@ -88,6 +115,7 @@ class Util {
      * Returns random number
      * @param {number} from inclusive number
      * @param {number} to exclusive number
+     * @returns {number}
      */
     static random(from, to) {
         if (typeof from !== "number" || typeof to !== "number") return 0;
@@ -96,7 +124,18 @@ class Util {
     }
 
     /**
+     * @typedef {object} CooldownTable
+     * @property {number} DAILY Cooldown for daily
+     * @property {number} WEEKLY Cooldown for weekly
+     * @property {number} WORK Cooldown for work
+     * @property {number} BEG Cooldown for beg
+     * @property {number} MONTHLY Cooldown for monthly
+     * @property {number} SEARCH Cooldown for search
+     */
+
+    /**
      * Default Cooldown table
+     * @type {CooldownTable}
      */
     static get COOLDOWN() {
         return {
@@ -110,7 +149,19 @@ class Util {
     }
 
     /**
+     * @typedef {object} MySQLOptions
+     * @property {string} [table="money"] Table name
+     * @property {string} database Database
+     * @property {string} user Database user info
+     * @property {string} password Database password
+     * @property {string} host Database host
+     * @property {number} [port=3306] Database PORT
+     * @property {object} [additionalOptions={}] Additional options
+     */
+
+    /**
      * Mysql Options
+     * @type {MySQLOptions}
      */
     static get MYSQL_OPTIONS() {
         return {
@@ -125,7 +176,15 @@ class Util {
     }
 
     /**
+     * @typedef {object} MongoOptions
+     * @property {string} [schema="userBalance"] Schema/Model name
+     * @property {string} [collection="money"] Collection name
+     * @property {object} [additionalOptions={}] Additional options
+     */
+
+    /**
      * Mongo options
+     * @type {MongoOptions}
      */
     static get MONGO_OPTIONS() {
         return {
@@ -136,7 +195,15 @@ class Util {
     }
 
     /**
+     * @typedef {object} SQLiteOptions
+     * @property {string} [table="money"] Table name
+     * @property {string} [filename="eco"] File name
+     * @property {object} [sqliteOptions={}] SQLite options
+     */
+
+    /**
      * SQLite Options
+     * @type {SQLiteOptions}
      */
     static get SQLITE_OPTIONS() {
         return {
