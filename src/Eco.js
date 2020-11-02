@@ -6,6 +6,7 @@ const VALID_ADAPTERS = {
 }
 
 class EconomyManager {
+    
     /**
      * Economy manager
      * @param {object} options Options
