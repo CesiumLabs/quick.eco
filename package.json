@@ -1,11 +1,7 @@
 {
-  "name": "quick.eco-rewrite",
+  "name": "quick.eco",
   "version": "5.0.0",
   "main": "index.js",
-  "scripts": {
-    "test": "cd test && node index.js",
-    "doc": "jsdoc test ./src/Eco.js"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Snowflake107/quick.eco.git"
