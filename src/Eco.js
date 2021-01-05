@@ -8,7 +8,7 @@ const VALID_ADAPTERS = {
 class EconomyManager {
     
     /**
-     * Economy manager
+     * Economy manager class
      * @param {object} options Options
      * @param {sqlite|mongo|mysql} options.adapter Adapter
      * @param {object} [options.adapterOptions={}] Adapter Options
