@@ -10,7 +10,7 @@ class EconomyManager {
     /**
      * Economy manager
      * @param {object} options Options
-     * @param {"sqlite"|"mongo"|"mysql"} options.adapter Adapter
+     * @param {("sqlite"|"mongo"|"mysql")} options.adapter Adapter
      * @param {object} [options.adapterOptions={}] Adapter Options
      * @param {string} [options.prefix="money"] Prefix
      * @param {boolean} [options.noNegative=false] If it should not go below 0
