@@ -228,7 +228,7 @@ class EconomyManager {
                 position: index + 1,
                 user: `${parsedKey.userID}`,
                 guild: `${parsedKey.guildID || ""}`,
-                money: item.data || 0
+                money: Number(item.data) || 0
             });
         });
 
