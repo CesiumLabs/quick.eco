@@ -66,8 +66,7 @@ class Util {
         if (typeof cooldownTime !== "number") throw new Error(`Expected cooldownTime to be a number, received ${typeof cooldownTime}!`);
         if (typeof collectedTime !== "number") throw new Error(`Expected collectedTime to be a number, received ${typeof collectedTime}!`);
 
-        if (collectedTime !== null && cooldownTime - (Date.now() - collectedTime) > 0) return true;
-        return false;
+        return (collectedTime !== null && cooldownTime - (Date.now() - collectedTime) > 0);
     }
 
     /**
@@ -86,22 +85,17 @@ class Util {
         if (!key) throw new Error("Invalid key");
         const chunk = key.split("_");
         if (chunk.length >= 3) {
-            const obj = {
+            return {
                 prefix: chunk[0],
                 guildID: chunk[1],
                 userID: chunk[2]
-            };
-
-            return obj;
-        } else {
-            const obj = {
-                prefix: chunk[0],
-                guildID: null,
-                userID: chunk[1]
-            };
-
-            return obj;
+            }
         }
+        return {
+            prefix: chunk[0],
+            guildID: null,
+            userID: chunk[1]
+        };
     }
 
     /**
@@ -123,8 +117,7 @@ class Util {
      */
     static random(from, to) {
         if (typeof from !== "number" || typeof to !== "number") return 0;
-        const amt = Math.floor(Math.random() * (to - from + 1)) + from;
-        return amt;
+        return Math.floor(Math.random() * (to - from + 1)) + from;
     }
 
     /**
