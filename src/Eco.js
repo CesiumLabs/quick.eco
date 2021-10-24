@@ -42,7 +42,7 @@ class EconomyManager {
          * Database Manager
          * @type {any}
          */
-        this.db;
+        this.db = null;
 
         if (this.adapter.name && Object.keys(VALID_ADAPTERS).includes(this.adapter.name)) this.__makeAdapter()
         else throw new Error(`Invalid Adapter: ${this.adapter.name}`)
@@ -63,8 +63,6 @@ class EconomyManager {
                 default:
 
                     this.db = new adapter(this.adapter.options);
-
-                    break;
             }
 
         } catch (err) {
@@ -169,10 +167,10 @@ class EconomyManager {
             while (i < len) {
                 this.db.delete(all[i].ID);
                 i++;
-            };
+            }
 
             return true;
-        } else return;
+        }
     }
 
     /**
@@ -193,10 +191,10 @@ class EconomyManager {
             while (i < len) {
                 this.db.delete(all[i].ID);
                 i++;
-            };
+            }
 
             return true;
-        } else return;
+        }
     }
 
     /**
@@ -226,14 +224,12 @@ class EconomyManager {
         data.sort((a, b) => b.data - a.data).forEach((item, index) => {
             const parsedKey = Util.parseKey(item.ID);
 
-            const data = {
+            arr.push({
                 position: index + 1,
                 user: `${parsedKey.userID}`,
                 guild: `${parsedKey.guildID || ""}`,
-                money: isNaN(item.data) ? 0 : item.data
-            };
-
-            arr.push(data);
+                money: item.data || 0
+            });
         });
 
         return arr;
