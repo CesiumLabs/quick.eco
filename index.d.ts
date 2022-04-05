@@ -69,6 +69,12 @@ declare module "quick.eco" {
         BEG: number;
         MONTHLY: number;
         SEARCH: number;
+        SEARCHALT: number;
+        FISH: number;
+        HUNT: number;
+        DIG: number;
+        POSTMEME: number;
+        CULTIVATE: number; // Bonus
     }
 
     export interface Leaderboard {
