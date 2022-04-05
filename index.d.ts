@@ -69,6 +69,12 @@ declare module "quick.eco" {
         BEG: number;
         MONTHLY: number;
         SEARCH: number;
+        SEARCHALT: number;
+        FISH: number;
+        HUNT: number;
+        DIG: number;
+        POSTMEME: number;
+        CULTIVATE: number; // Bonus
     }
 
     export interface Leaderboard {
@@ -118,6 +124,12 @@ declare module "quick.eco" {
         public search(userID: string, guildID: string | false, amount: number, ops: TimeBasedRewardOptions): Promise<JobData>
         public custom(userID: string, guildID: string | false, amount: number, ops: CustomRewardOptions): Promise<JobData>
         public beg(userID: string, guildID: string | false, amount: number, ops: TimeBasedRewardOptions): Promise<JobData>
+        public fish(userID: string, guildID: string | false, amount: number, ops: TimeBasedRewardOptions): Promise<JobData>
+        public hunt(userID: string, guildID: string | false, amount: number, ops: TimeBasedRewardOptions): Promise<JobData>
+        public dig(userID: string, guildID: string | false, amount: number, ops: TimeBasedRewardOptions): Promise<JobData>
+        public postmeme(userID: string, guildID: string | false, amount: number, ops: TimeBasedRewardOptions): Promise<JobData>
+        public cultivate(userID: string, guildID: string | false, amount: number, ops: TimeBasedRewardOptions): Promise<JobData>
+        public searchalt(userID: string, guildID: string | false, amount: number, ops: TimeBasedRewardOptions): Promise<JobData>
         public fetchMoney(userID: string, guildID: string | false): Promise<number>;
         public reset(): Promise<boolean>;
         private __checkManager(): void;

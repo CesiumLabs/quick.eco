@@ -135,6 +135,12 @@ class Util {
      * @property {number} BEG Cooldown for beg
      * @property {number} MONTHLY Cooldown for monthly
      * @property {number} SEARCH Cooldown for search
+     * @property {number} SEARCHALT Cooldown for search alternative
+     * @property {number} FISH Cooldown for fish
+     * @property {number} HUNT Cooldown for hunt
+     * @property {number} DIG Cooldown for dig
+     * @property {number} POSTMEME Cooldown for postmeme
+     * @property {number} CULTIVATE Cooldown for cultivate
      */
 
     /**
@@ -148,7 +154,13 @@ class Util {
             WORK: 2700000,
             BEG: 60000,
             MONTHLY: 2628000000,
-            SEARCH: 300000
+            SEARCH: 300000,
+            SEARCHALT: 45000,
+            FISH: 50000,
+            HUNT: 45000,
+            DIG: 30000,
+            POSTMEME: 60000,
+            CULTIVATE: 55000 // Bonus
         };
     }
 
