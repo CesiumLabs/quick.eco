@@ -462,6 +462,174 @@ class EconomyManager {
         return { cooldown: false, time: null, amount: newAmount };
     }
 
+    /**
+     * Fish reward
+     * @param {string} userID User id
+     * @param {string} guildID Guild id
+     * @param {number} amount Custom Amount
+     * @param {object} ops Options
+     * @param {number[]} [ops.range] Amount range
+     * @param {number} [ops.timeout] Timeout
+     * @returns {Promise<JobData>}
+     */
+    async fish(userID, guildID = false, amount, ops = { range: [], timeout: 0 }) {
+        this.__checkManager();
+
+        if (!userID || typeof userID !== "string") throw new Error("User id was not provided!");
+        if (!amount) amount = Util.random(ops && ops.range[0] || 1, ops && ops.range[1] || 70);
+
+        const key = Util.makeKey(userID, guildID, "fish");
+        const cooldownRaw = await this._get(key);
+        const cooldown = Util.onCooldown(ops.timeout || Util.COOLDOWN.FISH, cooldownRaw ? cooldownRaw.data : 0);
+
+        if (cooldown) return { cooldown: true, time: Util.getCooldown(ops.timeout || Util.COOLDOWN.FISH, cooldownRaw ? cooldownRaw.data : 0) };
+
+        const newAmount = await this.addMoney(userID, guildID, amount);
+        await this._set(key, Date.now());
+
+        return { cooldown: false, time: null, amount: newAmount };
+    }
+
+      /**
+     * Hunt reward
+     * @param {string} userID User id
+     * @param {string} guildID Guild id
+     * @param {number} amount Custom Amount
+     * @param {object} ops Options
+     * @param {number[]} [ops.range] Amount range
+     * @param {number} [ops.timeout] Timeout
+     * @returns {Promise<JobData>}
+     */
+    async hunt(userID, guildID = false, amount, ops = { range: [], timeout: 0 }) {
+        this.__checkManager();
+
+        if (!userID || typeof userID !== "string") throw new Error("User id was not provided!");
+        if (!amount) amount = Util.random(ops && ops.range[0] || 1, ops && ops.range[1] || 70);
+
+        const key = Util.makeKey(userID, guildID, "hunt");
+        const cooldownRaw = await this._get(key);
+        const cooldown = Util.onCooldown(ops.timeout || Util.COOLDOWN.HUNT, cooldownRaw ? cooldownRaw.data : 0);
+
+        if (cooldown) return { cooldown: true, time: Util.getCooldown(ops.timeout || Util.COOLDOWN.HUNT, cooldownRaw ? cooldownRaw.data : 0) };
+
+        const newAmount = await this.addMoney(userID, guildID, amount);
+        await this._set(key, Date.now());
+
+        return { cooldown: false, time: null, amount: newAmount };
+    }
+
+    /**
+     * Dig reward
+     * @param {string} userID User id
+     * @param {string} guildID Guild id
+     * @param {number} amount Custom Amount
+     * @param {object} ops Options
+     * @param {number[]} [ops.range] Amount range
+     * @param {number} [ops.timeout] Timeout
+     * @returns {Promise<JobData>}
+     */
+    async dig(userID, guildID = false, amount, ops = { range: [], timeout: 0 }) {
+        this.__checkManager();
+
+        if (!userID || typeof userID !== "string") throw new Error("User id was not provided!");
+        if (!amount) amount = Util.random(ops && ops.range[0] || 1, ops && ops.range[1] || 70);
+
+        const key = Util.makeKey(userID, guildID, "dig");
+        const cooldownRaw = await this._get(key);
+        const cooldown = Util.onCooldown(ops.timeout || Util.COOLDOWN.DIG, cooldownRaw ? cooldownRaw.data : 0);
+
+        if (cooldown) return { cooldown: true, time: Util.getCooldown(ops.timeout || Util.COOLDOWN.DIG, cooldownRaw ? cooldownRaw.data : 0) };
+
+        const newAmount = await this.addMoney(userID, guildID, amount);
+        await this._set(key, Date.now());
+
+        return { cooldown: false, time: null, amount: newAmount };
+    }
+
+    /**
+     * Postmeme reward
+     * @param {string} userID User id
+     * @param {string} guildID Guild id
+     * @param {number} amount Custom Amount
+     * @param {object} ops Options
+     * @param {number[]} [ops.range] Amount range
+     * @param {number} [ops.timeout] Timeout
+     * @returns {Promise<JobData>}
+     */
+    async postmeme(userID, guildID = false, amount, ops = { range: [], timeout: 0 }) {
+        this.__checkManager();
+
+        if (!userID || typeof userID !== "string") throw new Error("User id was not provided!");
+        if (!amount) amount = Util.random(ops && ops.range[0] || 1, ops && ops.range[1] || 70);
+
+        const key = Util.makeKey(userID, guildID, "postmeme");
+        const cooldownRaw = await this._get(key);
+        const cooldown = Util.onCooldown(ops.timeout || Util.COOLDOWN.POSTMEME, cooldownRaw ? cooldownRaw.data : 0);
+
+        if (cooldown) return { cooldown: true, time: Util.getCooldown(ops.timeout || Util.COOLDOWN.POSTMEME, cooldownRaw ? cooldownRaw.data : 0) };
+
+        const newAmount = await this.addMoney(userID, guildID, amount);
+        await this._set(key, Date.now());
+
+        return { cooldown: false, time: null, amount: newAmount };
+    }
+
+    /**
+     * Cultivate reward
+     * @param {string} userID User id
+     * @param {string} guildID Guild id
+     * @param {number} amount Custom Amount
+     * @param {object} ops Options
+     * @param {number[]} [ops.range] Amount range
+     * @param {number} [ops.timeout] Timeout
+     * @returns {Promise<JobData>}
+     */
+    async cultivate(userID, guildID = false, amount, ops = { range: [], timeout: 0 }) {
+        this.__checkManager();
+
+        if (!userID || typeof userID !== "string") throw new Error("User id was not provided!");
+        if (!amount) amount = Util.random(ops && ops.range[0] || 1, ops && ops.range[1] || 70);
+
+        const key = Util.makeKey(userID, guildID, "cultivate");
+        const cooldownRaw = await this._get(key);
+        const cooldown = Util.onCooldown(ops.timeout || Util.COOLDOWN.CULTIVATE, cooldownRaw ? cooldownRaw.data : 0);
+
+        if (cooldown) return { cooldown: true, time: Util.getCooldown(ops.timeout || Util.COOLDOWN.CULTIVATE, cooldownRaw ? cooldownRaw.data : 0) };
+
+        const newAmount = await this.addMoney(userID, guildID, amount);
+        await this._set(key, Date.now());
+
+        return { cooldown: false, time: null, amount: newAmount };
+    }
+
+    /**
+     * Searchalt reward
+     * @param {string} userID User id
+     * @param {string} guildID Guild id
+     * @param {number} amount Custom Amount
+     * @param {object} ops Options
+     * @param {number[]} [ops.range] Amount range
+     * @param {number} [ops.timeout] Timeout
+     * @returns {Promise<JobData>}
+     */
+    async searchalt(userID, guildID = false, amount, ops = { range: [], timeout: 0 }) {
+        this.__checkManager();
+
+        if (!userID || typeof userID !== "string") throw new Error("User id was not provided!");
+        if (!amount) amount = Util.random(ops.range[0] || 1, ops.range[1] || 70);
+
+        const key = Util.makeKey(userID, guildID, "searchalt");
+        const cooldownRaw = await this._get(key);
+        const cooldown = Util.onCooldown(ops.timeout || Util.COOLDOWN.SEARCHALT, cooldownRaw ? cooldownRaw.data : 0);
+        if (cooldown) return { cooldown: true, time: Util.getCooldown(ops.timeout || Util.COOLDOWN.SEARCHALT, cooldownRaw ? cooldownRaw.data : 0) };
+
+        const newAmount = await this.addMoney(userID, guildID, amount);
+        await this._set(key, Date.now());
+
+        return { cooldown: false, time: null, amount: newAmount };
+    }
+
+
 
 
     /**
