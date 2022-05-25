@@ -217,7 +217,7 @@ class EconomyManager {
 
         this.__checkManager();
 
-        let data = (await this.all(limit)).filter(x => x.ID.startsWith(this.prefix));
+        let data = (await this.all()).filter(x => x.ID.startsWith(this.prefix)).splice(0, limit);
 
         if (guildID) data = data.filter(x => x.ID.includes(guildID));
 
